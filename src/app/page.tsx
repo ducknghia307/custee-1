@@ -7,7 +7,7 @@ export default function Home() {
   const [state, setState] = useState(true);
   const [number, setNumber] = useState(3);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-5 p-24">
       <Button
         variant="destructive"
         onClick={() => {
@@ -37,10 +37,11 @@ export default function Home() {
             type="number"
             value={number}
             onChange={(e) => {
-              setNumber(e.target.valueAsNumber);
+              if (e.target.valueAsNumber > 0) setNumber(e.target.valueAsNumber);
             }}
           />
-          {"second(s)"}
+          {"second"}
+          {number > 1 ? "s" : null}
         </div>
       )}
     </main>
