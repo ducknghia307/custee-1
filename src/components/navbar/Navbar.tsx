@@ -17,9 +17,10 @@ export default function Navbar() {
   window.onscroll = () => {
     var currentScrollPos = window.scrollY;
     if (prevScrollPos > currentScrollPos) {
-      document.getElementById("navbar").style.top = "0";
+      document.getElementById("navbar")!.style.top = "0";
     } else {
-      document.getElementById("navbar").style.top = "-65px";
+      if (currentScrollPos > 50)
+        document.getElementById("navbar")!.style.top = "-65px";
     }
     prevScrollPos = currentScrollPos;
   };
@@ -27,7 +28,7 @@ export default function Navbar() {
   return (
     <div
       id="navbar"
-      className="h-14 w-full flex flex-row text-black justify-between font-bold bg-white rounded-sm items-center px-1 gap-2 fixed top-0 drop-shadow-[0_5px_5px_rgba(144,40,231,0.25)]"
+      className="h-14 w-full flex flex-row text-black justify-between font-bold bg-white rounded-sm items-center px-1 gap-2 fixed top-0 drop-shadow-[0_5px_5px_rgba(144,40,231,0.25)] z-50"
     >
       <div className="basis-full">
         <Link href="/">
