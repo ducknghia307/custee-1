@@ -90,6 +90,14 @@ export default function Navbar() {
                     />
                     <Link href="/">View Profile</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem className="flex flex-row gap-2">
+                    <img
+                      src="https://icons.veryicon.com/png/o/system/linear-chh/order-27.png"
+                      alt=""
+                      className="w-3"
+                    />
+                    <Link href="/">View Orders</Link>
+                  </DropdownMenuItem>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white">
@@ -193,6 +201,14 @@ export default function Navbar() {
                     className="w-3"
                   />
                   <Link href="/">View Cart</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex flex-row gap-2">
+                  <img
+                    src="https://icons.veryicon.com/png/o/system/linear-chh/order-27.png"
+                    alt=""
+                    className="w-3"
+                  />
+                  <Link href="/">View Orders</Link>
                 </DropdownMenuItem>
               </div>
               <DropdownMenuItem className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white">
