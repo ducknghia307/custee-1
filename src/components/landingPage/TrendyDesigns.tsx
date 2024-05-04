@@ -131,7 +131,7 @@ export default function TrendyDesigns() {
         </button>
         <div
           id="container"
-          className="flex flex-nowrap flex-row min-w-[90%] max-w-[90%] gap-10 mx-auto my-10 overflow-x-auto"
+          className="flex flex-nowrap flex-row min-w-[90%] max-w-[90%] gap-10 mx-auto my-16 overflow-x-auto"
         >
           {designList?.map((design, i) => {
             return (

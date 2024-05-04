@@ -9,10 +9,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
 
 export default function Navbar() {
+  const [notificationList, setNotificationList] = useState([
+    {
+      id: 1,
+      content: "Bạn có một đơn hàng đang được giao.",
+      time: new Date(),
+    },
+    {
+      id: 2,
+      content: "Đơn hàng của bạn đã được giao thành công.",
+      time: new Date(),
+    },
+    {
+      id: 3,
+      content:
+        "Hiện đang có sản phẩm mới trên trang mới nhất của Custee. Có thể bạn sẽ thích. Hãy tham khảo.",
+      time: new Date(),
+    },
+  ]);
+
   var prevScrollPos = window.scrollY;
   window.onscroll = () => {
     var currentScrollPos = window.scrollY;
@@ -119,15 +140,38 @@ export default function Navbar() {
             className="w-6"
           />
         </div>
-        <div className="h-10 flex flex-row w-100 items-center px-2">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png"
-            alt=""
-            className="w-6"
-          />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <div className="relative h-10 flex flex-row w-100 items-center px-2">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png"
+                alt=""
+                className="w-6"
+              />
+              <div className="absolute bottom-0 right-0 w-[16px] h-[16px] flex justify-center items-center rounded-full bg-red-500 text-white text-[10px] font-light">
+                {notificationList.length}
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="max-w-[250px] border-[1.5px] p-0 border-black overflow-hidden">
+            {notificationList.map((noti, i) => {
+              return (
+                <DropdownMenuItem
+                  key={i}
+                  className="rounded-none border-b-[1.5px] ml-2 pb-4 border-black ml-[-5px] last:border-none"
+                >
+                  <li className="list-disc font-semibold text-xs">{noti.content}</li>
+                  <div className="absolute bottom-[-4px] right-0 w-[30%] mr-2 font-light text-[8px] italic">
+                    {moment(noti.time).fromNow()}
+                  </div>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
+      {/* RESPONSIVE MENU ON SMALL SCREEN */}
       <div className="flex sm:hidden mr-4 basis-full flex-shrink-1 flex-row-reverse gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger>

@@ -6,7 +6,7 @@ export default function HotNews() {
   return (
     <div className="w-screen text-center mt-[-5%] z-20 m-2">
       <h1 className="font-extrabold text-4xl font-arimo">HOT NEWS</h1>
-      <div className="flex flex-row w-[80%] h-[80vh] gap-2 justify-center align-items-center mx-auto mt-36 font-arimo">
+      <div className="flex flex-row w-[80%] h-[80vh] gap-2 justify-center align-items-center mx-auto mt-24 font-arimo">
         <div className="flex flex-col w-[60%] justify-center gap-2">
           <div
             className="w-full bg-cover h-[50%] bg-center bg-no-repeat rounded-xl flex flex-col justify-end
