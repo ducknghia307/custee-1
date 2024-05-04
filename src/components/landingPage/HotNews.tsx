@@ -6,7 +6,7 @@ export default function HotNews() {
   return (
     <div className="w-screen text-center mt-[-5%] z-20 m-2">
       <h1 className="font-extrabold text-4xl font-arimo">HOT NEWS</h1>
-      <div className="flex flex-row w-[80%] h-[80vh] gap-2 justify-center align-items-center mx-auto mt-16 font-arimo">
+      <div className="flex flex-row w-[80%] h-[80vh] gap-2 justify-center align-items-center mx-auto mt-36 font-arimo">
         <div className="flex flex-col w-[60%] justify-center gap-2">
           <div
             className="w-full bg-cover h-[50%] bg-center bg-no-repeat rounded-xl flex flex-col justify-end
@@ -15,9 +15,12 @@ export default function HotNews() {
               backgroundImage: `url(${image1.src})`,
             }}
           >
-            <p className="font-black text-[100%] mx-2 cursor-pointer hover:underline md:text-[200%]">
+            <Link
+              href="/"
+              className="font-black text-[100%] mx-2 cursor-pointer hover:underline md:text-[200%]"
+            >
               Collection For Couples
-            </p>
+            </Link>
             <p className="font-light text-[10px] m-2 sm:text-[70%]">
               Our Collection for Couple Features coordinated designs and
               patterns, allowing couples to showcase their unity through
@@ -48,9 +51,12 @@ export default function HotNews() {
                   "url(https://s3-alpha-sig.figma.com/img/844f/fbd5/25cb0a88fadebc90d43146edec42cef9?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=if8tS~w2Gz4TRPKMjz-rxa6LnQVg8BfTblOFjZesA-MlUBh8oK0umQZApJnISd66ju63eIjIwz9hYS4NQZNoz8vGAWREHHSxi0Os0ufgDSh9xAhT6NcEFK4V394JjBvKH53XhXtDRStFijPIHQef~HzPzjdUNE-cT6zWfI5bMJrba2jihQtmu2MiDVVPi03soebk4PWp2Dchzi2hy8PtZ9Gqm~E0bX5ACqVBWMTXljFPEojQELhBc9hGLvK1HMkCGmO9q5L0B~XlqUGpKUph1tlOSqWRpF3eWpDvyC4sHacf7G1zMSDM7Dk2XTGuSphtXQbfBnGHay1FiiO8YCLkYw__)",
               }}
             >
-              <p className="font-black text-[100%] m-2 hover:underline md:text-[200%]">
+              <Link
+                href="/"
+                className="font-black text-[100%] m-2 hover:underline md:text-[200%]"
+              >
                 New Tote Bags Collection
-              </p>
+              </Link>
             </div>
           </div>
         </div>
@@ -62,9 +68,12 @@ export default function HotNews() {
               "url(https://s3-alpha-sig.figma.com/img/b6fc/2a16/bbe38c16145694cba4ecc2dd516fe9d0?Expires=1714953600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aNvEvl55n-V7e5tF7Me~-M1MGmUu1oO2GTaIG~yPyDbaRUUiVePxB5VBzI~pMzfy7Rl6WE7bm6DVyHwWMF6f4NeasMGlLf6ejGoYAlZeuaGHR3eqNaWC0My~b49h6VYzISov8CiVcuubQrkX8QLnn5Gt2fba-r3QYBJoy5pSJLoW~LIsCJ8CHDEuPnL9LRZdZyEFP7a9OEvdqss2PC37kx5k7yHicLm0HhygbyJqvwLAUh5eq2E~pwDXq6ZKghIn92cf~-nbbHp2dMm6U0KLtZ8KvsmV5AZGfsoL5lg~lHdBmtcJVWlYlqWXE50QHFzO52bTNLm5fCEZfnPQfmUhMQ__)",
           }}
         >
-          <p className="font-black text-[100%] mx-2 cursor-pointer hover:underline md:text-[200%]">
+          <Link
+            href="/"
+            className="font-black text-[100%] mx-2 cursor-pointer hover:underline md:text-[200%]"
+          >
             Sheer Bomber Jacket
-          </p>
+          </Link>
           <p className="font-light text-[10px] m-2 sm:text-[70%]">
             Introducing our stylish and versatile sheer clergy caped bomber
             jacket.
