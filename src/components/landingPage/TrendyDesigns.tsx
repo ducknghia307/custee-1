@@ -94,7 +94,7 @@ export default function TrendyDesigns() {
   }
 
   return (
-    <div className="w-screen mt-36 flex flex-col justify-center text-center">
+    <div className="w-screen mt-24 flex flex-col justify-center text-center">
       <h1 className="font-extrabold text-4xl font-arimo">TRENDY DESIGNS</h1>
       <div className="w-screen flex flex-row text-sm opacity-80 text-gray-500 font-bold gap-10 justify-center mt-6">
         <Link
@@ -131,7 +131,7 @@ export default function TrendyDesigns() {
         </button>
         <div
           id="container"
-          className="flex flex-nowrap flex-row min-w-[90%] max-w-[90%] gap-10 mx-auto my-16 overflow-x-auto"
+          className="flex flex-nowrap flex-row min-w-[90%] max-w-[90%] gap-10 mx-auto mt-16 overflow-x-auto"
         >
           {designList?.map((design, i) => {
             return (
