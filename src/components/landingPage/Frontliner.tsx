@@ -4,7 +4,7 @@ export default function Frontliner() {
   return (
     <div className="w-screen min-h-max flex flex-col justify-center overflow-x-hidden overflow-y-visible font-arimo">
       <div
-        className="w-[130%] min-h-[80vh] mt-[-50px] bg-gradient-to-tr from-[#9376DB] from-10% via-[#F2F3E3] via-50% to-[#9376DB] to-90%
+        className="w-[130%] min-h-[60vh] mt-[-50px] bg-gradient-to-tr from-[#9376DB] from-10% via-[#F2F3E3] via-50% to-[#9376DB] to-90%
          z-10 rounded-[100%] flex flex-col justify-center items-center gap-8 ml-[-15%] "
       >
         <p className="font-medium text-[12px] italic text-[#9376DB]">
@@ -22,7 +22,7 @@ export default function Frontliner() {
           DESIGN NOW!
         </button>
       </div>
-      <div className="flex flex-row justify-center gap-5 mt-[-5%]">
+      <div className="flex flex-row justify-center gap-5 mt-[-3%]">
         <div
           className="w-[20%] h-96 rounded-xl bg-center bg-cover"
           style={{
