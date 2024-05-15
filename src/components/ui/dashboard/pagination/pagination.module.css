@@ -1,0 +1,38 @@
+.container {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.buttonGroup {
+    background-color: #fff;
+    border-radius: 10px; 
+    display: flex;
+    align-items: center;
+    border: solid 1px #d8d8d8;
+}
+
+.buttonBack {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: transparent; 
+    /* border: none; */
+    border-right: 1px solid #d8d8d8;
+}
+
+.buttonBack:disabled {
+    cursor: not-allowed;
+}
+
+.buttonNext {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: transparent; 
+    border: none;
+}
+
+.buttonNext:disabled {
+    cursor: not-allowed;
+}
+
+

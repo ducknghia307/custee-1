@@ -1,0 +1,30 @@
+.container {
+    position: sticky;
+    top: 60px;
+}
+
+.userImage {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 40px;
+    /* object-fit: cover; */
+}
+
+.list{
+    list-style: none;
+}
+
+.listname{
+    font-size: 13px;
+}
+
+.smallFontSize {
+    font-size: 9px;
+}
+
+.submenuItem {
+    padding-left: 20px;
+}
+
+
+

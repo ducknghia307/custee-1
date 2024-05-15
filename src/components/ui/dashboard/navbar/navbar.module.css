@@ -1,0 +1,130 @@
+.container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 50px;
+    background-color: #fff;
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.1);  */
+    gap: 25px;
+    padding-right: 30px;
+}
+
+.title {
+    font-size: 15px;
+    color: #333;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.userImage {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 30px;
+    height: 30px;
+}
+
+.userDetail {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+}
+
+.userTitle {
+    font-size: 10px;
+    color: #666;
+}
+
+.icons {
+    position: relative; /* Đặt vị trí tương đối cho container của icon để dropdown có thể căn giữa */
+  }
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%; 
+    transform: translateX(-50%); 
+    /* right: 10px; */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    z-index: 1;
+    /* position: relative; */
+}
+
+.dropdownHeader {
+    background-color: #f2f2f2;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    text-align: center;
+}
+
+.dropdownContent {
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.dropdownItem:not(:last-child) {
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdownItem {
+    /* border-bottom: 1px solid #ccc; */
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.itemHeader span {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.itemContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemProduct {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 4px;
+    align-items: center;
+}
+
+.productImage {
+    width: 44px;
+    height: 44px;
+}
+
+.itemTotal {
+    text-align: right;
+    margin-top: 4px;
+}
+
+.itemTotal span {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.productName {
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 10px;
+}

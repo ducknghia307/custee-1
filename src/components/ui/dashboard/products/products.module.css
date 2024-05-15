@@ -1,0 +1,170 @@
+.container {
+    padding-left: 35px;
+    padding-right: 35px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.h3 {
+    font-size: 24px;
+    font-weight: bolder;
+    /* margin-top: 10px; */
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    margin-top: 10px;
+}
+
+.addButton {
+    padding: 6px 15px;
+    background-color: #D9D9D9;
+    border-radius: 22px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin-bottom: 10px;
+    /* margin-left: 10px; */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    height: 30px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0; 
+    border-radius: 10px;
+    overflow: hidden;
+    /* border: 1px solid #D8D8D8; */
+    border-left: 1px solid #D8D8D8;
+    border-right: 1px solid #D8D8D8;
+    border-bottom: 1px solid #D8D8D8;
+}
+
+.user {
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    height: 100%; 
+    background-color: #fff;
+}
+
+.table thead tr {
+    background-color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.table thead tr:first-child td:first-child {
+    border-top-left-radius: 10px; 
+}
+
+.table thead tr:first-child td:last-child {
+    border-top-right-radius: 10px; 
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px; 
+}
+
+.table td {
+    padding: 10px;
+    /* border-bottom: 1px solid #D8D8D8; */
+    border-top: 1px solid #D8D8D8;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr td {
+    font-size: 11px;
+}
+
+.table th, .table td {
+    text-align: center; 
+    padding: 10px;
+}
+
+.userImage {
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.buttons {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.buttonEdit {
+    padding: 2px; 
+    border-radius: 5px;
+    width: 20px; 
+    height: 20px;
+    cursor: pointer;
+    background-color: #FAFBFD;
+    border: 1px solid #D5D5D5;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.buttonDelete {
+    padding: 2px; 
+    border-radius: 5px;
+    width: 20px; 
+    height: 20px;
+    cursor: pointer;
+    background-color: #FAFBFD;
+    border: 1px solid #D5D5D5;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: #EF3826;
+}
+
+.modal{
+    margin: 12px 0px;
+}
+
+.h3header{
+    font-size: 21px;
+    font-weight: 500;
+    color: #202224;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.buttonConfirm{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.buttonYes{
+    background-color: #5D5FEF;
+    padding: 5px 30px;
+    color: #fff;
+    border-radius: 14px;
+    margin-right: 20px;
+}
+
+.buttonNo{
+    background-color: #EF5D80;
+    padding: 5px 30px;
+    color: #fff;
+    border-radius: 14px;
+}
+
