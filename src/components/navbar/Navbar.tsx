@@ -13,8 +13,10 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
+import { Button } from "../ui/button";
 
 export default function Navbar() {
+  const [user,setUser]= useState()
   const [notificationList, setNotificationList] = useState([
     {
       id: 1,
@@ -92,7 +94,7 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="basis-full flex-shrink-1 flex-row-reverse gap-2 mr-5 hidden sm:flex">
-        <div className="h-10 rounded-lg flex flex-row w-100 items-center px-2 gap-2">
+        {user ?  <div className="h-10 rounded-lg flex flex-row w-100 items-center px-2 gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger>
               <img
@@ -135,7 +137,15 @@ export default function Navbar() {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> :
+        <div className=" align-middle">
+       <Link href="/login">
+        <Button variant="ghost" className="h-10 w-15 text-base">
+          Log In
+        </Button>
+      </Link>
+      </div> }
+       
         <div className="h-10 flex flex-row w-100 items-center px-2">
           <img
             src="https://static-00.iconduck.com/assets.00/shopping-cart-icon-512x462-yrde1eu0.png"
