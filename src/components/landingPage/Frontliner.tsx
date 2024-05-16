@@ -1,30 +1,13 @@
 import React from "react";
+import grad_background from "@/assets/images/landingPage/gradient_background.png";
+import { dela, montserrat_500, montserrat_600 } from "@/assets/fonts/font";
 
 export default function Frontliner() {
   return (
-    <div className="w-screen min-h-max flex flex-col justify-center overflow-x-hidden overflow-y-visible font-arimo">
-      <div
-        className="w-[130%] min-h-[60vh] mt-[-50px] bg-gradient-to-tr from-[#9376DB] from-10% via-[#F2F3E3] via-50% to-[#9376DB] to-90%
-         z-10 rounded-[100%] flex flex-col justify-center items-center gap-8 ml-[-15%] "
-      >
-        <p className="font-medium text-[12px] italic text-[#9376DB]">
-          Experience fashion like never before...
-        </p>
-        <h3 className="text-5xl font-extrabold text-[#784BE6] font-sans">
-          Custom Tee, Unique Me
-        </h3>
-        <p className="w-[40%] text-center text-[10px] font-light hidden sm:block">
-          Discover a world of fashion-forward trends, curated collections, and
-          timeless pieces that inspire. Unleash your inner fashionista and
-          embark a journey of confidence, elegance and impeccable style.
-        </p>
-        <button className="bg-[#784BE6] hover:bg-[#6832E8] px-8 py-2 rounded-2xl font-medium text-white text-sm">
-          DESIGN NOW!
-        </button>
-      </div>
-      <div className="flex flex-row justify-center gap-5 mt-[-3%]">
+    <div className="relative w-screen min-h-max flex flex-col justify-center overflow-hidden">
+      <div className="flex flex-row justify-center gap-5 mt-56 mb-32 md:mt-64 xl:mt-80">
         <div
-          className="w-[20%] h-96 rounded-xl bg-center bg-cover"
+          className="w-[20%] h-[450px] rounded-xl bg-center bg-cover"
           style={{
             backgroundImage:
               "url('https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA3LzQ2MS1mZWxpeC0xNC1jYXJkLW1vY2t1cC5qcGc.jpg')",
@@ -52,7 +35,34 @@ export default function Frontliner() {
           }}
         ></div>
       </div>
-      <div className="w-screen min-h-[40vh] z-10 bg-white mt-[-7%] rounded-[100%] text-center"></div>
+      <div
+        className="absolute top-[-10%] left-[-10%] w-[120%] h-[500px] max-h-[100vh] z-20 rounded-[90%] flex flex-col justify-center items-center gap-8 lg:gap-6 bg-cover bg-center pt-24 overflow-hidden"
+        style={{ backgroundImage: `url(${grad_background.src})` }}
+      >
+        <p
+          className={`${montserrat_500.className} text-[10px] lg:text-[16px] hidden md:block`}
+        >
+          Experience fashion like never before
+        </p>
+        <h3
+          className={`text-[40px] font-extrabold text-[#784BE6] lg:text-[48px] ${dela.className}`}
+        >
+          Custom Tee, Unique Me
+        </h3>
+        <p
+          className={`w-[40%] text-center text-[8px] lg:text-[12px] hidden md:block ${montserrat_500.className}`}
+        >
+          Discover a world of fashion-forward trends, curated collections, and
+          timeless pieces that inspire. Unleash your inner fashionista and
+          embark a journey of confidence, elegance and impeccable style.
+        </p>
+        <button
+          className={`bg-[#784BE6] hover:bg-[#6832E8] px-4 py-2 lg:px-6 lg:py-3 rounded-full font-medium text-white text-xs lg:text-md ${montserrat_600.className}`}
+        >
+          DESIGN NOW!
+        </button>
+      </div>
+      <div className="absolute bottom-16 w-full min-h-[200px] z-10 bg-white rounded-[100%]"></div>
     </div>
   );
 }
