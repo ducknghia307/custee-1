@@ -1,0 +1,44 @@
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: colors;
+}
+
+.modalVisible {
+    visibility: visible;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.modalInvisible {
+    visibility: hidden;
+}
+
+.modalContent {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: all;
+    max-width: 100%;
+    width: 32rem;
+}
+
+.modalOpen {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modalClosed {
+    transform: scale(1.1);
+    opacity: 0;
+}
+
+.closeButton {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    color: #000;
+}

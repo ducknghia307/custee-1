@@ -1,0 +1,144 @@
+.modalBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+}
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.modalHeader h1 {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.modalContent h1 {
+    font-size: 33px;
+    color: #202224;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.closeButton {
+    float: right;
+    border: none;
+    background: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.orderInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 40px;
+}
+
+.orderInfo p,
+.productRow {
+    margin-top: 10px;
+    font-size: 17px;
+}
+
+.totalPrice {
+    text-align: end;
+    margin-top: 10px;
+}
+
+.productList {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.productListHeader {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    /* Adjusted to fit four columns */
+    text-align: center;
+    background-color: #f2f2f2;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+.productImage {
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+}
+
+.productRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    /* Adjusted to fit four columns */
+    align-items: center;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.productDetail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    /* Changed from row to column */
+}
+
+.productDetail span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.processButton {
+    color: #6226EF;
+    background-color: #EDE7F6;
+    padding: 5px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.rejectButton {
+    color: #EF3826;
+    background-color: #FCE4EC;
+    padding: 5px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.pendingButton {
+    color: #FFA756;
+    background-color: #FFF3E0;
+    padding: 5px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}

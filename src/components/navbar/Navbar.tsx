@@ -12,8 +12,10 @@ import {
 import Link from "next/link";
 import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
+import { Button } from "../ui/button";
 
 export default function Navbar() {
+  const [user,setUser]= useState()
   const [notificationList, setNotificationList] = useState([
     {
       id: 1,
@@ -92,7 +94,6 @@ export default function Navbar() {
           TUTORIAL
         </Link>
       </div>
-
       {/*ACCOUNT MENU*/}
       <div className="w-full flex-shrink-1 flex-row-reverse gap-3 hidden pr-3 items-center sm:flex">
         <div className="hs-dropdown relative inline-flex">
