@@ -1,21 +1,12 @@
 "use client";
 import { useState } from "react";
 import "./Navbar.css";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
-import { Button } from "../ui/button";
 
 export default function Navbar() {
-  const [user,setUser]= useState()
+  const [user, setUser] = useState();
   const [notificationList, setNotificationList] = useState([
     {
       id: 1,
@@ -55,7 +46,7 @@ export default function Navbar() {
   return (
     <div
       id="navbar"
-      className="min-h-14 max-h-24 w-full flex flex-row text-black justify-between font-bold bg-white rounded-sm items-center px-1 gap-2 fixed top-0 drop-shadow-[0_5px_5px_rgba(144,40,231,0.25)] z-50"
+      className="min-h-14 max-h-24 w-full flex flex-row text-black justify-between font-bold bg-white rounded-sm items-center px-1 gap-2 fixed top-0 drop-shadow-[0_5px_10px_rgba(120,75,230,0.5)] z-50"
     >
       <div className="w-full">
         <Link href="/">

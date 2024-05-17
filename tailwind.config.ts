@@ -81,7 +81,12 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("preline/plugin")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("preline/plugin"),
+    require("tailwind-scrollbar"),
+    require("@tailwindcss/forms"),
+  ],
 } satisfies Config;
 
 export default config;
