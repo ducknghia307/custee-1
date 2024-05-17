@@ -21,7 +21,7 @@ export default function Footer() {
               className="w-[1rem]"
             />
             <p className="text-white font-light text-[8px] hover:underline hover:cursor-pointer">
-              custeeteam@gmail.com
+              Custee.work@gmail.com
             </p>
           </div>
           <div className="flex flex-row gap-2 items-center">
