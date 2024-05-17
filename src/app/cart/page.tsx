@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import {
@@ -9,6 +11,7 @@ import {
   montserrat_600,
 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter.js";
+import { LabelList } from "recharts";
 
 interface CartItem {
   id: number;
@@ -22,6 +25,153 @@ interface CartItem {
 }
 
 export default function page() {
+  const [checkedList, setCheckedList] = useState<CartItem[]>([]);
+  const [currentTotal, setCurrentTotal] = useState(0);
+  const [cartList, setCartList] = useState<CartItem[]>([
+    {
+      id: 1234567890,
+      productUrl:
+        "https://product.hstatic.net/1000042622/product/t2115-1_1b4213bc818b4c3d99e6ed2a5a8ef018_master.jpg",
+      productName: "Basic T-Shirt",
+      price: 250000,
+      quantity: [
+        {
+          size: "M",
+          quantity: 1,
+        },
+        {
+          size: "XL",
+          quantity: 2,
+        },
+        {
+          size: "2XL",
+          quantity: 2,
+        },
+      ],
+    },
+    {
+      id: 2,
+      productUrl:
+        "https://i.pinimg.com/564x/77/f4/22/77f422e813baba93acbc04648800c9d0.jpg",
+      productName: "Scarlet T-Shirt",
+      price: 330000,
+      quantity: [
+        {
+          size: "L",
+          quantity: 4,
+        },
+        {
+          size: "XL",
+          quantity: 3,
+        },
+      ],
+    },
+    {
+      id: 3,
+      productUrl:
+        "https://i.pinimg.com/736x/d3/2c/49/d32c49036224247db899f8f44e9f95a5.jpg",
+      productName: "Custee T-Shirt",
+      price: 450000,
+      quantity: [
+        {
+          size: "XS",
+          quantity: 4,
+        },
+        {
+          size: "XL",
+          quantity: 1,
+        },
+      ],
+    },
+    {
+      id: 4,
+      productUrl:
+        "https://i.pinimg.com/736x/d3/2c/49/d32c49036224247db899f8f44e9f95a5.jpg",
+      productName: "Custee T-Shirt 2",
+      price: 450000,
+      quantity: [
+        {
+          size: "XS",
+          quantity: 4,
+        },
+      ],
+    },
+    {
+      id: 5,
+      productUrl:
+        "https://i.pinimg.com/736x/d3/2c/49/d32c49036224247db899f8f44e9f95a5.jpg",
+      productName: "Custee T-Shirt 3",
+      price: 1000000,
+      quantity: [
+        {
+          size: "XS",
+          quantity: 4,
+        },
+        {
+          size: "S",
+          quantity: 2,
+        },
+        {
+          size: "M",
+          quantity: 1,
+        },
+        {
+          size: "L",
+          quantity: 7,
+        },
+        {
+          size: "XL",
+          quantity: 12,
+        },
+      ],
+    },
+  ]);
+
+  const sumQuantity = (quantityArray: any) => {
+    return quantityArray.reduce(
+      (n: any, { quantity }: { quantity: any }) => n + quantity,
+      0
+    );
+  };
+
+  const checkboxChanged = (event: any) => {
+    const checkedItem = cartList.find(
+      (element) => element.id == event.target.defaultValue
+    );
+    if (checkedItem) {
+      if (event.target.checked) {
+        setCheckedList([...checkedList, checkedItem]);
+      } else {
+        document.querySelector("#choose-all-checkbox")!.checked = false;
+        const newCheckList = checkedList.filter(
+          (item) => item.id != checkedItem.id
+        );
+        setCheckedList(newCheckList);
+      }
+    }
+  };
+
+  const allCheckboxChanged = (event: any) => {
+    if (event.target.checked) {
+      setCheckedList(cartList);
+    } else {
+      setCheckedList([]);
+    }
+  };
+
+  const updateTotal = () => {
+    setCurrentTotal(0);
+    checkedList.map((item) => {
+      setCurrentTotal(
+        (oldTotal) => oldTotal + sumQuantity(item.quantity) * item.price
+      );
+    });
+  };
+
+  useEffect(() => {
+    updateTotal();
+  }, [checkedList]);
+
   const [checkedList, setCheckedList] = useState<CartItem[]>([]);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [cartList, setCartList] = useState<CartItem[]>([
@@ -233,9 +383,9 @@ export default function page() {
             })}
           </div>
           <div
-            className={`sticky bottom-0 w-full min-h-32 flex flex-row items-center justify-between bg-violet-500 text-white ${montserrat_600.className}`}
+            className={`sticky bottom-0 w-full min-h-32 flex flex-row items-center justify-between bg-violet-500 px-16 text-white ${montserrat_600.className}`}
           >
-            <div className="w-full flex flex-row items-center justify-start gap-4 pl-16">
+            <div className="flex flex-row items-center justify-center gap-4">
               <input
                 id="choose-all-checkbox"
                 type="checkbox"
@@ -246,31 +396,28 @@ export default function page() {
               <label htmlFor="choose-all-checkbox" className="text-xl">
                 {checkedList.length == cartList.length ||
                 checkedList.length === 0 ? (
-                  <>
-                    Select all &#40;{cartList.length} item
-                    {cartList.length <= 1 ? "" : "s"}&#41;
-                  </>
+                  <>Choose all</>
                 ) : (
                   <>
-                    Select {checkedList.length} item
-                    {checkedList.length <= 1 ? "" : "s"}
+                    Choosing {checkedList.length} item
+                    {checkedList.length === 1 ? "" : "s"}
                   </>
                 )}
               </label>
             </div>
-            <div className="w-full flex flex-row items-center justify-between gap-16">
+            <div className="flex flex-row items-center justify-between gap-16">
               <div className="flex flex-col items-start justify-around gap-2">
                 <p>Vouchers:</p>
                 <p>Discount:</p>
                 <p>Total cost:</p>
               </div>
               <div className="flex flex-col items-end justify-around gap-2 min-w-fit">
-                <p className="underline text-[#F1E15B]">Select or type</p>
+                <p className="underline text-[#F1E15B]">Choose or type</p>
                 <p>-0 đ</p>
                 <p>{CurrencySplitter(currentTotal)} đ</p>
               </div>
             </div>
-            <div className="w-full flex justify-center items-center">
+            <div className="flex justify-center items-center">
               <button
                 className={`px-6 py-2 rounded-full transition-all
               ${
@@ -285,6 +432,8 @@ export default function page() {
           </div>
         </div>
       </div>
+      <Footer />
+    </div>
       <Footer />
     </div>
   );
