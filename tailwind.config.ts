@@ -8,6 +8,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./node_modules/preline/dist/*.js",
   ],
   prefix: "",
   theme: {
@@ -22,6 +23,7 @@ const config = {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         arimo: ["Arimo", "sans-serif"],
+        dela_gothic_one: ["Dela Gothic One", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -79,7 +81,12 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("preline/plugin"),
+    require("tailwind-scrollbar"),
+    require("@tailwindcss/forms"),
+  ],
 } satisfies Config;
 
 export default config;

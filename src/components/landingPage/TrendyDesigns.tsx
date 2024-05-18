@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import "../styles/TrendyDesigns.css";
+import image8 from "../../assets/images/landingPage/image_8.jpg";
+import image9 from "../../assets/images/landingPage/image_9.png";
+import image10 from "../../assets/images/landingPage/image_10.png";
+import image11 from "../../assets/images/landingPage/image_11.png";
+import { dela, montserrat_600, montserrat_400 } from "@/assets/fonts/font";
 
 export default function TrendyDesigns() {
   const [designList, setDesignList] = useState([
@@ -8,68 +13,60 @@ export default function TrendyDesigns() {
       id: 1,
       name: "Levis Dri- FIT",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/4395/74e6/df3c610f75fbdc29d3ce5b323e7f440e?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=JadfikGhoAvPplxdbnElPrroUh~x1ZY6dsR2wuo7mn2-32Aa42URHzUzXZATp3osQMoNwJ365519gecpz~sIovxiIZHyei~4q1zqxojnK5OJFL3zsmb5yMUQkVEPoOPTl7xiwA6xDEG0d0PGkPL2ugnWSYn-C~aJ~MgqcOngrotb8FhEBI67euPwwo0TOavtQ4Vx-EYGtsezrFZQLzDMPMnZ7XlyhqGMZevDYCITqE90fKoeaZ6JP0rh6idpuju9yTVnK56LFASxecI121ClKWCRj6naYer1H4L-fZdunexvv94LKbVnNZ38g883-~FQDm0hYrq6OZ6Zgtwwk275dw__",
+      image: image8.src,
     },
     {
       id: 2,
       name: "Levis Stripes",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/10c6/cd47/4dca44f322af93281ae774160f97db05?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=hK3DBBQzdQo0J4fNpannxohMzqJ0qtv2BAkGeYjvmgen3KJSqhO8MsdL7HdkRxWjXgibL154YKMKNmfPM9KEguqygBdPLNpMLVFt86Jid7MaBMEPOVUziS4-rhl2RnnCGUAfQ~bFxPGuzaftbb5A56SK~nFWak6orfkShX2nMV-H61twAEsRO5kpHiE3h1ifjBv5QJ6xEgLm5QRWoms0Wsh2nzClCGnmeUU4rBZt3lGP18H0YdmZwNo3fsnMv7TXIeSgi8cp2Qe~xJoUshM~d6wWcUFb9SARP70wczl9PiMDA9BtNq0VJz~O9W23lnucenldBuGyOrnx2R8E0RJ07w__",
+      image: image9.src,
     },
     {
       id: 3,
       name: "H&M Regular Fit",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/a619/ef0a/688c8f2a495c6b032ad2a503619c2b37?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OQDTrdXz3r7OuOtxxjv7~bqDpus3m2hh0UWiOEtIxjzK1cu5ME4yVtzDfksVqqbq0EKPXzXR3E7JeJQpJRNaIKhjeG6DtpjRwloV4Z5gkcVwTMVCCy5Eu2fnj6AObSxL~niiOOD4mqIV3OmvoOiwMgsdWa2r9nTzlvEnhlYEsBnNkrgwcF39P0SxPOZgC7dAoWIwdCimcWAP-J-03Ryukc5tZ-PS1zvg2oP5uJCBEKPxjXl9e050RMS1IZLx5Slz8r~z~NVo138Z9oiKDpIgU~1sV81LiixqSHW1yFy-eEXcHcr1ZxXwq9CXwWvriNMfBkzJDg~45R~mo2vZDJ1kZQ__",
+      image: image10.src,
     },
     {
       id: 4,
       name: "Jack & Jones Re",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/c7cf/20e2/902b071b2c775fa690c26b84008c2647?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=py1j~IYJ0rn230W4jAqveL56atkEGpXUUtUi-Z1Wh6lHSQ9qb5fupc7RQJZTzQkjvU9ZJ6VdV3Al~UMcJAPcdDNZBS5Yt0telIh9Fejp-XvHnEoNCV6amGE-AKs4QscV9SEknAJVeuWGVUmGlJHQzXqTsWPNG6vGRMVMVA3GqKh2yIp60IMLMblRTG~AB9tU1R3ioQl1GxtgnJjz6kt2rmiBQQEHT1B8EC3SKPS1fgD86d3Wnk9MD22pSml~zwbdOQdHsi0z2SR0eWzz9HgL75HL97wEV9gRBUglatF7rQxG5QTFE3ASMSb06xkc6LBT2pVny~LLWJzNIN2jPIU9cw__",
+      image: image11.src,
     },
     {
       id: 5,
       name: "Levis Dri- FIT",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/c7cf/20e2/902b071b2c775fa690c26b84008c2647?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=py1j~IYJ0rn230W4jAqveL56atkEGpXUUtUi-Z1Wh6lHSQ9qb5fupc7RQJZTzQkjvU9ZJ6VdV3Al~UMcJAPcdDNZBS5Yt0telIh9Fejp-XvHnEoNCV6amGE-AKs4QscV9SEknAJVeuWGVUmGlJHQzXqTsWPNG6vGRMVMVA3GqKh2yIp60IMLMblRTG~AB9tU1R3ioQl1GxtgnJjz6kt2rmiBQQEHT1B8EC3SKPS1fgD86d3Wnk9MD22pSml~zwbdOQdHsi0z2SR0eWzz9HgL75HL97wEV9gRBUglatF7rQxG5QTFE3ASMSb06xkc6LBT2pVny~LLWJzNIN2jPIU9cw__",
+      image: image8.src,
     },
     {
       id: 6,
       name: "Levis Dri- FIT",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/c7cf/20e2/902b071b2c775fa690c26b84008c2647?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=py1j~IYJ0rn230W4jAqveL56atkEGpXUUtUi-Z1Wh6lHSQ9qb5fupc7RQJZTzQkjvU9ZJ6VdV3Al~UMcJAPcdDNZBS5Yt0telIh9Fejp-XvHnEoNCV6amGE-AKs4QscV9SEknAJVeuWGVUmGlJHQzXqTsWPNG6vGRMVMVA3GqKh2yIp60IMLMblRTG~AB9tU1R3ioQl1GxtgnJjz6kt2rmiBQQEHT1B8EC3SKPS1fgD86d3Wnk9MD22pSml~zwbdOQdHsi0z2SR0eWzz9HgL75HL97wEV9gRBUglatF7rQxG5QTFE3ASMSb06xkc6LBT2pVny~LLWJzNIN2jPIU9cw__",
+      image: image8.src,
     },
     {
       id: 7,
       name: "Levis Dri- FIT",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/c7cf/20e2/902b071b2c775fa690c26b84008c2647?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=py1j~IYJ0rn230W4jAqveL56atkEGpXUUtUi-Z1Wh6lHSQ9qb5fupc7RQJZTzQkjvU9ZJ6VdV3Al~UMcJAPcdDNZBS5Yt0telIh9Fejp-XvHnEoNCV6amGE-AKs4QscV9SEknAJVeuWGVUmGlJHQzXqTsWPNG6vGRMVMVA3GqKh2yIp60IMLMblRTG~AB9tU1R3ioQl1GxtgnJjz6kt2rmiBQQEHT1B8EC3SKPS1fgD86d3Wnk9MD22pSml~zwbdOQdHsi0z2SR0eWzz9HgL75HL97wEV9gRBUglatF7rQxG5QTFE3ASMSb06xkc6LBT2pVny~LLWJzNIN2jPIU9cw__",
+      image: image8.src,
     },
     {
       id: 8,
       name: "Levis Dri- FIT",
       category: "Men's T-Shirt",
-      image:
-        "https://s3-alpha-sig.figma.com/img/c7cf/20e2/902b071b2c775fa690c26b84008c2647?Expires=1715558400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=py1j~IYJ0rn230W4jAqveL56atkEGpXUUtUi-Z1Wh6lHSQ9qb5fupc7RQJZTzQkjvU9ZJ6VdV3Al~UMcJAPcdDNZBS5Yt0telIh9Fejp-XvHnEoNCV6amGE-AKs4QscV9SEknAJVeuWGVUmGlJHQzXqTsWPNG6vGRMVMVA3GqKh2yIp60IMLMblRTG~AB9tU1R3ioQl1GxtgnJjz6kt2rmiBQQEHT1B8EC3SKPS1fgD86d3Wnk9MD22pSml~zwbdOQdHsi0z2SR0eWzz9HgL75HL97wEV9gRBUglatF7rQxG5QTFE3ASMSb06xkc6LBT2pVny~LLWJzNIN2jPIU9cw__",
+      image: image8.src,
     },
   ]);
 
   const slideNext = () => {
     var container = document.getElementById("container");
-    sideScroll(container!, "right", 5, 1500, 10);
+    sideScroll(container!, "right", 5, 1500, 40);
   };
 
   const slideBack = () => {
     var container = document.getElementById("container");
-    sideScroll(container!, "left", 5, 1500, 10);
+    sideScroll(container!, "left", 5, 1500, 40);
   };
 
   function sideScroll(
@@ -95,8 +92,12 @@ export default function TrendyDesigns() {
 
   return (
     <div className="w-screen mt-24 flex flex-col justify-center text-center">
-      <h1 className="font-extrabold text-4xl font-arimo">TRENDY DESIGNS</h1>
-      <div className="w-screen flex flex-row text-sm opacity-80 text-gray-500 font-bold gap-10 justify-center mt-6">
+      <h1 className={`font-extrabold text-4xl ${dela.className}`}>
+        TRENDY DESIGNS
+      </h1>
+      <div
+        className={`w-screen flex flex-row text-sm opacity-80 text-gray-500 font-bold gap-10 justify-center mt-6 ${montserrat_600.className}`}
+      >
         <Link
           href="/"
           className="hover:underline hover:text-gray-700 cursor-pointer"
@@ -143,13 +144,19 @@ export default function TrendyDesigns() {
               >
                 <div className="absolute bottom-0 w-full h-16 bg-yellow-100 flex flex-row justify-between items-center group">
                   <div className="flex flex-col justify-center gap-1 ml-3 text-start">
-                    <p className="text-[80%] font-bold group-hover:underline">
+                    <p
+                      className={`text-[80%] font-bold group-hover:underline ${montserrat_600.className}`}
+                    >
                       {design.name}
                     </p>
                     <p className="text-[50%]">{design.category}</p>
                   </div>
                   <div className="rounded-full h-6 w-6 bg-violet-500 border mr-2 cursor-pointer hover:bg-violet-700 flex justify-center items-center">
-                    <p className="text-[5px] text-white">Icon</p>
+                    <p
+                      className={`text-[5px] text-white ${montserrat_400.className}`}
+                    >
+                      Icon
+                    </p>
                   </div>
                 </div>
               </Link>
