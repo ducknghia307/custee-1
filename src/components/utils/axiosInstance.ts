@@ -1,22 +1,25 @@
-// utils/axiosInstance.js
 import axios from 'axios';
-import { useSelector } from 'react-redux';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: 'http://localhost:5000/',
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = useSelector((state) => state.auth.accessToken);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // The token will be added to the config before each request
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+
+export const setAuthToken = (token) => {
+  if (token) {
+    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axiosInstance.defaults.headers.common['Authorization'];
+  }
+};
 
 export default axiosInstance;

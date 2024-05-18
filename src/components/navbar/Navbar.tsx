@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Navbar.css";
 import {
   DropdownMenu,
@@ -14,9 +14,22 @@ import Link from "next/link";
 import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
 import { Button } from "../ui/button";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function Navbar() {
-  const [user,setUser]= useState()
+  const [user, setUser] = useState(null);
+  async function logOut() {
+    try {
+      const response = await axiosInstance.post("/auth/logout", {});
+      localStorage.removeItem("accessToken");
+      console.log("Log out successfully");
+      setUser(null); // Clear the user state after logging out
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  }
+  
   const [notificationList, setNotificationList] = useState([
     {
       id: 1,
@@ -38,6 +51,13 @@ export default function Navbar() {
       time: new Date(),
     },
   ]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setUser({ name: "John Doe" }); 
+    }
+  }, []);
 
   var prevScrollPos = window.scrollY;
   window.onscroll = () => {
@@ -94,58 +114,64 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="basis-full flex-shrink-1 flex-row-reverse gap-2 mr-5 hidden sm:flex">
-        {user ?  <div className="h-10 rounded-lg flex flex-row w-100 items-center px-2 gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <img
-                src="https://icons.veryicon.com/png/o/internet--web/prejudice/user-128.png"
-                alt=""
-                className="w-6"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <div className="flex flex-col justify-between">
-                <div>
-                  <DropdownMenuLabel>Hi, John Doe</DropdownMenuLabel>
+        {user ? (
+          <div className="h-10 rounded-lg flex flex-row w-100 items-center px-2 gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <img
+                  src="https://icons.veryicon.com/png/o/internet--web/prejudice/user-128.png"
+                  alt=""
+                  className="w-6"
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <DropdownMenuLabel>Hi, {user.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="flex flex-row gap-2">
+                      <img
+                        src="https://cdn-icons-png.freepik.com/256/552/552848.png?semt=ais_hybrid"
+                        alt=""
+                        className="w-3"
+                      />
+                      <Link href="/">View Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex flex-row gap-2">
+                      <img
+                        src="https://icons.veryicon.com/png/o/system/linear-chh/order-27.png"
+                        alt=""
+                        className="w-3"
+                      />
+                      <Link href="/">View Orders</Link>
+                    </DropdownMenuItem>
+                  </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="flex flex-row gap-2">
+                  <DropdownMenuItem 
+                    className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white"
+                    onSelect={logOut}
+                  >
                     <img
-                      src="https://cdn-icons-png.freepik.com/256/552/552848.png?semt=ais_hybrid"
+                      src="https://static-00.iconduck.com/assets.00/logout-icon-2048x2046-yqonjwjv.png"
                       alt=""
                       className="w-3"
                     />
-                    <Link href="/">View Profile</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex flex-row gap-2">
-                    <img
-                      src="https://icons.veryicon.com/png/o/system/linear-chh/order-27.png"
-                      alt=""
-                      className="w-3"
-                    />
-                    <Link href="/">View Orders</Link>
+                    Log out
                   </DropdownMenuItem>
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white">
-                  <img
-                    src="https://static-00.iconduck.com/assets.00/logout-icon-2048x2046-yqonjwjv.png"
-                    alt=""
-                    className="w-3"
-                  />
-                  <Link href="/">Log out</Link>
-                </DropdownMenuItem>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div> :
-        <div className=" align-middle">
-       <Link href="/login">
-        <Button variant="ghost" className="h-10 w-15 text-base">
-          Log In
-        </Button>
-      </Link>
-      </div> }
-       
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          <div className="align-middle">
+            <Link href="/login">
+              <Button variant="ghost" className="h-10 w-15 text-base">
+                Log In
+              </Button>
+            </Link>
+          </div>
+        )}
+
         <div className="h-10 flex flex-row w-100 items-center px-2">
           <img
             src="https://static-00.iconduck.com/assets.00/shopping-cart-icon-512x462-yrde1eu0.png"
@@ -284,13 +310,16 @@ export default function Navbar() {
                   <Link href="/">View Orders</Link>
                 </DropdownMenuItem>
               </div>
-              <DropdownMenuItem className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white">
+              <DropdownMenuItem 
+                className="flex flex-row justify-center gap-2 bg-red-500 text-white text-center hover:!bg-red-600 hover:!text-white"
+                onSelect={logOut}
+              >
                 <img
                   src="https://static-00.iconduck.com/assets.00/logout-icon-2048x2046-yqonjwjv.png"
                   alt=""
                   className="w-3"
                 />
-                <Link href="/">Log out</Link>
+                Log out
               </DropdownMenuItem>
             </div>
           </DropdownMenuContent>
