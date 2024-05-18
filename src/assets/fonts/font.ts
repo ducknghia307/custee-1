@@ -23,3 +23,9 @@ export const montserrat_600 = Montserrat({
   subsets: ["latin"],
   display: "swap",
 });
+
+export const montserrat_700 = Montserrat({
+  weight: "700",
+  subsets: ["latin"],
+  display: "swap",
+});
