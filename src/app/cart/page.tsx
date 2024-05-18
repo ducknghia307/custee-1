@@ -11,7 +11,6 @@ import {
   montserrat_600,
 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter.js";
-import { LabelList } from "recharts";
 
 interface CartItem {
   id: number;
