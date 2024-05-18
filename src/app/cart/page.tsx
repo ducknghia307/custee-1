@@ -9,7 +9,6 @@ import {
   montserrat_600,
 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter.js";
-import { LabelList } from "recharts";
 
 interface CartItem {
   id: number;
@@ -234,9 +233,9 @@ export default function page() {
             })}
           </div>
           <div
-            className={`sticky bottom-0 w-full min-h-32 flex flex-row items-center justify-between bg-violet-500 px-16 text-white ${montserrat_600.className}`}
+            className={`sticky bottom-0 w-full min-h-32 flex flex-row items-center justify-between bg-violet-500 text-white ${montserrat_600.className}`}
           >
-            <div className="flex flex-row items-center justify-center gap-4">
+            <div className="w-full flex flex-row items-center justify-start gap-4 pl-16">
               <input
                 id="choose-all-checkbox"
                 type="checkbox"
@@ -247,28 +246,31 @@ export default function page() {
               <label htmlFor="choose-all-checkbox" className="text-xl">
                 {checkedList.length == cartList.length ||
                 checkedList.length === 0 ? (
-                  <>Choose all</>
+                  <>
+                    Select all &#40;{cartList.length} item
+                    {cartList.length <= 1 ? "" : "s"}&#41;
+                  </>
                 ) : (
                   <>
-                    Choosing {checkedList.length} item
-                    {checkedList.length === 1 ? "" : "s"}
+                    Select {checkedList.length} item
+                    {checkedList.length <= 1 ? "" : "s"}
                   </>
                 )}
               </label>
             </div>
-            <div className="flex flex-row items-center justify-between gap-16">
+            <div className="w-full flex flex-row items-center justify-between gap-16">
               <div className="flex flex-col items-start justify-around gap-2">
                 <p>Vouchers:</p>
                 <p>Discount:</p>
                 <p>Total cost:</p>
               </div>
               <div className="flex flex-col items-end justify-around gap-2 min-w-fit">
-                <p className="underline text-[#F1E15B]">Choose or type</p>
+                <p className="underline text-[#F1E15B]">Select or type</p>
                 <p>-0 đ</p>
                 <p>{CurrencySplitter(currentTotal)} đ</p>
               </div>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="w-full flex justify-center items-center">
               <button
                 className={`px-6 py-2 rounded-full transition-all
               ${
