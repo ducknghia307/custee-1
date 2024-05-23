@@ -1,8 +1,11 @@
 "use client"
-import { ButtonIcon } from "@radix-ui/react-icons";
+
 import styles from "../chartuser/chart.module.css"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { MdCalendarMonth, MdErrorOutline, MdLogout, MdOutlineFileDownload } from "react-icons/md";
+import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const data = [
   {
@@ -81,12 +84,43 @@ const data = [
 
 
 const ChartUser = () => {
+
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [dateRangeString, setDateRangeString] = useState('');
+  const [startDate, endDate] = dateRange;
+
+
+  const handleDateRangeChange = (update) => {
+    setDateRange(update);
+    const startMonth = update[0]?.getMonth() + 1;
+    const startYear = update[0]?.getFullYear();
+
+    if (update[1]) {
+      const endMonth = update[1]?.getMonth() + 1;
+      const endYear = update[1]?.getFullYear();
+      const rangeString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
+      setDateRangeString(rangeString);
+    } else {
+      const monthString = `${startMonth}/${startYear}`;
+      setDateRangeString(monthString);
+    }
+  };
+
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.title}>User Statistics</span>
         <div className={styles.controls}>
-          <button className={styles.button}>1/2023 - 12/2023  <MdCalendarMonth /></button>
+          <DatePicker
+            selectsRange={true}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleDateRangeChange}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            customInput={<button className={styles.button}><MdCalendarMonth size={18}/> {dateRangeString}</button>}
+          />
           <button className={styles.button}>Export <MdOutlineFileDownload /></button>
         </div>
       </div>
