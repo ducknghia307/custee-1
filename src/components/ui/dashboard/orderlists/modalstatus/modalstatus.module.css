@@ -8,6 +8,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    
 }
 
 .modalContent {
@@ -17,29 +18,35 @@
     width: 80%;
     max-width: 600px;
     position: relative;
+    border: 1.5px solid #000;
 }
 .modalHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    /* padding: 10px; */
+    margin-bottom: 5px;
 }
 
 .modalHeader h1 {
-    flex-grow: 1;
-    text-align: center;
-}
-
-.modalContent h1 {
     font-size: 33px;
     color: #202224;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 10px;
+    margin-right: 70px;
+}
+
+.pendingButton {
+    color: #FFA756;
+    background-color: #FFF3E0;
+    padding: 5px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .closeButton {
-    float: right;
+    /* float: right; */
     border: none;
     background: none;
     font-size: 30px;
@@ -56,12 +63,15 @@
 .orderInfo p,
 .productRow {
     margin-top: 10px;
-    font-size: 17px;
+    font-size: 14px;
 }
 
 .totalPrice {
     text-align: end;
     margin-top: 10px;
+    font-weight: bolder;
+    margin-right: 20px;
+    font-size: 13px;
 }
 
 .productList {
@@ -93,7 +103,7 @@
     /* Adjusted to fit four columns */
     align-items: center;
     text-align: center;
-    padding: 10px 0;
+    /* padding: 10px 0; */
 }
 
 .productDetail {
@@ -102,6 +112,11 @@
     justify-content: center;
     flex-direction: row;
     /* Changed from row to column */
+}
+
+.productRow span {
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .productDetail span {
@@ -134,11 +149,3 @@
     cursor: pointer;
 }
 
-.pendingButton {
-    color: #FFA756;
-    background-color: #FFF3E0;
-    padding: 5px 20px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-}

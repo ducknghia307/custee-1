@@ -1,4 +1,4 @@
-import { MdClear } from "react-icons/md";
+import { MdClear, MdClose } from "react-icons/md";
 import styles from '../modalstatus/modalstatus.module.css';
 import shirt from "../../../../../assets/logo/shirt.webp"
 import Image from "next/image";
@@ -32,7 +32,8 @@ const ModalEditStatus = ({ open, onClose }) => {
                 <div className={styles.modalHeader}>
                     <span className={styles.pendingButton}>Pending</span>
                     <h1>Order Detail</h1>
-                    <button className={styles.closeButton} onClick={onClose}>×</button>
+                    {/* <button className={styles.closeButton} onClick={onClose}>×</button> */}
+                    <MdClose className={styles.closeButton} onClick={onClose}/> 
                 </div>
 
                 <div className={styles.orderInfo}>
