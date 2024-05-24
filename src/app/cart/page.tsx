@@ -42,7 +42,7 @@ export default function page() {
         },
         {
           size: "2XL",
-          quantity: 2,
+          quantity: 22,
         },
       ],
     },
@@ -89,7 +89,7 @@ export default function page() {
       quantity: [
         {
           size: "XS",
-          quantity: 4,
+          quantity: 10,
         },
       ],
     },
@@ -179,9 +179,9 @@ export default function page() {
             className={`w-full h-10 bg-[#784BE6]/50 ${montserrat_500.className} flex flex-row items-center justify-center`}
           >
             <p className="w-full text-center">Product</p>
-            <p className="w-full text-center">Price</p>
-            <p className="w-full text-center">Quantity</p>
-            <p className="w-full text-center">Total</p>
+            <p className="w-3/4 text-center">Price</p>
+            <p className="w-1/4 text-center">Quantity</p>
+            <p className="w-3/4 text-center">Total</p>
           </div>
           <div
             className={`w-full min-h-96 max-h-96 bg-[#F1E15B]/25 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto scrollbar scrollbar-track-violet-200 scrollbar-thumb-violet-500 active:scrollbar-thumb-violet-800
@@ -209,22 +209,46 @@ export default function page() {
                     <img className="w-16" src={item.productUrl} />
                     <p className="">{item.productName}</p>
                   </div>
-                  <div className="min-w-fit w-full text-center">
+                  <div className="min-w-fit w-3/4 text-center">
                     {CurrencySplitter(item.price)} đ
                   </div>
                   <div
-                    className={`flex flex-wrap items-center justify-center min-w-fit w-full text-center`}
+                    className={`flex flex-col items-center min-w-fit w-1/4 text-center`}
                   >
                     {item.quantity.map((q) => {
                       return (
-                        <p className="" style={{ flex: "50%" }}>
-                          {q.size}:{" "}
-                          <span className="font-extrabold">{q.quantity}</span>
-                        </p>
+                        <div className="group w-full flex flex-row justify-between items-center">
+                          <div className="">{q.size}: </div>
+                          <span className="font-extrabold flex flex-row items-center gap-2">
+                            <span>{q.quantity}</span>
+                            <span className="flex flex-col invisible group-hover:visible">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="12"
+                                height="12"
+                                fill="currentColor"
+                                className="rounded-sm hover:bg-[#CDBC2A] cursor-pointer"
+                              >
+                                <path d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"></path>
+                              </svg>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="12"
+                                height="12"
+                                fill="currentColor"
+                                className="rounded-sm hover:bg-[#CDBC2A] cursor-pointer"
+                              >
+                                <path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path>
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
                       );
                     })}
                   </div>
-                  <div className="min-w-fit w-full text-center">
+                  <div className="min-w-fit w-3/4 text-center">
                     {CurrencySplitter(sumQuantity(item.quantity) * item.price)}{" "}
                     đ
                   </div>
@@ -275,9 +299,10 @@ export default function page() {
                 className={`px-6 py-2 rounded-full transition-all
               ${
                 checkedList.length > 0
-                  ? "bg-[#F1E15B] text-black"
+                  ? "bg-[#F1E15B] text-black hover:bg-[#CDBC2A]"
                   : "bg-[#F1E15B]/50"
               }`}
+                disabled={checkedList.length === 0}
               >
                 CHECKOUT
               </button>
