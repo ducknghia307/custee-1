@@ -51,25 +51,8 @@ export default function page() {
               quantity: 2,
             },
             {
-              size: "2XL",
+              size: "XXL",
               quantity: 2,
-            },
-          ],
-        },
-        {
-          id: 2,
-          productUrl:
-            "https://i.pinimg.com/564x/77/f4/22/77f422e813baba93acbc04648800c9d0.jpg",
-          productName: "Scarlet T-Shirt",
-          price: 330000,
-          quantity: [
-            {
-              size: "L",
-              quantity: 4,
-            },
-            {
-              size: "XL",
-              quantity: 3,
             },
           ],
         },
@@ -96,25 +79,8 @@ export default function page() {
               quantity: 2,
             },
             {
-              size: "2XL",
+              size: "XXL",
               quantity: 2,
-            },
-          ],
-        },
-        {
-          id: 2,
-          productUrl:
-            "https://i.pinimg.com/564x/77/f4/22/77f422e813baba93acbc04648800c9d0.jpg",
-          productName: "Scarlet T-Shirt",
-          price: 330000,
-          quantity: [
-            {
-              size: "L",
-              quantity: 4,
-            },
-            {
-              size: "XL",
-              quantity: 3,
             },
           ],
         },
@@ -141,7 +107,7 @@ export default function page() {
               quantity: 2,
             },
             {
-              size: "2XL",
+              size: "XXL",
               quantity: 2,
             },
           ],
@@ -186,7 +152,7 @@ export default function page() {
               quantity: 2,
             },
             {
-              size: "2XL",
+              size: "XXL",
               quantity: 2,
             },
           ],
@@ -223,7 +189,7 @@ export default function page() {
           price: 450000,
           quantity: [
             {
-              size: "XS",
+              size: "S",
               quantity: 4,
             },
             {
@@ -233,15 +199,23 @@ export default function page() {
           ],
         },
         {
-          id: 4,
+          id: 1234567890,
           productUrl:
-            "https://i.pinimg.com/736x/d3/2c/49/d32c49036224247db899f8f44e9f95a5.jpg",
-          productName: "Custee T-Shirt 2",
-          price: 450000,
+            "https://product.hstatic.net/1000042622/product/t2115-1_1b4213bc818b4c3d99e6ed2a5a8ef018_master.jpg",
+          productName: "Basic T-Shirt",
+          price: 250000,
           quantity: [
             {
-              size: "XS",
-              quantity: 4,
+              size: "M",
+              quantity: 1,
+            },
+            {
+              size: "XL",
+              quantity: 2,
+            },
+            {
+              size: "XXL",
+              quantity: 2,
             },
           ],
         },
@@ -253,23 +227,23 @@ export default function page() {
           price: 1000000,
           quantity: [
             {
-              size: "XS",
+              size: "S",
               quantity: 4,
             },
             {
-              size: "S",
+              size: "M",
               quantity: 2,
             },
             {
-              size: "M",
+              size: "L",
               quantity: 1,
             },
             {
-              size: "L",
+              size: "XL",
               quantity: 7,
             },
             {
-              size: "XL",
+              size: "XXL",
               quantity: 12,
             },
           ],
@@ -316,7 +290,7 @@ export default function page() {
               return (
                 <div className="w-full min-h-32 h-auto bg-transparent flex flex-row items-start justify-center border-b border-gray-800 last:border-b-0">
                   <div className="w-1/3 text-center flex flex-col items-center py-8">
-                    <p>ID: {order.id}</p>
+                    <p>#{order.id}</p>
                     <p>{order.date.toDateString()}</p>
                   </div>
                   <div className="w-full flex flex-col items-center">
@@ -325,7 +299,7 @@ export default function page() {
                         <div className="w-full min-h-24 h-auto flex flex-row justify-center items-center text-[80%]">
                           <div className="w-full flex flex-row items-center gap-2 justify-start">
                             <img className="w-16" src={product.productUrl} />
-                            <p className="max-w-full text-ellipsis text-nowrap">
+                            <p className="max-w-full text-ellipsis whitespace-nowrap overflow-hidden">
                               {product.productName}
                             </p>
                           </div>
@@ -333,20 +307,14 @@ export default function page() {
                             {CurrencySplitter(product.price)} đ
                           </div>
                           <div
-                            className={`flex-row gap-2 items-center justify-center min-w-fit w-full text-center hidden md:flex`}
+                            className={`flex flex-row gap-2 items-center justify-center min-w-fit w-1/4 text-center`}
                           >
-                            {product.quantity.map((q) => {
-                              return (
-                                <p>
-                                  {q.size}:{" "}
-                                  <span className="font-extrabold">
-                                    {q.quantity}
-                                  </span>
-                                </p>
-                              );
-                            })}
+                            Quantity:
+                            <span className="font-extrabold">
+                              {sumQuantity(product.quantity)}
+                            </span>
                           </div>
-                          <div className="min-w-fit w-full text-center">
+                          <div className="min-w-fit w-full text-center self-center">
                             {CurrencySplitter(
                               sumQuantity(product.quantity) * product.price
                             )}{" "}
@@ -357,31 +325,31 @@ export default function page() {
                     })}
                   </div>
                   <div
-                    className={`w-1/3 flex flex-col justify-center gap-8 my-auto text-center ${montserrat_700.className} text-xs`}
+                    className={`w-1/3 flex flex-col justify-center gap-4 my-auto text-center ${montserrat_700.className} text-xs`}
                   >
                     <p className={`${montserrat_400.className} text-lg`}>
                       {CurrencySplitter(orderTotal(order))} đ
                     </p>
                     {order.status.toLowerCase() == "pending" ? (
-                      <div className="w-full flex flex-col items-center justify-center gap-1">
-                        <div className="rounded-md px-6 py-1 bg-[#FFA756]/20 text-[#FFA756]">
+                      <div className="w-full flex flex-col md:flex-row items-center justify-center gap-1">
+                        <div className="rounded-sm px-8 py-1 md:px-3 bg-[#FFA756]/20 text-[#FFA756]">
                           {order.status}
                         </div>
-                        <div className="rounded-md px-7 py-1 bg-[#EF3826]/20 text-[#EF3826]">
+                        <div className="rounded-sm px-9 py-1 md:px-4 bg-[#EF3826]/20 text-[#EF3826]">
                           Cancel
                         </div>
                       </div>
                     ) : (
                       <div
-                        className={`w-fit rounded-md px-6 py-1 text-xs mx-auto
+                        className={`w-fit rounded-sm py-1 text-xs mx-auto
                       ${
                         order.status.toLowerCase() == "in delivery"
-                          ? "bg-[#6D9CF6]/20 text-[#6D9CF6]"
+                          ? "px-5 bg-[#6D9CF6]/20 text-[#6D9CF6]"
                           : ""
                       }
                       ${
                         order.status.toLowerCase() == "completed"
-                          ? "bg-[#00B69B]/20 text-[#00B69B]"
+                          ? "px-5 bg-[#00B69B]/20 text-[#00B69B]"
                           : ""
                       }
                       `}
