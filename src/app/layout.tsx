@@ -4,6 +4,8 @@ import "./globals.css";
 import PrelineScript from "@/components/preline/PrelineScript";
 
 import { cn } from "@/lib/utils";
+import StoreProvider from "./StoreProvider";
+import { Toast } from "@/components/toast/toast";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,7 +30,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {children}
+        <StoreProvider>
+          {children}
+          <Toast /> 
+        </StoreProvider>
       </body>
       <PrelineScript />
     </html>
