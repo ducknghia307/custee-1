@@ -18,6 +18,14 @@ import { Button } from "../ui/button";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { useAppDispatch } from "../../redux/hook";
 import { showToast } from "../toast/toast";
+import {
+  dela,
+  montserrat_400,
+  montserrat_500,
+  montserrat_600,
+  montserrat_700,
+} from "@/assets/fonts/font";
+import bg from "../../assets/logo/bg1.jpg"
 
 export function SigninForm() {
   const [email, setEmail] = useState("");
@@ -33,14 +41,14 @@ export function SigninForm() {
   // console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
   // console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
   // console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
-  
+
   async function loginUser(email: string, password: string) {
     try {
       const response = await axiosInstance.post("/auth", { email, password });
       showToast("Login successful!", "success");
       const { accessToken, user } = response.data;
       const id = user.id;
-localStorage.setItem("userId", id);
+      localStorage.setItem("userId", id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
       console.log(
@@ -68,8 +76,8 @@ localStorage.setItem("userId", id);
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-  
-      
+
+
       console.log("Logged in user:", user);
       // Additional logic if needed
     } catch (error) {
@@ -79,83 +87,115 @@ localStorage.setItem("userId", id);
   };
 
   return (
-    <div>
-     
-        <Card style={{ height: "450px", width: "500px" }} className="space-y-1">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-3xl font-bold">
-              Log In
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="text"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="text-right text-sm">
-              <Link className="underline ml-2" href="signup">
-                Forgot password?
-              </Link>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <Button className="w-full" type="submit" onClick={handleSubmit}>
-              Log In
-            </Button>
-          </CardFooter>
-          <div
-            className="mt-4 text-center text-sm"
+    <div
+      style={{
+        backgroundImage: `url(${bg.src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      <Card
+        style={{
+          width: "600px",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingBottom: "20px",
+          backgroundColor: "rgba(255, 255, 255, 0.9)", // Slightly transparent white background
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        }}
+        className="space-y-1"
+      >
+        <CardHeader className="space-y-1">
+          <div className="w-full flex flex-col justify-center items-center mt-8 mb-4">
+            <p className={`text-3xl font-black ${dela.className}`}>ACCOUNT</p>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="email">
+              Email
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="password">
+              Password
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="text-right text-sm">
+            <Link className={`underline ml-2 ${montserrat_400.className}`} href="forgotpassword">
+              Forgot password?
+            </Link>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col">
+          <Button
+            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            className={`w-full ${montserrat_700.className}`}
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Log In
+          </Button>
+        </CardFooter>
+        <div
+          className="mt-4 text-center text-sm"
+          style={{
+            width: "100%",
+            height: "45px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button
+            onClick={handleLogInGoogle}
             style={{
-              width: "100%",
-              height: "40px",
+              width: "120px",
               display: "flex",
               justifyContent: "center",
+              alignItems: "center",
+              gap: "5px",
             }}
+            className={`rounded-md border-2 bg-stone-50 ${montserrat_400.className}`}
           >
-            <button
-              onClick={handleLogInGoogle} 
-              style={{
-                width: "120px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              className="rounded-md border-2 bg-stone-50"
-            >
-              <img
-                style={{ width: "30px", height: "30px" }}
-                src="google.png"
-                alt="Google"
-              ></img>
-              Google
-            </button>
-          </div>
-        </Card>
-        <div className="mt-4 text-center text-sm">
+            <img style={{ width: "30px", height: "30px" }} src="google.png" alt="Google"></img>
+            Google
+          </button>
+        </div>
+        <div className={`text-center text-sm ${montserrat_400.className}`} style={{ paddingTop: "20px" }}>
           Don't have an account?
           <Link className="underline ml-2" href="signup">
             Sign Up
           </Link>
         </div>
-    
+      </Card>
     </div>
   );
 }

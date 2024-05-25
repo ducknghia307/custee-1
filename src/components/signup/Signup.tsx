@@ -18,6 +18,14 @@ import axiosInstance, { setAuthToken } from "../../utils/axiosInstance";
 import { useAppDispatch } from "../../redux/hook";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { showToast } from "../toast/toast";
+import {
+  dela,
+  montserrat_400,
+  montserrat_500,
+  montserrat_600,
+  montserrat_700,
+} from "@/assets/fonts/font";
+import bg from "../../assets/logo/bg1.jpg"
 
 export function SignupForm() {
   const [email, setEmail] = useState("");
@@ -62,84 +70,132 @@ export function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-md">
-      <form onSubmit={handleSubmit}>
-        <Card style={{ minHeight: "450px", width: "500px" }}>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-3xl font-bold">
-              Sign Up
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="text"
-                placeholder="Phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <Button type="submit" className="w-full">
-              Sign Up
-            </Button>
-          </CardFooter>
-        </Card>
-        <div className="mt-4 text-center text-sm">
+    <div
+      style={{
+        backgroundImage: `url(${bg.src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        width: "100vw",
+        height: "800px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+        
+      }}
+    >
+      <Card
+        style={{
+          width: "600px",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingBottom: "20px",
+          backgroundColor: "rgba(255, 255, 255, 0.9)", // Slightly transparent white background
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        }}
+        className="space-y-1"
+      >
+        <CardHeader className="space-y-1">
+          <div className="w-full flex flex-col justify-center items-center mt-8 mb-4">
+            <p className={`text-3xl font-black ${dela.className}`}>SIGN UP</p>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="username">
+              Username
+            </Label>
+            <Input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="email">
+              Email
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="phone">
+              Phone
+            </Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="password">
+              Password
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="confirmPassword">
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col">
+          <Button
+            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            className={`w-full ${montserrat_700.className}`}
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Sign Up
+          </Button>
+        </CardFooter>
+        <div className={`text-center text-sm ${montserrat_400.className}`}>
           Have an account?
           <Link className="underline ml-2" href="/login">
             Log In
           </Link>
         </div>
-      </form>
+      </Card>
     </div>
   );
 }
