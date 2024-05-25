@@ -26,13 +26,13 @@ export function SigninForm() {
   const dispatch = useAppDispatch();
 
 
-  console.log("NEXT_PUBLIC_FIREBASE_APIKEY",process.env.NEXT_PUBLIC_FIREBASE_APIKEY)
-  console.log("NEXT_PUBLIC_FIREBASE_AUTHDOMAIN",process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN)
-  console.log("NEXT_PUBLIC_FIREBASE_PROJECTID",process.env.NEXT_PUBLIC_FIREBASE_PROJECTID)
-  console.log("NEXT_PUBLIC_FIREBASE_STORAGEBUCKET",process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET)
-  console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
-  console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
-  console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
+  // console.log("NEXT_PUBLIC_FIREBASE_APIKEY",process.env.NEXT_PUBLIC_FIREBASE_APIKEY)
+  // console.log("NEXT_PUBLIC_FIREBASE_AUTHDOMAIN",process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN)
+  // console.log("NEXT_PUBLIC_FIREBASE_PROJECTID",process.env.NEXT_PUBLIC_FIREBASE_PROJECTID)
+  // console.log("NEXT_PUBLIC_FIREBASE_STORAGEBUCKET",process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET)
+  // console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
+  // console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
+  // console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
   
   async function loginUser(email: string, password: string) {
     try {
@@ -40,7 +40,7 @@ export function SigninForm() {
       showToast("Login successful!", "success");
       const { accessToken, user } = response.data;
       const id = user.id;
-
+localStorage.setItem("userId", id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
       console.log(

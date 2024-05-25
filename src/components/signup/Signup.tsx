@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import axiosInstance, { setAuthToken } from "../../utils/axiosInstance";
 import { useAppDispatch } from "../../redux/hook";
 import { setCredentials } from "../../redux/features/auth/authSlice";
+import { showToast } from "../toast/toast";
 
 export function SignupForm() {
   const [email, setEmail] = useState("");
@@ -41,14 +42,18 @@ export function SignupForm() {
         password,
         phone,
       });
+      // localStorage.setItem("userId", id);
       console.log("Registration response:", response.data.user);
 
       // Assuming the token is in response.data.token
-      const { token,user} = response.data;
-      let accessToken=token
+      const { token, user } = response.data;
+   
+      
+      const id=user._id
+      let accessToken = token;
       await setAuthToken(token);
-      dispatch(setCredentials({accessToken,user}));
-
+      dispatch(setCredentials({ accessToken, user ,id}));
+      showToast("Registration successful", "success");
       // Redirect to home page
       router.push("/");
     } catch (error) {
