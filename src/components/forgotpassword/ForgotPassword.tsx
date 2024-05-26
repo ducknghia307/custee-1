@@ -24,12 +24,27 @@ import bg from "../../assets/logo/bg1.jpg"
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const router = useRouter();
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      return "Email is required";
+    } else if (!emailRegex.test(email)) {
+      return "Email must be a valid email address";
+    }
+    return "";
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Navigate to /getotp without any API call or toast notification
-    router.push("/getotp");
+    const emailError = validateEmail(email);
+    setEmailError(emailError);
+
+    if (!emailError) {
+      router.push("/getotp");
+    }
   };
 
   return (
@@ -79,6 +94,7 @@ export function ForgotPasswordForm() {
               className={`${montserrat_400.className}`}
               style={{ height: "40px", fontSize: "15px" }}
             />
+            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">

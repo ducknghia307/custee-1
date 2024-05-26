@@ -26,10 +26,14 @@ import {
   montserrat_700,
 } from "@/assets/fonts/font";
 import bg from "../../assets/logo/bg1.jpg"
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 export function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -41,6 +45,25 @@ export function SigninForm() {
   // console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
   // console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
   // console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
+    if (!email) {
+      return "Email is required";
+    } else if (!emailRegex.test(email)) {
+      return "Email must be a valid email address";
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return "Password is required";
+    } else if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    return "";
+  };
 
   async function loginUser(email: string, password: string) {
     try {
@@ -64,11 +87,19 @@ export function SigninForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await loginUser(email, password);
-      router.push("/");
-    } catch (error) {
-      console.error("Login error:", error);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+
+    if (!emailError && !passwordError) {
+      try {
+        await loginUser(email, password);
+        router.push("/");
+      } catch (error) {
+        console.error("Login error:", error);
+      }
     }
   };
 
@@ -108,8 +139,8 @@ export function SigninForm() {
           paddingLeft: "20px",
           paddingRight: "20px",
           paddingBottom: "20px",
-          backgroundColor: "rgba(255, 255, 255, 0.9)", // Slightly transparent white background
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow
+          backgroundColor: "rgba(255, 255, 255, 0.9)", 
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
         }}
         className="space-y-1"
       >
@@ -120,7 +151,11 @@ export function SigninForm() {
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
-            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="email">
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="email"
+            >
               Email
             </Label>
             <Input
@@ -133,24 +168,45 @@ export function SigninForm() {
               className={`${montserrat_400.className}`}
               style={{ height: "40px", fontSize: "15px" }}
             />
+            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
           </div>
           <div className="space-y-2">
-            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="password">
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="password"
+            >
               Password
             </Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`${montserrat_400.className}`}
-              style={{ height: "40px", fontSize: "15px" }}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${montserrat_400.className}`}
+                style={{ height: "40px", fontSize: "15px" }}
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <AiFillEye className="h-5 w-5 text-gray-500" />
+                )}
+              </div>
+            </div>
+            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
           </div>
           <div className="text-right text-sm">
-            <Link className={`underline ml-2 ${montserrat_400.className}`} href="forgotpassword">
+            <Link
+              className={`underline ml-2 ${montserrat_400.className}`}
+              href="forgotpassword"
+            >
               Forgot password?
             </Link>
           </div>
