@@ -20,7 +20,7 @@ const ChangePassword = () => {
       setErrorMessage("New password and confirm password do not match");
       return;
     }
-    setAuthToken(token);
+    // setAuthToken(token);
     try {
       // Make API call to change password
       const response = await axiosInstance.post("/api/user/change_password", {

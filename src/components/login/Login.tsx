@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,7 +25,6 @@ export function SigninForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-
   // console.log("NEXT_PUBLIC_FIREBASE_APIKEY",process.env.NEXT_PUBLIC_FIREBASE_APIKEY)
   // console.log("NEXT_PUBLIC_FIREBASE_AUTHDOMAIN",process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN)
   // console.log("NEXT_PUBLIC_FIREBASE_PROJECTID",process.env.NEXT_PUBLIC_FIREBASE_PROJECTID)
@@ -33,14 +32,14 @@ export function SigninForm() {
   // console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
   // console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
   // console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
-  
+
   async function loginUser(email: string, password: string) {
     try {
       const response = await axiosInstance.post("/auth", { email, password });
       showToast("Login successful!", "success");
       const { accessToken, user } = response.data;
       const id = user.id;
-localStorage.setItem("userId", id);
+      localStorage.setItem("userId", id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
       console.log(
@@ -53,7 +52,7 @@ localStorage.setItem("userId", id);
       throw error;
     }
   }
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,8 +67,7 @@ localStorage.setItem("userId", id);
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-  
-      
+
       console.log("Logged in user:", user);
       // Additional logic if needed
     } catch (error) {
@@ -80,82 +78,80 @@ localStorage.setItem("userId", id);
 
   return (
     <div>
-     
-        <Card style={{ height: "450px", width: "500px" }} className="space-y-1">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-3xl font-bold">
-              Log In
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="text"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="text-right text-sm">
-              <Link className="underline ml-2" href="signup">
-                Forgot password?
-              </Link>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <Button className="w-full" type="submit" onClick={handleSubmit}>
-              Log In
-            </Button>
-          </CardFooter>
-          <div
-            className="mt-4 text-center text-sm"
+      <Card style={{ height: "450px", width: "500px" }} className="space-y-1">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-center text-3xl font-bold">
+            Log In
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="text-right text-sm">
+            <Link className="underline ml-2" href="signup">
+              Forgot password?
+            </Link>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col">
+          <Button className="w-full" type="submit" onClick={handleSubmit}>
+            Log In
+          </Button>
+        </CardFooter>
+        <div
+          className="mt-4 text-center text-sm"
+          style={{
+            width: "100%",
+            height: "40px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button
+            onClick={handleLogInGoogle}
             style={{
-              width: "100%",
-              height: "40px",
+              width: "120px",
               display: "flex",
               justifyContent: "center",
+              alignItems: "center",
             }}
+            className="rounded-md border-2 bg-stone-50"
           >
-            <button
-              onClick={handleLogInGoogle} 
-              style={{
-                width: "120px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              className="rounded-md border-2 bg-stone-50"
-            >
-              <img
-                style={{ width: "30px", height: "30px" }}
-                src="google.png"
-                alt="Google"
-              ></img>
-              Google
-            </button>
-          </div>
-        </Card>
-        <div className="mt-4 text-center text-sm">
-          Don't have an account?
-          <Link className="underline ml-2" href="signup">
-            Sign Up
-          </Link>
+            <img
+              style={{ width: "30px", height: "30px" }}
+              src="google.png"
+              alt="Google"
+            ></img>
+            Google
+          </button>
         </div>
-    
+      </Card>
+      <div className="mt-4 text-center text-sm">
+        Don't have an account?
+        <Link className="underline ml-2" href="signup">
+          Sign Up
+        </Link>
+      </div>
     </div>
   );
 }

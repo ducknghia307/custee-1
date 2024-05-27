@@ -42,7 +42,7 @@ export function SignupForm() {
         password,
         phone,
       });
-      // localStorage.setItem("userId", id);
+      // localStorage.setItem("userId", id);  
       console.log("Registration response:", response.data.user);
 
       // Assuming the token is in response.data.token

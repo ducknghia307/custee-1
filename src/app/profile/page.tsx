@@ -29,7 +29,7 @@ const Profile = () => {
     avatar: "",
     username: "",
     email: "",
-    phoneNumber: "",
+    phone: "",
     // dateOfBirth: "",
     address: "",
   });
@@ -37,14 +37,7 @@ const Profile = () => {
   const token = useAppSelector((state) => state.auth.token);
   const id = useAppSelector((state) => state.auth.userId);
   // console.log('awdadwadwa',userId);
-
   useEffect(() => {
-    if (token) {
-      setAuthToken(token);
-    } else {
-      console.error("Token not found in Redux state");
-    }
-
     axiosInstance
       .get(`/api/user/${id}`)
       .then((res) => {
@@ -52,15 +45,17 @@ const Profile = () => {
           avatar: res.data.metadata.avatar,
           username: res.data.metadata.username,
           email: res.data.metadata.email,
-          phoneNumber: res.data.metadata.phone,
+          phone: res.data.metadata.phone,
           // dateOfBirth: res.data.metadata.dateOfBirth,
           address: res.data.metadata.address,
         });
+        console.log(res);
+        
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [id, token]);
+  }, [id]);
 
   const handleProfileFileChange = async (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -104,9 +99,7 @@ const Profile = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === "phoneNumber" && !/^\d*$/.test(value)) {
-      return;
-    }
+  
     setFormData({ ...formData, [name]: value });
   };
 
@@ -168,7 +161,7 @@ const Profile = () => {
           {[
             { label: "Email", name: "email", type: "email" },
             { label: "Username", name: "username", type: "text" },
-            { label: "Phone number", name: "phoneNumber", type: "tel" },
+            { label: "Phone number", name: "phone", type: "tel" },
             // { label: "Date of birth", name: "dateOfBirth", type: "date" },
             { label: "Address", name: "address", type: "text" },
           ].map((field) => (
