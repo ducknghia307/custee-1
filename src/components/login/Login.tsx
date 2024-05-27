@@ -18,10 +18,22 @@ import { Button } from "../ui/button";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { useAppDispatch } from "../../redux/hook";
 import { showToast } from "../toast/toast";
+import {
+  dela,
+  montserrat_400,
+  montserrat_500,
+  montserrat_600,
+  montserrat_700,
+} from "@/assets/fonts/font";
+import bg from "../../assets/logo/bg1.jpg"
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 export function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -32,6 +44,25 @@ export function SigninForm() {
   // console.log("NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID",process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID)
   // console.log("NEXT_PUBLIC_FIREBASE_APPID",process.env.NEXT_PUBLIC_FIREBASE_APPID)
   // console.log("NEXT_PUBLIC_FIREBASE_MEASUREMENTID",process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID)
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
+    if (!email) {
+      return "Email is required";
+    } else if (!emailRegex.test(email)) {
+      return "Email must be a valid email address";
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return "Password is required";
+    } else if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    return "";
+  };
 
   async function loginUser(email: string, password: string) {
     try {
@@ -55,11 +86,19 @@ export function SigninForm() {
  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await loginUser(email, password);
-      router.push("/");
-    } catch (error) {
-      console.error("Login error:", error);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+
+    if (!emailError && !passwordError) {
+      try {
+        await loginUser(email, password);
+        router.push("/");
+      } catch (error) {
+        console.error("Login error:", error);
+      }
     }
   };
 
@@ -67,6 +106,7 @@ export function SigninForm() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
 
       console.log("Logged in user:", user);
       // Additional logic if needed
@@ -77,16 +117,46 @@ export function SigninForm() {
   };
 
   return (
-    <div>
-      <Card style={{ height: "450px", width: "500px" }} className="space-y-1">
+    <div
+      style={{
+        backgroundImage: `url(${bg.src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      <Card
+        style={{
+          width: "600px",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingBottom: "20px",
+          backgroundColor: "rgba(255, 255, 255, 0.9)", 
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+        }}
+        className="space-y-1"
+      >
         <CardHeader className="space-y-1">
-          <CardTitle className="text-center text-3xl font-bold">
-            Log In
-          </CardTitle>
+          <div className="w-full flex flex-col justify-center items-center mt-8 mb-4">
+            <p className={`text-3xl font-black ${dela.className}`}>ACCOUNT</p>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="email"
+            >
+              Email
+            </Label>
             <Input
               id="email"
               name="email"
@@ -94,27 +164,59 @@ export function SigninForm() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className={`${montserrat_400.className}`}
+              style={{ height: "40px", fontSize: "15px" }}
             />
+            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="password"
+            >
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${montserrat_400.className}`}
+                style={{ height: "40px", fontSize: "15px" }}
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <AiFillEye className="h-5 w-5 text-gray-500" />
+                )}
+              </div>
+            </div>
+            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
           </div>
           <div className="text-right text-sm">
-            <Link className="underline ml-2" href="signup">
+            <Link
+              className={`underline ml-2 ${montserrat_400.className}`}
+              href="forgotpassword"
+            >
               Forgot password?
             </Link>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">
-          <Button className="w-full" type="submit" onClick={handleSubmit}>
+          <Button
+            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            className={`w-full ${montserrat_700.className}`}
+            type="submit"
+            onClick={handleSubmit}
+          >
             Log In
           </Button>
         </CardFooter>
@@ -122,7 +224,7 @@ export function SigninForm() {
           className="mt-4 text-center text-sm"
           style={{
             width: "100%",
-            height: "40px",
+            height: "45px",
             display: "flex",
             justifyContent: "center",
           }}
@@ -134,24 +236,21 @@ export function SigninForm() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              gap: "5px",
             }}
-            className="rounded-md border-2 bg-stone-50"
+            className={`rounded-md border-2 bg-stone-50 ${montserrat_400.className}`}
           >
-            <img
-              style={{ width: "30px", height: "30px" }}
-              src="google.png"
-              alt="Google"
-            ></img>
+            <img style={{ width: "30px", height: "30px" }} src="google.png" alt="Google"></img>
             Google
           </button>
         </div>
+        <div className={`text-center text-sm ${montserrat_400.className}`} style={{ paddingTop: "20px" }}>
+          Don't have an account?
+          <Link className="underline ml-2" href="signup">
+            Sign Up
+          </Link>
+        </div>
       </Card>
-      <div className="mt-4 text-center text-sm">
-        Don't have an account?
-        <Link className="underline ml-2" href="signup">
-          Sign Up
-        </Link>
-      </div>
     </div>
   );
 }
