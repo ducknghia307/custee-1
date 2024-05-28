@@ -21,6 +21,7 @@ import {
 } from "@/assets/fonts/font";
 import bg from "../../assets/logo/bg1.jpg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -30,6 +31,7 @@ export function ResetPasswordForm() {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const router = useRouter();
+  const email = localStorage.getItem("email");
 
   const validatePassword = (password) => {
     if (!password) {
@@ -51,14 +53,18 @@ export function ResetPasswordForm() {
     e.preventDefault();
 
     const passwordError = validatePassword(password);
-    const confirmPasswordError = validateConfirmPassword(password, confirmPassword);
+    const confirmPasswordError = validateConfirmPassword(
+      password,
+      confirmPassword
+    );
 
     setPasswordError(passwordError);
     setConfirmPasswordError(confirmPasswordError);
 
     if (!passwordError && !confirmPasswordError) {
+      axiosInstance.post("/otp/resetPassword", { email, password });
       showToast("Password reset successfully!", "success");
-      router.push("/login");
+      // router.push("/login");
     } else {
       if (passwordError) showToast(passwordError, "error");
       if (confirmPasswordError) showToast(confirmPasswordError, "error");
@@ -94,12 +100,18 @@ export function ResetPasswordForm() {
       >
         <CardHeader className="space-y-1">
           <div className="w-full flex flex-col justify-center items-center mt-8 mb-4">
-            <p className={`text-3xl font-black ${dela.className}`}>RESET PASSWORD</p>
+            <p className={`text-3xl font-black ${dela.className}`}>
+              RESET PASSWORD
+            </p>
           </div>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
-            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="password">
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="password"
+            >
               New Password
             </Label>
             <div className="relative">
@@ -128,7 +140,11 @@ export function ResetPasswordForm() {
             {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
           </div>
           <div className="space-y-2">
-            <Label className={`${montserrat_600.className}`} style={{ fontSize: "18px" }} htmlFor="confirmPassword">
+            <Label
+              className={`${montserrat_600.className}`}
+              style={{ fontSize: "18px" }}
+              htmlFor="confirmPassword"
+            >
               Confirm Password
             </Label>
             <div className="relative">
@@ -161,7 +177,11 @@ export function ResetPasswordForm() {
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button
-            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            style={{
+              backgroundColor: "#784BE6",
+              fontSize: "17px",
+              padding: "20px 0",
+            }}
             className={`w-full ${montserrat_700.className}`}
             type="submit"
             onClick={handleSubmit}
@@ -169,7 +189,10 @@ export function ResetPasswordForm() {
             Reset Password
           </Button>
         </CardFooter>
-        <div className={`text-center text-sm ${montserrat_400.className}`} style={{ paddingTop: "20px" }}>
+        <div
+          className={`text-center text-sm ${montserrat_400.className}`}
+          style={{ paddingTop: "20px" }}
+        >
           Remembered your password?
           <Link className="underline ml-2 mr-2" href="/login">
             Login

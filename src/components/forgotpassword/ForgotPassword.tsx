@@ -27,6 +27,7 @@ export function ForgotPasswordForm() {
   const [emailError, setEmailError] = useState("");
   const router = useRouter();
 
+ 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
@@ -44,7 +45,9 @@ export function ForgotPasswordForm() {
   
     if (!emailError) {
       try {
-        await axiosInstance.post("/auth/requestOTP", { email });
+        await axiosInstance.post("/otp/requestOTP", { email });
+        console.log(email);
+        localStorage.setItem("email",email);
         showToast("OTP sent to email", "success");
         router.push("/getotp");
       } catch (error) {

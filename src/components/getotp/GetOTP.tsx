@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {axiosInstance} from "../../utils/axiosInstance";
+import { axiosInstance } from "../../utils/axiosInstance";
 import {
   CardTitle,
   CardHeader,
@@ -24,7 +24,6 @@ import { InputOTPPattern } from "../ui/InputOTPPattern";
 export function GetOTPForm() {
   const router = useRouter();
   const [otp, setOTP] = useState("");
-  const [email, setEmail] = useState(""); // Add email state if needed
 
   const handleOTPChange = (value) => {
     setOTP(value);
@@ -33,7 +32,7 @@ export function GetOTPForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/auth/verifyOTP", { email, otp });
+      await axiosInstance.post("/otp/verifyOTP", { otp });
       showToast("OTP verified", "success");
       router.push("/resetpassword");
     } catch (error) {
@@ -78,7 +77,11 @@ export function GetOTPForm() {
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button
-            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            style={{
+              backgroundColor: "#784BE6",
+              fontSize: "17px",
+              padding: "20px 0",
+            }}
             className={`w-full ${montserrat_700.className}`}
             type="submit"
             onClick={handleSubmit}
@@ -86,7 +89,10 @@ export function GetOTPForm() {
             Verify OTP
           </Button>
         </CardFooter>
-        <div className={`text-center text-sm ${montserrat_400.className}`} style={{ paddingTop: "20px" }}>
+        <div
+          className={`text-center text-sm ${montserrat_400.className}`}
+          style={{ paddingTop: "20px" }}
+        >
           Remembered your password? Back to
           <Link className="underline ml-1" href="/login">
             Login

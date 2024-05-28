@@ -80,7 +80,7 @@ export function SigninForm() {
       console.log("Login successful, token set");
       dispatch(setCredentials({ accessToken, id, user }));
       if (user.role === "user") router.push("/");
-      router.push("/dashboard");
+      else if (user.role === "admin") router.push("/dashboard");
     } catch (error) {
       showToast("Something went wrong", "error");
       throw error;
