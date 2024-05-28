@@ -2,7 +2,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axiosInstance, { setAuthToken } from "../../utils/axiosInstance";
+import axiosInstance, {
+  publicAxios,
+  setAuthToken,
+} from "../../utils/axiosInstance";
 import { auth, provider } from "../../config/config"; // Import Firebase auth and provider
 import { signInWithPopup } from "firebase/auth"; // Import signInWithPopup function
 import {
@@ -25,15 +28,15 @@ import {
   montserrat_600,
   montserrat_700,
 } from "@/assets/fonts/font";
-import bg from "../../assets/logo/bg1.jpg"
+import bg from "../../assets/logo/bg1.jpg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 export function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  // const [emailError, setEmailError] = useState("");
+  // const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -55,58 +58,56 @@ export function SigninForm() {
     return "";
   };
 
-  const validatePassword = (password) => {
-    if (!password) {
-      return "Password is required";
-    } else if (password.length < 8) {
-      return "Password must be at least 8 characters long";
-    }
-    return "";
-  };
+  // const validatePassword = (password) => {
+  //   if (!password) {
+  //     return "Password is required";
+  //   } else if (password.length < 8) {
+  //     return "Password must be at least 8 characters long";
+  //   }
+  //   return "";
+  // };
 
   async function loginUser(email: string, password: string) {
     try {
-      const response = await axiosInstance.post("/auth", { email, password });
+      const response = await publicAxios.post("/auth", { email, password });
       showToast("Login successful!", "success");
       const { accessToken, user } = response.data;
+      console.log(response);
+
       const id = user.id;
       localStorage.setItem("userId", id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
-      console.log(
-        "Current headers after login:",
-        axiosInstance.defaults.headers.common
-      );
       dispatch(setCredentials({ accessToken, id, user }));
+      if (user.role === "user") router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       showToast("Something went wrong", "error");
       throw error;
     }
   }
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+    // const emailError = validateEmail(email);
+    // const passwordError = validatePassword(password);
 
-    setEmailError(emailError);
-    setPasswordError(passwordError);
+    // setEmailError(emailError);
+    // setPasswordError(passwordError);
 
-    if (!emailError && !passwordError) {
-      try {
-        await loginUser(email, password);
-        router.push("/");
-      } catch (error) {
-        console.error("Login error:", error);
-      }
+    // if (!emailError) {
+    try {
+      await loginUser(email, password);
+    } catch (error) {
+      console.error("Login error:", error);
     }
+    // }
   };
 
   const handleLogInGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
 
       console.log("Logged in user:", user);
       // Additional logic if needed
@@ -138,8 +139,8 @@ export function SigninForm() {
           paddingLeft: "20px",
           paddingRight: "20px",
           paddingBottom: "20px",
-          backgroundColor: "rgba(255, 255, 255, 0.9)", 
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
         className="space-y-1"
       >
@@ -167,7 +168,7 @@ export function SigninForm() {
               className={`${montserrat_400.className}`}
               style={{ height: "40px", fontSize: "15px" }}
             />
-            {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+            {/* {emailError && <p style={{ color: "red" }}>{emailError}</p>} */}
           </div>
           <div className="space-y-2">
             <Label
@@ -199,7 +200,7 @@ export function SigninForm() {
                 )}
               </div>
             </div>
-            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
+            {/* {passwordError && <p style={{ color: "red" }}>{passwordError}</p>} */}
           </div>
           <div className="text-right text-sm">
             <Link
@@ -212,7 +213,11 @@ export function SigninForm() {
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button
-            style={{ backgroundColor: "#784BE6", fontSize: "17px", padding: "20px 0" }}
+            style={{
+              backgroundColor: "#784BE6",
+              fontSize: "17px",
+              padding: "20px 0",
+            }}
             className={`w-full ${montserrat_700.className}`}
             type="submit"
             onClick={handleSubmit}
@@ -240,11 +245,18 @@ export function SigninForm() {
             }}
             className={`rounded-md border-2 bg-stone-50 ${montserrat_400.className}`}
           >
-            <img style={{ width: "30px", height: "30px" }} src="google.png" alt="Google"></img>
+            <img
+              style={{ width: "30px", height: "30px" }}
+              src="google.png"
+              alt="Google"
+            ></img>
             Google
           </button>
         </div>
-        <div className={`text-center text-sm ${montserrat_400.className}`} style={{ paddingTop: "20px" }}>
+        <div
+          className={`text-center text-sm ${montserrat_400.className}`}
+          style={{ paddingTop: "20px" }}
+        >
           Don't have an account?
           <Link className="underline ml-2" href="signup">
             Sign Up

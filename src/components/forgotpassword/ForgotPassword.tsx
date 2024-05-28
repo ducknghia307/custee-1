@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axiosInstance from "../../utils/axiosInstance";
+import {axiosInstance} from "../../utils/axiosInstance";
 import {
   CardTitle,
   CardHeader,
@@ -37,13 +37,21 @@ export function ForgotPasswordForm() {
     return "";
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const emailError = validateEmail(email);
     setEmailError(emailError);
-
+  
     if (!emailError) {
-      router.push("/getotp");
+      try {
+        await axiosInstance.post("/auth/requestOTP", { email });
+        showToast("OTP sent to email", "success");
+        router.push("/getotp");
+      } catch (error) {
+        console.log(error);
+        
+        showToast("Error sending OTP", "error");
+      }
     }
   };
 

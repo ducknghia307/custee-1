@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axiosInstance from "../../utils/axiosInstance";
+import { useState } from "react";
+import {axiosInstance} from "../../utils/axiosInstance";
 import {
   CardTitle,
   CardHeader,
@@ -22,11 +23,22 @@ import { InputOTPPattern } from "../ui/InputOTPPattern";
 
 export function GetOTPForm() {
   const router = useRouter();
+  const [otp, setOTP] = useState("");
+  const [email, setEmail] = useState(""); // Add email state if needed
 
-  const handleSubmit = (e) => {
+  const handleOTPChange = (value) => {
+    setOTP(value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Navigate to /getotp without any API call or toast notification
-    router.push("/resetpassword");
+    try {
+      await axiosInstance.post("/auth/verifyOTP", { email, otp });
+      showToast("OTP verified", "success");
+      router.push("/resetpassword");
+    } catch (error) {
+      showToast("Error verifying OTP", "error");
+    }
   };
 
   return (
@@ -62,7 +74,7 @@ export function GetOTPForm() {
           </div>
         </CardHeader>
         <CardContent className="space-y-5">
-          <InputOTPPattern />
+          <InputOTPPattern onOTPChange={handleOTPChange} />
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button

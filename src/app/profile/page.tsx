@@ -13,10 +13,10 @@ import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
 import profile from "../../assets/logo/profile.png";
 import addprofile from "../../assets/logo/addprofile.png";
-import axiosInstance, { setAuthToken } from "@/utils/axiosInstance";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { uploadImage } from "@/redux/features/auth/authSlice";
 import { showToast } from "@/components/toast/toast";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 const Profile = () => {
   const [isDefaultImage, setIsDefaultImage] = useState(true);

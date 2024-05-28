@@ -1,11 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";  
 import "./Navbar.css";
 import Link from "next/link";
 import moment from "moment";
 import logo from "../../assets/logo/custee-transparent.png";
 import { Button } from "../ui/button";
-import axiosInstance from "../../utils/axiosInstance";
+import {axiosInstance} from "../../utils/axiosInstance";
 import { logOut as logOutAction } from "../../redux/features/auth/authSlice";
 
 import { useAppDispatch, useAppSelector } from "../../redux/hook";

@@ -4,7 +4,7 @@ import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { showToast } from "@/components/toast/toast";
 import { useAppSelector } from "@/redux/hook";
-import axiosInstance, { setAuthToken } from "@/utils/axiosInstance";
+import {axiosInstance} from "@/utils/axiosInstance";
 import React, { useState } from "react";
 
 const ChangePassword = () => {

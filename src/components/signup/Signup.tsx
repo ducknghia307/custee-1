@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import axiosInstance, { setAuthToken } from "../../utils/axiosInstance";
+import {axiosInstance , setAuthToken } from "../../utils/axiosInstance";
 import { useAppDispatch } from "../../redux/hook";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { showToast } from "../toast/toast";
