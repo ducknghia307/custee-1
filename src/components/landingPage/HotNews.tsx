@@ -8,7 +8,7 @@ import { dela, montserrat_500, montserrat_600 } from "@/assets/fonts/font";
 
 export default function HotNews() {
   return (
-    <div className={`w-screen text-center mt-[-5%] z-10 m-2 ${dela.className}`}>
+    <div className={`w-screen text-center mt-[-8%] z-10 m-2 ${dela.className}`}>
       <h1 className="text-4xl">HOT NEWS</h1>
       <div className="flex flex-row w-[80%] h-[80vh] gap-2 justify-center align-items-center mx-auto mt-12">
         <div className="flex flex-col w-[60%] justify-center gap-2">

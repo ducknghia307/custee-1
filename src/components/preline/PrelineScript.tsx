@@ -1,25 +1,20 @@
 "use client";
-
 import { usePathname } from "next/navigation";
+import { HSDropdown } from "preline/preline";
 import { useEffect } from "react";
 
-import { IStaticMethods } from "preline/preline";
-declare global {
-  interface Window {
-    HSStaticMethods: IStaticMethods;
-  }
-}
-
-export default function PrelineScript() {
+export default function PrelineLoader() {
   const path = usePathname();
 
   useEffect(() => {
-    const loadPreline = async () => {
-      await import("preline/preline");
-      window.HSStaticMethods?.autoInit();
-    };
-    loadPreline();
+    import("preline/preline");
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      HSDropdown.autoInit();
+    }, 100);
   }, [path]);
 
-  return null;
+  return <></>;
 }
