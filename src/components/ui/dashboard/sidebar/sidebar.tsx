@@ -45,11 +45,11 @@ const menuItems = [
                 path: "/dashboard/orderlists",
                 icon: <MdAllInbox size={18}/>
             },
-            {
-                title: "Sign Out",
-                path: "/dashboard/sign_out",//temporarily
-                icon: <MdOutlineLogout size={18}/>
-            },
+            // {
+            //     title: "Sign Out",
+            //     path: "/dashboard/sign_out",//temporarily
+            //     icon: <MdOutlineLogout size={18}/>
+            // },
         ]
     }
 ];
