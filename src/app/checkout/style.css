@@ -1,0 +1,9 @@
+.ant-select-selector {
+  background-color: transparent !important;
+  border: none !important;
+  border-color: black !important;
+}
+
+.ant-select-selector:focus {
+  border-color: black !important;
+}
