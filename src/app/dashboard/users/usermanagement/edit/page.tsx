@@ -13,7 +13,7 @@ import Link from "next/link";
 const EditUserPage = () => {
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const [birthDate, setBirthDate] = useState(new Date());
+    const [birthDate, setBirthDate] = useState(new Date());zz
 
     const handleFileChange = ({ target }) => {
         if (target.files && target.files[0]) {
