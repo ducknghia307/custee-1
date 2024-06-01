@@ -9,7 +9,7 @@ import {
   montserrat_600,
 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter.js";
-import axiosInstance from "@/utils/axiosInstance";
+import { axiosInstance } from "@/utils/axiosInstance";
 import EmptyCartImage from "../../assets/images/cart/empty-cart.png";
 import Link from "next/link";
 import { Image, InputNumber } from "antd";
@@ -47,27 +47,28 @@ export default function page() {
   const userId = localStorage.getItem("userId");
 
   const fetchCartItem = async () => {
-    await axiosInstance
-      .get(`/api/cart/user/${userId}`)
-      .then((res) => {
-        const userCartId = res.data.metadata._id;
-        axiosInstance
-          .get(`/api/cartItem/cart/${userCartId}`)
-          .then((res) => {
-            console.log(res.data.metadata);
-            const fetched = res.data.metadata;
-            fetched.map((item: CartItem) => {
-              return sortSize(item);
+    if (userId)
+      await axiosInstance
+        .get(`/api/cart/user/${userId}`)
+        .then((res: any) => {
+          const cartId = res.data.metadata._id;
+          axiosInstance
+            .get(`/api/cartItem/cart/${cartId}`)
+            .then((res: any) => {
+              console.log("FETCHED: ", res.data.metadata);
+              const fetched = res.data.metadata;
+              fetched.map((item: CartItem) => {
+                return sortSize(item);
+              });
+              setCartItemList(fetched);
+            })
+            .catch((err: any) => {
+              console.log(err);
             });
-            setCartItemList(fetched);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
   };
 
   const sumQuantity = (quantityArray: any) => {
@@ -123,12 +124,12 @@ export default function page() {
           size: size,
           quantity: quantity,
         })
-        .then((res) => {
+        .then((res: any) => {
           console.log("Update quantity: ", res.data);
           fetchCartItem();
           setCheckedList(checkedList.filter((item) => item._id !== cartItemId));
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.log(err);
         });
   };
@@ -136,11 +137,11 @@ export default function page() {
   const deleteCartItem = async (id: string) => {
     await axiosInstance
       .delete(`/api/cartItem/${id}`)
-      .then((res) => {
+      .then((res: any) => {
         console.log("Delete cartItem: ", res.data);
         fetchCartItem();
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
       });
   };
@@ -391,6 +392,13 @@ export default function page() {
                   : "bg-[#F1E15B]/50 cursor-not-allowed"
               }`}
                   disabled={checkedList.length === 0}
+                  onClick={() => {
+                    sessionStorage.setItem(
+                      "checkoutList",
+                      JSON.stringify(checkedList)
+                    );
+                    window.location.replace("/checkout");
+                  }}
                 >
                   CHECKOUT
                 </button>

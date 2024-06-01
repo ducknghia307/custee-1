@@ -1,7 +1,7 @@
 "use client";
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
-import axiosInstance from "@/utils/axiosInstance";
+import { axiosInstance } from "@/utils/axiosInstance";
 import { Card, Image } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -26,53 +26,93 @@ export default function page() {
   const fetchProduct = async () => {
     await axiosInstance
       .get(`/api/product`)
-      .then((res) => {
+      .then((res: any) => {
         console.log(res.data.metadata);
         setProductList(res.data.metadata);
       })
-      .catch((err) => console.log(err));
+      .catch((err: any) => console.log(err));
   };
 
   const addToCart = async (productId: string) => {
     console.log("UserId: ", userId);
     if (userId)
       axiosInstance
-        .post(`/api/cart`, {
-          userId: userId,
-        })
+        .get(`/api/cart/user/${userId}`)
         .then((res) => {
-          const cartId = res.data.metadata._id;
-          axiosInstance
-            .post(`/api/cartItem`, {
-              cartId: cartId,
-              productId: productId,
-              quantityPerSize: [
-                {
-                  size: "S",
-                  quantity: 1,
-                },
-                {
-                  size: "M",
-                  quantity: 1,
-                },
-                {
-                  size: "L",
-                  quantity: 1,
-                },
-                {
-                  size: "XL",
-                  quantity: 1,
-                },
-                {
-                  size: "XXL",
-                  quantity: 1,
-                },
-              ],
-            })
-            .then((res) => {
-              console.log("New cartItem: ", res.data.metadata);
-            })
-            .catch((err) => console.log(err));
+          if (!res.data.metadata)
+            axiosInstance
+              .post(`/api/cart`, {
+                userId: userId,
+              })
+              .then((res) => {
+                console.log("NEW CART: ", res.data.metadata);
+                const cartId = res.data.metadata._id;
+                axiosInstance
+                  .post(`/api/cartItem`, {
+                    cartId: cartId,
+                    productId: productId,
+                    quantityPerSize: [
+                      {
+                        size: "S",
+                        quantity: 1,
+                      },
+                      {
+                        size: "M",
+                        quantity: 1,
+                      },
+                      {
+                        size: "L",
+                        quantity: 1,
+                      },
+                      {
+                        size: "XL",
+                        quantity: 1,
+                      },
+                      {
+                        size: "XXL",
+                        quantity: 1,
+                      },
+                    ],
+                  })
+                  .then((res: any) => {
+                    console.log("New cartItem: ", res.data.metadata);
+                  })
+                  .catch((err: any) => console.log(err));
+              })
+              .catch((err: any) => console.log(err));
+          else {
+            axiosInstance
+              .post(`/api/cartItem`, {
+                cartId: res.data.metadata._id,
+                productId: productId,
+                quantityPerSize: [
+                  {
+                    size: "S",
+                    quantity: 1,
+                  },
+                  {
+                    size: "M",
+                    quantity: 1,
+                  },
+                  {
+                    size: "L",
+                    quantity: 1,
+                  },
+                  {
+                    size: "XL",
+                    quantity: 1,
+                  },
+                  {
+                    size: "XXL",
+                    quantity: 1,
+                  },
+                ],
+              })
+              .then((res: any) => {
+                console.log("New cartItem: ", res.data.metadata);
+              })
+              .catch((err: any) => console.log(err));
+          }
         })
         .catch((err) => console.log(err));
   };
@@ -94,6 +134,7 @@ export default function page() {
           {productList.map((product) => {
             return (
               <Card
+                key={product._id}
                 title={product.name}
                 className="w-56 mt-32 border-2 border-black flex flex-col items-center justify-center"
               >

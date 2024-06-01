@@ -14,28 +14,43 @@ import { Collapse } from "antd";
 import Link from "next/link";
 import dateFormat from "../../../assistants/date.format";
 import "../style.css";
+import { axiosInstance } from "@/utils/axiosInstance";
+import { current } from "@reduxjs/toolkit";
 
+interface Order {
+  _id: string;
+  code: string;
+  paymentMethod: string;
+  deliveryOptions: {
+    method: string;
+    cose: number;
+  };
+  discountValue: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 interface OrderItem {
-  id: string;
-  productOrderedList: Product[];
+  _id: string;
+  orderId: Order;
+  productId: Product[];
+  quantityPerSize: {
+    size: string;
+    quantity: number;
+  }[];
   status: string;
   createdAt: Date;
   updatedAt?: Date;
 }
 
 interface Product {
-  id: string;
+  _id: string;
   userId: string;
   name: string;
   price: number;
-  quantityPerSize: {
-    size: string;
-    quantity: number;
-  }[];
   image: string;
   color: string;
   pattern: string;
-  discount?: string;
   wordDecoration?: string;
   imageDecoration?: string;
   createdAt?: Date;
@@ -55,94 +70,29 @@ const pendingColor = {
 };
 
 export default function page() {
-  const [orderList, setOrderList] = useState<OrderItem[]>([
-    {
-      id: "123213",
-      productOrderedList: [
-        {
-          id: "85944",
-          userId: "983uz8232i2213y",
-          name: "T Shirt",
-          price: 99000,
-          quantityPerSize: [
-            {
-              size: "S",
-              quantity: 7,
-            },
-            {
-              size: "M",
-              quantity: 3,
-            },
-          ],
-          image:
-            "https://pos.nvncdn.com/b3bf61-16762/ps/20240112_06f1gMyo9i.jpeg",
-          color: "white",
-          pattern: "T-shirt",
-        },
-        {
-          id: "53356",
-          userId: "983uz8232i2213y",
-          name: "T Shirt",
-          price: 99000,
-          quantityPerSize: [
-            {
-              size: "S",
-              quantity: 7,
-            },
-            {
-              size: "M",
-              quantity: 3,
-            },
-          ],
-          image:
-            "https://pos.nvncdn.com/b3bf61-16762/ps/20240112_06f1gMyo9i.jpeg",
-          color: "white",
-          pattern: "T-shirt",
-        },
-      ],
-      status: "In delivery",
-      createdAt: new Date(),
-    },
-    {
-      id: "5673454",
-      productOrderedList: [
-        {
-          id: "85944",
-          userId: "983uz8232i2213y",
-          name: "T Shirt",
-          price: 99000,
-          quantityPerSize: [
-            {
-              size: "S",
-              quantity: 7,
-            },
-            {
-              size: "M",
-              quantity: 3,
-            },
-            {
-              size: "L",
-              quantity: 3,
-            },
-            {
-              size: "XL",
-              quantity: 3,
-            },
-            {
-              size: "XXL",
-              quantity: 3,
-            },
-          ],
-          image:
-            "https://pos.nvncdn.com/b3bf61-16762/ps/20240112_06f1gMyo9i.jpeg",
-          color: "white",
-          pattern: "T-shirt",
-        },
-      ],
-      status: "Pending",
-      createdAt: new Date(),
-    },
-  ]);
+  const [orderList, setOrderList] = useState<Order[]>([]);
+  const [orderItemList, setOrderItemList] = useState<OrderItem[]>([]);
+  const [inProgressList, setInProgressList] = useState<any[]>([]);
+  const userId = localStorage.userId;
+
+  const getOrderItemList = async () => {
+    await axiosInstance
+      .get(`/api/order/user/${userId}`)
+      .then((res) => {
+        console.log("Order: ", res.data.metadata);
+        setOrderList(res.data.metadata);
+        res.data.metadata.map((order: any) => {
+          axiosInstance
+            .get(`/api/orderItem/order/${order._id}`)
+            .then((res) => {
+              console.log("OrderItem: ", res.data.metadata);
+              setOrderItemList((current) => [...current, ...res.data.metadata]);
+            })
+            .catch((err) => console.log(err));
+        });
+      })
+      .catch((err) => console.log(err));
+  };
 
   const sumQuantity = (quantityArray: any) => {
     return quantityArray.reduce(
@@ -151,22 +101,27 @@ export default function page() {
     );
   };
 
-  const orderTotal = (order: OrderItem) => {
+  const orderTotal = (item: OrderItem) => {
     var total = 0;
-    order.productOrderedList.map((product: Product) => {
-      total += product.price * sumQuantity(product.quantityPerSize);
+    item.productId.map((product: Product) => {
+      total += product.price * sumQuantity(item.quantityPerSize);
     });
     return total;
   };
 
-  const [inProgressList, setInProgressList] = useState<any[]>([]);
-
   useEffect(() => {
-    async function getCollapseList() {
-      setInProgressList([]);
-      orderList.map((order) => {
+    setOrderItemList([]);
+    getOrderItemList();
+    getCollapseList();
+  }, []);
+
+  const getCollapseList = async () => {
+    setInProgressList([]);
+    orderList.map((order) => {
+      const itemList = orderItemList.filter((i) => i.orderId._id === order._id);
+      itemList.map((item) => {
         const newItem = {
-          key: order.id,
+          key: item._id,
           label: (
             <div
               className={`w-full flex justify-between items-center ${montserrat_600.className}`}
@@ -174,17 +129,15 @@ export default function page() {
               <div className="w-full flex items-center justify-between gap-8 pr-16">
                 <span className="flex gap-8">
                   <p className={`${montserrat_400.className} text-xs`}>
-                    {dateFormat(order.createdAt, "dd/mm/yyyy HH:MM")}
+                    {dateFormat(item.createdAt, "dd/mm/yyyy HH:MM")}
                   </p>
 
                   <p className={`${montserrat_400.className} text-xs`}>
                     <i>
-                      &#40;{order.productOrderedList.length} product
+                      &#40;{item.productId.length} product
                       <span
                         className={`${
-                          order.productOrderedList.length > 1
-                            ? "inline"
-                            : "hidden"
+                          item.productId.length > 1 ? "inline" : "hidden"
                         }`}
                       >
                         s
@@ -193,15 +146,16 @@ export default function page() {
                     </i>
                   </p>
                 </span>
-                <p>{CurrencySplitter(orderTotal(order))} &#8363;</p>
+                <p>{CurrencySplitter(orderTotal(item))} &#8363;</p>
               </div>
               <p
                 className={`w-24 text-center rounded-sm
-                ${
-                  order.status.toLowerCase() === "pending"
-                    ? `${pendingColor.text}`
-                    : `${deliveryColor.text}`
-                }`}
+              ${
+                order.status.toLowerCase() === "pending" ||
+                order.status.toLowerCase() === "processing"
+                  ? `${pendingColor.text}`
+                  : `${deliveryColor.text}`
+              }`}
               >
                 {order.status}
               </p>
@@ -210,15 +164,16 @@ export default function page() {
           children: (
             <div
               className={`p-1 flex flex-col items-center justify-center ${
-                order.status.toLowerCase() === "pending"
+                order.status.toLowerCase() === "pending" ||
+                order.status.toLowerCase() === "processing"
                   ? `bg-[${pendingColor.light}]`
                   : ""
               } 
-              ${
-                order.status.toLowerCase() === "in delivery"
-                  ? `bg-[${deliveryColor.light}]`
-                  : ""
-              }`}
+            ${
+              order.status.toLowerCase() === "in delivery"
+                ? `bg-[${deliveryColor.light}]`
+                : ""
+            }`}
             >
               <div className="w-3/4 flex justify-center items-center font-bold text-[10px] mt-2">
                 <p className="w-full text-center">Product</p>
@@ -226,7 +181,7 @@ export default function page() {
                 <p className="w-full text-center">Quantity</p>
                 <p className="w-full text-center">Total</p>
               </div>
-              {order.productOrderedList.map((product) => {
+              {item.productId.map((product) => {
                 return (
                   <div className="w-3/4 flex justify-center items-center mt-2">
                     <span className="w-full flex items-center justify-center gap-4">
@@ -237,18 +192,18 @@ export default function page() {
                       {CurrencySplitter(product.price)} &#8363;
                     </p>
                     <span className="w-full min-w-max flex items-center justify-center gap-4">
-                      {product.quantityPerSize.map((item) => {
+                      {item.quantityPerSize.map((q) => {
                         return (
                           <span className="flex gap-1">
-                            <p className="font-extrabold">{item.size}:</p>
-                            <p>{item.quantity}</p>
+                            <p className="font-extrabold">{q.size}:</p>
+                            <p>{q.quantity}</p>
                           </span>
                         );
                       })}
                     </span>
                     <span className="w-full text-center">
                       {CurrencySplitter(
-                        sumQuantity(product.quantityPerSize) * product.price
+                        sumQuantity(item.quantityPerSize) * product.price
                       )}{" "}
                       &#8363;
                     </span>
@@ -259,7 +214,8 @@ export default function page() {
           ),
           style: {
             backgroundColor:
-              order.status.toLowerCase() === "pending"
+              order.status.toLowerCase() === "pending" ||
+              order.status.toLowerCase() === "processing"
                 ? `${pendingColor.dark}`
                 : order.status.toLowerCase() === "in delivery"
                 ? `${deliveryColor.dark}`
@@ -267,22 +223,25 @@ export default function page() {
             marginTop: "5px",
           },
         };
+
         if (
           order.status.toLowerCase() === "pending" ||
+          order.status.toLowerCase() === "processing" ||
           order.status.toLowerCase() === "in delivery"
         ) {
           setInProgressList((prev) => [...prev, newItem]);
         }
       });
-    }
-    getCollapseList();
-  }, []);
+    });
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-between gap-16">
       <Navbar />
       <div className="w-full flex flex-col justify-center items-center mt-32">
-        <p className={`text-3xl font-black ${dela.className}`}>ORDER</p>
+        <p className={`text-3xl font-black ${dela.className}`}>
+          ORDER {orderItemList.length}
+        </p>
         <div
           className={`flex flex-row justify-center items-center gap-4 mt-8 text-sm ${montserrat_400.className}`}
         >
