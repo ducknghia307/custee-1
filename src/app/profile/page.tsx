@@ -33,6 +33,7 @@ const Profile = () => {
     // dateOfBirth: "",
     address: "",
   });
+  const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const token = useAppSelector((state) => state.auth.token);
   const id = useAppSelector((state) => state.auth.userId);
@@ -50,7 +51,6 @@ const Profile = () => {
           address: res.data.metadata.address,
         });
         console.log(res);
-        
       })
       .catch((error) => {
         console.error(error);
@@ -61,20 +61,14 @@ const Profile = () => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       // Dispatch the uploadImage action
-      dispatch(uploadImage(id, file))
-        .then((downloadURL) => {
-          console.log(downloadURL);
-
-          // Update the local state with the avatar URL
-          setFormData({ ...formData, avatar: downloadURL });
-          setIsDefaultImage(false);
-        })
-        .catch((error) => {
-          console.error("Failed to upload image:", error);
-        });
+      setSelectedProfileImage(file);
+      setFormData({ ...formData, avatar: URL.createObjectURL(file) });
+      setIsDefaultImage(false);
     }
   };
-
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
   const handleDesignFileChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -99,7 +93,7 @@ const Profile = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-  
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -107,18 +101,25 @@ const Profile = () => {
     event.preventDefault();
 
     try {
-      const response = await axiosInstance.patch(`/api/user/${id}`, formData);
+      let avatarUrl = formData.avatar;
+
+      if (selectedProfileImage) {
+        avatarUrl = await dispatch(uploadImage(id, selectedProfileImage));
+        setFormData({ ...formData, avatar: avatarUrl });
+      }
+
+      const response = await axiosInstance.patch(`/api/user/${id}`, {
+        ...formData,
+        avatar: avatarUrl,
+      });
+
       console.log("Profile updated successfully:", response.data);
       showToast("Profile updated successfully", "success");
+      setIsEditing(false);
     } catch (error) {
       console.error("Failed to update profile:", error);
     }
-    setIsEditing(!isEditing);
   };
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
-
   const borderStyle = isDefaultImage
     ? "bg-purple-300"
     : "border border-solid border-[#fff394]";
@@ -134,7 +135,7 @@ const Profile = () => {
           <div
             className={`relative w-36 h-36 rounded-full overflow-hidden ${borderStyle}`}
             style={{
-              border: "1px ridge purple", // Adjust border width and color as needed
+              border: "1px ridge purple",
             }}
           >
             <Image
@@ -150,12 +151,14 @@ const Profile = () => {
             className="hidden"
             onChange={handleProfileFileChange}
           />
-          <button
-            className={`text-purple-500 text-20 mt-2 ${montserrat_400.className}`}
-            onClick={triggerProfileFileInput}
-          >
-            Change profile photo
-          </button>
+          {isEditing && (
+            <button
+              className={`text-purple-500 text-20 mt-2 ${montserrat_400.className}`}
+              onClick={triggerProfileFileInput}
+            >
+              Change profile photo
+            </button>
+          )}
         </div>
         <div className="w-full max-w-md space-y-2">
           {[

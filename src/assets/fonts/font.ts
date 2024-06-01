@@ -6,6 +6,7 @@ export const dela = Dela_Gothic_One({
   display: "swap",
 });
 
+
 export const montserrat_400 = Montserrat({
   weight: "500",
   subsets: ["latin"],
