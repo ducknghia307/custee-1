@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import styles from "../../../../../components/ui/dashboard/usermanagement/addUser/addUser.module.css"
+import styles from "../../../../../../components/ui/dashboard/usermanagement/addUser/addUser.module.css"
 import { MdArrowBackIos, MdCameraAlt } from "react-icons/md";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,7 +13,7 @@ import Link from "next/link";
 const EditUserPage = () => {
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const [birthDate, setBirthDate] = useState(new Date());zz
+    const [birthDate, setBirthDate] = useState(new Date());
 
     const handleFileChange = ({ target }) => {
         if (target.files && target.files[0]) {

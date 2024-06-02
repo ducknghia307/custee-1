@@ -75,7 +75,7 @@ export default function Navbar() {
       </div>
       <div className="w-full flex-row gap-8 text-sm font-bold font-monospace items-center justify-center hidden sm:flex">
         <Link
-          href="/"
+          href="/custom"
           className="w-max text-center ease-in-out duration-100 hover:text-[#784be6] relative hoverMenuItem"
         >
           DESIGN YOUR SHIRT
@@ -351,7 +351,7 @@ export default function Navbar() {
                 </span>
                 <Link
                   className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                  href="/"
+                  href="/custom"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
