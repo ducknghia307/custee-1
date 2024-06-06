@@ -23,32 +23,36 @@ const Profile = () => {
   const [designImages, setDesignImages] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [buttonText, setButtonText] = useState("Update Your Profile");
-  // const id = localStorage.getItem("userId");
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     avatar: "",
     username: "",
     email: "",
     phone: "",
-    // dateOfBirth: "",
+    gender: "",
     address: "",
+    dateOfBirth: "", // Add dateOfBirth to formData
   });
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [isFormValid, setIsFormValid] = useState(false);
   const token = useAppSelector((state) => state.auth.token);
   const id = useAppSelector((state) => state.auth.userId);
-  // console.log('awdadwadwa',userId);
+
   useEffect(() => {
     axiosInstance
       .get(`/api/user/${id}`)
       .then((res) => {
+        const dateOfBirth = res.data.metadata.dateOfBirth
+          ? new Date(res.data.metadata.dateOfBirth).toISOString().split("T")[0]
+          : "";
         setFormData({
           avatar: res.data.metadata.avatar,
           username: res.data.metadata.username,
           email: res.data.metadata.email,
           phone: res.data.metadata.phone,
-          // dateOfBirth: res.data.metadata.dateOfBirth,
+          gender: res.data.metadata.gender || "",
           address: res.data.metadata.address,
+          dateOfBirth, // Initialize dateOfBirth
         });
         console.log(res);
       })
@@ -60,15 +64,16 @@ const Profile = () => {
   const handleProfileFileChange = async (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      // Dispatch the uploadImage action
       setSelectedProfileImage(file);
       setFormData({ ...formData, avatar: URL.createObjectURL(file) });
       setIsDefaultImage(false);
     }
   };
+
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
+
   const handleDesignFileChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -93,7 +98,6 @@ const Profile = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-
     setFormData({ ...formData, [name]: value });
   };
 
@@ -120,6 +124,7 @@ const Profile = () => {
       console.error("Failed to update profile:", error);
     }
   };
+
   const borderStyle = isDefaultImage
     ? "bg-purple-300"
     : "border border-solid border-[#fff394]";
@@ -133,7 +138,7 @@ const Profile = () => {
       <div className="w-full max-w-3xl mx-auto flex flex-row justify-center gap-10 mt-16">
         <div className="flex flex-col items-center">
           <div
-            className={`relative w-36 h-36 rounded-full overflow-hidden ${borderStyle}`}
+            className={`relative w-36 h-36 rounded-full mt-10 overflow-hidden ${borderStyle}`}
             style={{
               border: "1px ridge purple",
             }}
@@ -165,8 +170,9 @@ const Profile = () => {
             { label: "Email", name: "email", type: "email" },
             { label: "Username", name: "username", type: "text" },
             { label: "Phone number", name: "phone", type: "tel" },
-            // { label: "Date of birth", name: "dateOfBirth", type: "date" },
+            { label: "Gender", name: "gender", type: "select" },
             { label: "Address", name: "address", type: "text" },
+            { label: "Date of Birth", name: "dateOfBirth", type: "date" }, // Add dateOfBirth field
           ].map((field) => (
             <div key={field.name} className="flex items-center">
               <label
@@ -174,23 +180,41 @@ const Profile = () => {
               >
                 {field.label}
               </label>
-              <input
-                type={field.type}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleInputChange}
-                className={`w-2/3 p-2 border border-gray-300 rounded ${montserrat_400.className}`}
-                style={{
-                  border: field.name === "email" ? "none" : "1px solid #ccc",
-                  backgroundColor:
-                    field.name === "email"
-                      ? "#fff"
-                      : isEditing
-                      ? "#fff"
-                      : "#F0F0F0",
-                }}
-                disabled={!isEditing || field.name === "email"}
-              />
+              {field.type === "select" ? (
+                <select
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  className={`w-2/3 p-2 border border-gray-300 rounded ${montserrat_400.className}`}
+                  style={{
+                    border: "1px solid #ccc",
+                    backgroundColor: isEditing ? "#fff" : "#F0F0F0",
+                  }}
+                  disabled={!isEditing}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              ) : (
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  className={`w-2/3 p-2 border border-gray-300 rounded ${montserrat_400.className}`}
+                  style={{
+                    border: field.name === "email" ? "none" : "1px solid #ccc",
+                    backgroundColor:
+                      field.name === "email"
+                        ? "#fff"
+                        : isEditing
+                        ? "#fff"
+                        : "#F0F0F0",
+                  }}
+                  disabled={!isEditing || field.name === "email"}
+                />
+              )}
             </div>
           ))}
           {isEditing ? (
@@ -203,9 +227,7 @@ const Profile = () => {
                   fontSize: "18px",
                   backgroundColor: "red",
                   color: "#fff",
-                  // cursor: isFormValid ? "pointer" : "not-allowed",
                 }}
-                // disabled={!isFormValid}
               >
                 Cancel
               </button>{" "}
@@ -218,9 +240,7 @@ const Profile = () => {
                   fontSize: "18px",
                   backgroundColor: "green",
                   color: "#fff",
-                  // cursor: isFormValid ? "pointer" : "not-allowed",
                 }}
-                // disabled={!isFormValid}
               >
                 Confirm
               </button>{" "}
@@ -235,9 +255,7 @@ const Profile = () => {
                   fontSize: "18px",
                   backgroundColor: "#784BE6",
                   color: "#fff",
-                  // cursor: isFormValid ? "pointer" : "not-allowed",
                 }}
-                // disabled={!isFormValid}
               >
                 {buttonText}
               </button>

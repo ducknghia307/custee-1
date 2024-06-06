@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import styles from "../../../../components/ui/dashboard/usermanagement/users.module.css";
 import Link from "next/link";
@@ -16,19 +16,19 @@ const UserManagement = () => {
   const [otherReason, setOtherReason] = useState('');
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosInstance.get("/api/user");
+      setUsers(response.data.metadata.users);
+      console.log(setUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch users
-    const fetchUsers = async () => {
-      try {
-        const response = await axiosInstance.get("/api/user"); 
-        setUsers(response.data.metadata.users);
-        console.log(setUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
@@ -39,7 +39,24 @@ const UserManagement = () => {
       setOtherReason('');
     }
   };
-  
+
+  const handleBanUser = async () => {
+    try {
+      await axiosInstance.patch(`/api/user/${selectedUser._id}`, { status: 'Non-Available' });
+      setUsers(users.map(user => user._id === selectedUser._id ? { ...user, status: 'Non-Available' } : user));
+      setOpen(false);
+    } catch (error) {
+      console.error("Error banning user:", error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <div className={styles.container}>
@@ -59,9 +76,11 @@ const UserManagement = () => {
             <td>Avatar</td>
             <td>User Name</td>
             <td>Email</td>
-            {/* <td>Gender</td> */}
+            <td>Gender</td>
+            <td>Date Of Birth</td>
+            <td>Address</td>
             <td>Phone</td>
-            {/* <td>Status</td> */}
+            <td>Status</td>
             <td>Action</td>
           </tr>
         </thead>
@@ -75,15 +94,17 @@ const UserManagement = () => {
               </td>
               <td>{user.username}</td>
               <td>{user.email}</td>
-              {/* <td>{user.gender}</td> */}
+              <td>{user.gender}</td>
+              <td>{user.dateOfBirth ? formatDate(user.dateOfBirth) : ""}</td>
+              <td>{user.address}</td>
               <td>{user.phone}</td>
-              {/* <td>{user.status}</td> */}
+              <td>{user.status}</td>
               <td>
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/users/usermanagement/edit/${user._id}`}>
-                    <MdOutlineEdit size={5} className={styles.buttonEdit} />
+                    <MdOutlineEdit size={20} className={styles.buttonEdit} />
                   </Link>
-                  <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)} />
+                  <MdDeleteOutline size={20} className={styles.buttonDelete} onClick={() => { setOpen(true); setSelectedUser(user); }} />
                 </div>
               </td>
             </tr>
@@ -125,7 +146,7 @@ const UserManagement = () => {
             )}
           </div>
           <div className="flex flex-row justify-center">
-            <button className={styles.buttonBan}>
+            <button className={styles.buttonBan} onClick={handleBanUser}>
               Ban User
             </button>
           </div>

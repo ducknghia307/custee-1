@@ -74,6 +74,10 @@ const AddUserPage = () => {
                         </div>
                     </div>
                     <div className={styles.inputGroup}>
+                        <label>Password</label>
+                        <input type="password" placeholder="Enter password" required />
+                    </div>
+                    <div className={styles.inputGroup}>
                         <label>Date of Birth</label>
                         <div className={styles.datePickerContainer}>
                             <DatePicker

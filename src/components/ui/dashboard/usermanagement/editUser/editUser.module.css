@@ -174,12 +174,12 @@
 }
 
 .datePickerContainer input {
-    /* width: 100%; */
+    width: 100%;
     padding: 8px;
     border: none;
     border-radius: 5px;
-    color: #000;
-    font-size: 13px;
+    color: #A6A6A6;
+    font-size: 11px;
     background-color: #fff; 
     outline: none;
 }
