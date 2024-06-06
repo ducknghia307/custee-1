@@ -83,10 +83,11 @@ export default function page() {
       (element) => element._id == event.target.defaultValue
     );
     if (checkedItem) {
+      const allCheckboxes = document.querySelector("#choose-all-checkbox");
       if (event.target.checked) {
         setCheckedList([...checkedList, checkedItem]);
       } else {
-        document.querySelector("#choose-all-checkbox")!.checked = false;
+        (allCheckboxes as any).checked = false;
         const newCheckList = checkedList.filter(
           (item) => item._id != checkedItem._id
         );

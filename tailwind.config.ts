@@ -23,7 +23,7 @@ const config = {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         arimo: ["Arimo", "sans-serif"],
-        dela_gothic_one: ["Dela Gothic One", "sans-serif"],
+        dela_gothic_one: ["'Dela Gothic One'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
