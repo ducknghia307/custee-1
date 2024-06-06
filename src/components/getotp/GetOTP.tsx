@@ -28,7 +28,7 @@ export function GetOTPForm() {
   const handleOTPChange = (value) => {
     setOTP(value);
   };
-
+const email = localStorage.getItem("email")
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

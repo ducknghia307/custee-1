@@ -1,32 +1,62 @@
-"use client"
+"use client";
 
-import styles from "../../../../components/ui/dashboard/usermanagement/users.module.css"
-// import Search from "../../../components/ui/dashboard/search/search";
+import styles from "../../../../components/ui/dashboard/usermanagement/users.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import Pagination from "@/components/ui/dashboard/pagination/pagination";
 import { MdDeleteOutline, MdOutlineAdd, MdOutlineEdit } from "react-icons/md";
 import logo from "../../../../assets/logo/avatar1.jpg";
 import Search from "@/components/ui/dashboard/search/search";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ModalDelete from "@/components/ui/dashboard/usermanagement/deleteUser/deleteModal";
-import ModalEditStatus from "@/components/ui/dashboard/orderlists/modalstatus/modalstatus";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 const UserManagement = () => {
-
   const [selectedReason, setSelectedReason] = useState('');
   const [otherReason, setOtherReason] = useState('');
+  const [users, setUsers] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosInstance.get("/api/user");
+      setUsers(response.data.metadata.users);
+      console.log(setUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleReasonChange = (event) => {
     const { value } = event.target;
     setSelectedReason(value);
-    // Reset other reason input when other options are selected
     if (value !== 'other') {
       setOtherReason('');
     }
   };
 
-  const [open, setOpen] = useState<boolean>(false)
+  const handleBanUser = async () => {
+    try {
+      await axiosInstance.patch(`/api/user/${selectedUser._id}`, { status: 'Non-Available' });
+      setUsers(users.map(user => user._id === selectedUser._id ? { ...user, status: 'Non-Available' } : user));
+      setOpen(false);
+    } catch (error) {
+      console.error("Error banning user:", error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <div className={styles.container}>
@@ -47,123 +77,45 @@ const UserManagement = () => {
             <td>User Name</td>
             <td>Email</td>
             <td>Gender</td>
+            <td>Date Of Birth</td>
+            <td>Address</td>
             <td>Phone</td>
             <td>Status</td>
             <td>Action</td>
           </tr>
         </thead>
         <tbody style={{ backgroundColor: "#fff" }}>
-          <tr>
-            <td>
-              <div className={styles.user}>
-                <Image src={logo} alt="" width={40} height={40} className={styles.userImage} />
-              </div>
-            </td>
-            <td>John Smith</td>
-            <td>johnsmith@gmail.com</td>
-            <td>Male</td>
-            <td>012345678</td>
-            <td>Available</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/usermanagement/edit">
-                  <MdOutlineEdit size={5} className={styles.buttonEdit} />
-                </Link>
-                
-                <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)}/>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className={styles.user}>
-                <Image src={logo} alt="" width={40} height={40} className={styles.userImage} />
-              </div>
-            </td>
-            <td>John Smith</td>
-            <td>johnsmith@gmail.com</td>
-            <td>Male</td>
-            <td>012345678</td>
-            <td>Available</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/usermanagement/edit">
-                  <MdOutlineEdit size={5} className={styles.buttonEdit} />
-                </Link>
-                
-                <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)}/>
-              </div>
-            </td>
-          </tr><tr>
-            <td>
-              <div className={styles.user}>
-                <Image src={logo} alt="" width={40} height={40} className={styles.userImage} />
-              </div>
-            </td>
-            <td>John Smith</td>
-            <td>johnsmith@gmail.com</td>
-            <td>Male</td>
-            <td>012345678</td>
-            <td>Available</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/usermanagement/edit">
-                  <MdOutlineEdit size={5} className={styles.buttonEdit} />
-                </Link>
-                
-                <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)}/>
-              </div>
-            </td>
-          </tr><tr>
-            <td>
-              <div className={styles.user}>
-                <Image src={logo} alt="" width={40} height={40} className={styles.userImage} />
-              </div>
-            </td>
-            <td>John Smith</td>
-            <td>johnsmith@gmail.com</td>
-            <td>Male</td>
-            <td>012345678</td>
-            <td>Available</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/usermanagement/edit">
-                  <MdOutlineEdit size={5} className={styles.buttonEdit} />
-                </Link>
-                
-                <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)}/>
-              </div>
-            </td>
-          </tr><tr>
-            <td>
-              <div className={styles.user}>
-                <Image src={logo} alt="" width={40} height={40} className={styles.userImage} />
-              </div>
-            </td>
-            <td>John Smith</td>
-            <td>johnsmith@gmail.com</td>
-            <td>Male</td>
-            <td>012345678</td>
-            <td>Available</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/usermanagement/edit">
-                  <MdOutlineEdit size={5} className={styles.buttonEdit} />
-                </Link>
-                
-                <MdDeleteOutline size={5} className={styles.buttonDelete} onClick={() => setOpen(true)}/>
-              </div>
-            </td>
-          </tr>
+          {users.map((user, index) => (
+            <tr key={index}>
+              <td>
+                <div className={styles.user}>
+                  <Image src={user.avatar || logo} alt="" width={40} height={40} className={styles.userImage} />
+                </div>
+              </td>
+              <td>{user.username}</td>
+              <td>{user.email}</td>
+              <td>{user.gender}</td>
+              <td>{user.dateOfBirth ? formatDate(user.dateOfBirth) : ""}</td>
+              <td>{user.address}</td>
+              <td>{user.phone}</td>
+              <td>{user.status}</td>
+              <td>
+                <div className={styles.buttons}>
+                  <Link href={`/dashboard/users/usermanagement/edit/${user._id}`}>
+                    <MdOutlineEdit size={20} className={styles.buttonEdit} />
+                  </Link>
+                  <MdDeleteOutline size={20} className={styles.buttonDelete} onClick={() => { setOpen(true); setSelectedUser(user); }} />
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <Pagination />
       <ModalDelete open={open} onClose={() => setOpen(false)}>
         <div className={styles.modal}>
           <h1 className={styles.h1}>Ban Reason</h1>
-          <h3 className={styles.h3header}>
-            Why are you banning this user?
-          </h3>
+          <h3 className={styles.h3header}>Why are you banning this user?</h3>
           <div className={styles.sizeSelector}>
             <label>
               <input type="radio" name="reason" value="reason 1" onChange={handleReasonChange} /> Providing false information
@@ -184,7 +136,8 @@ const UserManagement = () => {
               <input type="radio" name="reason" value="other" onChange={handleReasonChange} /> Other
             </label>
             {selectedReason === 'other' && (
-              <textarea className={styles.otherReason}
+              <textarea
+                className={styles.otherReason}
                 value={otherReason}
                 onChange={(e) => setOtherReason(e.target.value)}
                 placeholder="Enter other reason..."
@@ -192,10 +145,8 @@ const UserManagement = () => {
               />
             )}
           </div>
-          {/* <hr className="border-t-solid border-1 border-grey" /> */}
           <div className="flex flex-row justify-center">
-            {/* <button className={styles.buttonBan} onClick={() => setOpen(false)}> */}
-            <button className={styles.buttonBan} >
+            <button className={styles.buttonBan} onClick={handleBanUser}>
               Ban User
             </button>
           </div>
@@ -203,6 +154,6 @@ const UserManagement = () => {
       </ModalDelete>
     </div>
   );
-}
+};
 
-export default UserManagement
+export default UserManagement;

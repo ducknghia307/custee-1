@@ -1,8 +1,16 @@
+"use client"
 import React from "react";
 import grad_background from "@/assets/images/landingPage/gradient_background.png";
 import { dela, montserrat_500, montserrat_600 } from "@/assets/fonts/font";
+import { useRouter } from "next/navigation";
 
 export default function Frontliner() {
+  const router = useRouter();
+
+  const handleDesignNowClick = () => {
+    router.push("/custom");
+  };
+
   return (
     <div className="relative w-screen min-h-max flex flex-col justify-center overflow-hidden">
       <div className="flex flex-row justify-center gap-5 mt-56 mb-32 md:mt-64 xl:mt-80">
@@ -58,6 +66,7 @@ export default function Frontliner() {
         </p>
         <button
           className={`bg-[#784BE6] hover:bg-[#6832E8] px-4 py-2 lg:px-6 lg:py-3 rounded-full font-medium text-white text-xs lg:text-md ${montserrat_600.className}`}
+          onClick={handleDesignNowClick}
         >
           DESIGN NOW!
         </button>
