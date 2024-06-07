@@ -29,7 +29,7 @@ interface Product {
 }
 interface CartItem {
   _id: string;
-  cartId: string;
+  userId: string;
   productId: Product;
   quantityPerSize: {
     size: string;
@@ -48,23 +48,15 @@ export default function page() {
 
   const fetchCartItem = async () => {
     if (userId)
-      await axiosInstance
-        .get(`/api/cart/user/${userId}`)
+      axiosInstance
+        .get(`/api/cartItem/user/${userId}`)
         .then((res: any) => {
-          const cartId = res.data.metadata._id;
-          axiosInstance
-            .get(`/api/cartItem/cart/${cartId}`)
-            .then((res: any) => {
-              console.log("FETCHED: ", res.data.metadata);
-              const fetched = res.data.metadata;
-              fetched.map((item: CartItem) => {
-                return sortSize(item);
-              });
-              setCartItemList(fetched);
-            })
-            .catch((err: any) => {
-              console.log(err);
-            });
+          console.log("FETCHED: ", res.data.metadata);
+          const fetched = res.data.metadata;
+          fetched.map((item: CartItem) => {
+            return sortSize(item);
+          });
+          setCartItemList(fetched);
         })
         .catch((err: any) => {
           console.log(err);

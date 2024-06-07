@@ -1,0 +1,10 @@
+.ant-steps-item-container * {
+  font-size: 12px !important;
+}
+
+span.ant-steps-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
