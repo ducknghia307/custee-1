@@ -5,14 +5,13 @@ import React, { useEffect, useState } from "react";
 import {
   dela,
   montserrat_400,
-  montserrat_500,
   montserrat_600,
   montserrat_700,
 } from "@/assets/fonts/font";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { Collapse, Select } from "antd";
 import CurrencySplitter from "@/assistants/currencySpliter";
-import { generateOrderCode } from "@/assistants/generators";
+import { generateNumericCode } from "@/assistants/generators";
 import "./style.css";
 
 export default function page() {
@@ -21,7 +20,17 @@ export default function page() {
   const [total, setTotal] = useState(0);
   const [totalIncludingDelivery, setTotalIncludingDelivery] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [editModeOn, setEditModeOn] = useState(false);
 
+  const [deliveryInfo, setDeliveryInfo] = useState<{
+    recipientName: string;
+    phone: string;
+    address: string;
+  }>({
+    recipientName: "",
+    phone: "",
+    address: "",
+  });
   const [paymentMethod, setPaymentMethod] = useState("");
   const [deliveryOptions, setDeliveryOptions] = useState<{
     method: string;
@@ -37,6 +46,11 @@ export default function page() {
         .get(`/api/user/${userId}`)
         .then((res: any) => {
           setCurrentUser(res.data.metadata);
+          setDeliveryInfo({
+            recipientName: res.data.metadata.username,
+            phone: res.data.metadata.phone,
+            address: res.data.metadata.address,
+          });
         })
         .catch((err: any) => console.log(err));
     }
@@ -81,12 +95,17 @@ export default function page() {
   };
 
   const handleCompleteOrder = async () => {
-    const newOrderCode = generateOrderCode(6, "");
+    const newOrderCode = generateNumericCode(8);
     await axiosInstance
       .post(`/api/order`, {
         userId: userId,
         code: newOrderCode,
+        total:
+          totalIncludingDelivery > 0
+            ? totalIncludingDelivery - discountAmount
+            : total - discountAmount,
         paymentMethod: paymentMethod,
+        deliveryInfo: deliveryInfo,
         deliveryOptions: deliveryOptions,
         discountValue: discountValue,
       })
@@ -135,14 +154,66 @@ export default function page() {
               <p className={`${montserrat_600.className} text-lg`}>
                 Contact details
               </p>
-              <p className="text-xs text-[#784BE6] cursor-pointer hover:underline">
-                Edit info
+              <p
+                className="text-xs text-[#784BE6] cursor-pointer hover:underline"
+                onClick={() => {
+                  setEditModeOn(!editModeOn);
+                  document.getElementById("first-edit")?.focus();
+                }}
+              >
+                {editModeOn ? "Confirm" : "Edit info"}
               </p>
             </div>
             <div className="w-full flex flex-col gap-4">
-              <p>{currentUser.username}</p>
-              <p>{currentUser.phone}</p>
-              <p>{currentUser.address}</p>
+              <div className="flex items-center gap-2">
+                <p className={`${editModeOn ? "inline" : "hidden"}`}>
+                  Recipient's name:
+                </p>
+                <input
+                  id="first-edit"
+                  type="text"
+                  value={deliveryInfo.recipientName}
+                  onChange={(e) => {
+                    setDeliveryInfo({
+                      ...deliveryInfo,
+                      recipientName: e.target.value,
+                    });
+                  }}
+                  className="rounded-xl text-xs bg-transparent border-none focus:border"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <p className={`${editModeOn ? "inline" : "hidden"}`}>
+                  Phone number:
+                </p>
+                <input
+                  type="text"
+                  value={deliveryInfo.phone}
+                  onChange={(e) => {
+                    setDeliveryInfo({
+                      ...deliveryInfo,
+                      phone: e.target.value,
+                    });
+                  }}
+                  className="rounded-xl text-xs bg-transparent border-none focus:border"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <p className={`${editModeOn ? "inline" : "hidden"}`}>
+                  Address:
+                </p>
+                <input
+                  type="text"
+                  value={deliveryInfo.address}
+                  onChange={(e) => {
+                    setDeliveryInfo({
+                      ...deliveryInfo,
+                      address: e.target.value,
+                    });
+                  }}
+                  className="rounded-xl text-xs bg-transparent border-none focus:border"
+                />
+              </div>
             </div>
           </div>
 
