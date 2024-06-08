@@ -9,7 +9,7 @@ const ToolBox = ({ addText, handleImageUpload, deleteSelectedImage,selectedText 
   const handleTextButtonClick = () => {
     setShowTextPopup(true);
   };
-  console.log(selectedText);
+ 
   
 
   const closeTextPopup = () => {

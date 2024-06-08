@@ -19,11 +19,8 @@ interface Product {
   userId: string;
   name: string;
   price: number;
-  color: string;
   pattern: string;
   image: string;
-  wordDecoration: string;
-  imageDecoration: string;
   createdAt: Date;
   updatedAt: Date;
 }

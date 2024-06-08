@@ -8,14 +8,14 @@ import { TrashSimple } from "@phosphor-icons/react";
 import ColorPicker from "@/components/custom/ColorPicker";
 import MaterialInfo from "@/components/custom/MaterialInfo";
 import ToolBox from "@/components/custom/ToolBox";
-
 import { uploadImage } from "@/redux/features/auth/authSlice";
-import { useAppDispatch } from "@/redux/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { showToast } from "@/components/toast/toast";
-// Dynamically import fabric
+import { axiosInstance } from "@/utils/axiosInstance";
+
 const fabric = typeof window !== "undefined" ? require("fabric").fabric : null;
 
-export default function Account() {
+export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
   const canvasFrontRef = useRef(null);
   const canvasBackRef = useRef(null);
@@ -24,8 +24,29 @@ export default function Account() {
   const [selectedImage, setSelectedImage] = useState("front");
   const [selectedColor, setSelectedColor] = useState("Beige");
   const [selectedText, setSelectedText] = useState(null);
-  const dispatch = useAppDispatch();
+  const [totalPrice, setTotalPrice] = useState(150000); // Default price
+  const [productName, setProductName] = useState("Áo Thun Cổ Tròn"); // Default product name
 
+  const userId = useAppSelector((state) => state.auth.userId);
+  const [product, setProduct] = useState({
+    userId,
+    name: "",
+    price: "",
+    pattern: "T-shirt",
+    images: {
+      front: "",
+      back: "",
+    },
+  });
+  const [cartItem, setCartItem] = useState({
+    userId,
+    productId: "",
+    quantityPerSize: [],
+  });
+
+  console.log('::::::::::::',cartItem);
+  
+  const dispatch = useAppDispatch();
   const imageMapping = {
     Black: {
       front: "/TeeFrontBlack.png",
@@ -76,13 +97,39 @@ export default function Account() {
     }
   }, [currentView, selectedColor]);
 
+  async function createProduct(product) {
+    try {
+      const response = await axiosInstance.post("/api/product", product);
+      console.log(response);
+
+      if (response.status === 200) {
+        showToast("Product created successfully", "success");
+      }
+
+      setCartItem((prevCartItem) => ({
+        ...prevCartItem,
+        productId: response.data._id,
+      }));
+
+      // Add the item to the cart
+      const addToCartResponse = await axiosInstance.post("/api/cartItem", {
+        ...cartItem,
+        productId: response.data._id, // Ensure productId is correct
+      });
+
+      console.log('addtocartresponse:::',addToCartResponse);
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  }
+
   const saveCanvas = (canvas, view) => {
     return new Promise((resolve, reject) => {
       const offscreenCanvas = document.createElement("canvas");
       offscreenCanvas.width = 500; // Adjust these values to the actual image dimensions
       offscreenCanvas.height = 550; // Adjust these values to the actual image dimensions
       const ctx = offscreenCanvas.getContext("2d");
-   
+
       const backgroundImg = new Image();
       backgroundImg.src =
         view === "front"
@@ -123,7 +170,6 @@ export default function Account() {
       ])
         .then(([frontDataURL, backDataURL]) => {
           console.log("Both canvases saved successfully");
-          // Handle the URLs or continue with upload
           uploadDesignImages(frontDataURL, backDataURL);
           showToast("Successfully created", "success");
         })
@@ -138,19 +184,26 @@ export default function Account() {
   const uploadDesignImages = (frontDataURL, backDataURL) => {
     const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
     const backFile = dataURLtoFile(backDataURL, "back_design.png");
+    let frontURL; // Define frontURL in the outer scope
 
-    // Dispatch upload actions for each image
     dispatch(uploadImage("userId123", frontFile))
-      .then((frontURL) => {
+      .then((response) => {
+        frontURL = response; // Store the frontURL from the response
         console.log("Front design uploaded. Download URL:", frontURL);
-        // Do something with the front URL
-
-        // Upload the back design
         return dispatch(uploadImage("userId123", backFile));
       })
       .then((backURL) => {
         console.log("Back design uploaded. Download URL:", backURL);
-        // Do something with the back URL
+        setProduct((prevProduct) => ({
+          ...prevProduct,
+          name: productName,
+          price: totalPrice,
+          images: {
+            front: frontURL,
+            back: backURL,
+          },
+        }));
+        createProduct(product);
       })
       .catch((error) => {
         console.error("Error uploading design:", error);
@@ -253,9 +306,21 @@ export default function Account() {
 
   const handleSizeChange = (event) => {
     const { name, value } = event.target;
-    setSizes((prevSizes) => ({
-      ...prevSizes,
+    const newSizes = {
+      ...sizes,
       [name]: value,
+    };
+    setSizes(newSizes);
+    const updatedQuantityPerSize = Object.keys(newSizes)
+      .map((size) => ({
+        size,
+        quantity: newSizes[size] ? parseInt(newSizes[size]) : 0,
+      }))
+      .filter((item) => item.quantity > 0);
+
+    setCartItem((prevCartItem) => ({
+      ...prevCartItem,
+      quantityPerSize: updatedQuantityPerSize,
     }));
   };
 
@@ -441,6 +506,8 @@ export default function Account() {
               sizes={sizes}
               handleSizeChange={handleSizeChange}
               saveDesign={saveDesign}
+              totalPrice={totalPrice}
+              name={productName}
             />
           </div>
         </div>
