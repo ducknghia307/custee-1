@@ -35,86 +35,39 @@ export default function page() {
 
   const addToCart = async (productId: string) => {
     console.log("UserId: ", userId);
-    if (userId)
+    if (userId) {
       axiosInstance
-        .get(`/api/cart/user/${userId}`)
-        .then((res) => {
-          if (!res.data.metadata)
-            axiosInstance
-              .post(`/api/cart`, {
-                userId: userId,
-              })
-              .then((res) => {
-                console.log("NEW CART: ", res.data.metadata);
-                const cartId = res.data.metadata._id;
-                axiosInstance
-                  .post(`/api/cartItem`, {
-                    cartId: cartId,
-                    productId: productId,
-                    quantityPerSize: [
-                      {
-                        size: "S",
-                        quantity: 1,
-                      },
-                      {
-                        size: "M",
-                        quantity: 1,
-                      },
-                      {
-                        size: "L",
-                        quantity: 1,
-                      },
-                      {
-                        size: "XL",
-                        quantity: 1,
-                      },
-                      {
-                        size: "XXL",
-                        quantity: 1,
-                      },
-                    ],
-                  })
-                  .then((res: any) => {
-                    console.log("New cartItem: ", res.data.metadata);
-                  })
-                  .catch((err: any) => console.log(err));
-              })
-              .catch((err: any) => console.log(err));
-          else {
-            axiosInstance
-              .post(`/api/cartItem`, {
-                cartId: res.data.metadata._id,
-                productId: productId,
-                quantityPerSize: [
-                  {
-                    size: "S",
-                    quantity: 1,
-                  },
-                  {
-                    size: "M",
-                    quantity: 1,
-                  },
-                  {
-                    size: "L",
-                    quantity: 1,
-                  },
-                  {
-                    size: "XL",
-                    quantity: 1,
-                  },
-                  {
-                    size: "XXL",
-                    quantity: 1,
-                  },
-                ],
-              })
-              .then((res: any) => {
-                console.log("New cartItem: ", res.data.metadata);
-              })
-              .catch((err: any) => console.log(err));
-          }
+        .post(`/api/cartItem`, {
+          userId: userId,
+          productId: productId,
+          quantityPerSize: [
+            {
+              size: "S",
+              quantity: 1,
+            },
+            {
+              size: "M",
+              quantity: 1,
+            },
+            {
+              size: "L",
+              quantity: 1,
+            },
+            {
+              size: "XL",
+              quantity: 1,
+            },
+            {
+              size: "XXL",
+              quantity: 1,
+            },
+          ],
         })
-        .catch((err) => console.log(err));
+        .then((res: any) => {
+          console.log("New cartItem: ", res.data.metadata);
+        })
+        .catch((err: any) => console.log(err));
+    }
   };
 
   useEffect(() => {
