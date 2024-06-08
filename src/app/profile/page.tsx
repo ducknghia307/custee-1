@@ -37,11 +37,12 @@ const Profile = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const token = useAppSelector((state) => state.auth.token);
   const id = useAppSelector((state) => state.auth.userId);
-  // console.log('awdadwadwa',userId);
+  console.log('awdadwadwa',id);
   useEffect(() => {
     axiosInstance
       .get(`/api/user/${id}`)
       .then((res) => {
+        console.log(res);
         setFormData({
           avatar: res.data.metadata.avatar,
           username: res.data.metadata.username,
@@ -50,7 +51,6 @@ const Profile = () => {
           // dateOfBirth: res.data.metadata.dateOfBirth,
           address: res.data.metadata.address,
         });
-        console.log(res);
       })
       .catch((error) => {
         console.error(error);
