@@ -1,4 +1,4 @@
-export function generateOrderCode(length, prefix) {
+export function generateNumericAndUppercaseCode(length, prefix) {
   let result = prefix + "";
   const numbers = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let counter = prefix.length;
@@ -21,7 +21,7 @@ export function generatePassword(length) {
   return result;
 }
 
-export function generateCode(length) {
+export function generateNumericCode(length) {
   let result = "";
   const characters = "0123456789";
   let counter = 0;

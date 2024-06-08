@@ -32,6 +32,8 @@ export function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   // const [emailError, setEmailError] = useState("");
   // const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
@@ -95,7 +97,13 @@ export function SigninForm() {
     // if (!emailError) {
     try {
       await loginUser(email, password);
+      setErrorMessage("");
     } catch (error) {
+      if (error.response && error.response.status === 403) {
+        setErrorMessage("Your account is banned.");
+      } else {
+        setErrorMessage("Login failed. Please try again.");
+      }
       console.error("Login error:", error);
     }
     // }
@@ -238,6 +246,7 @@ export function SigninForm() {
           >
             Log In
           </Button>
+        {errorMessage && <p style={{ color: "red", marginTop:"20px" }}>{errorMessage}</p>}
         </CardFooter>
         <div
           className="mt-4 text-center text-sm"
