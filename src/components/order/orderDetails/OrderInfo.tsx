@@ -86,9 +86,9 @@ export default function OrderInfo({ order }: { order: Order }) {
       <Breadcrumb items={breadcrumbItems} />
       <div className="w-full flex items-center justify-between">
         <p className="text-3xl font-bold">Order ID: {order.code}</p>
-        <div className="flex items-center gap-4">
-          <button className="hover:underline">Get invoice</button>
-          <button className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white">
+        <div className="flex items-center gap-4 opacity-50">
+          <button disabled className="hover:underline disabled:cursor-not-allowed">Get invoice</button>
+          <button disabled className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white disabled:cursor-not-allowed">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -100,7 +100,7 @@ export default function OrderInfo({ order }: { order: Order }) {
             </svg>
             Buy more
           </button>
-          <button className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white">
+          <button disabled className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white disabled:cursor-not-allowed">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

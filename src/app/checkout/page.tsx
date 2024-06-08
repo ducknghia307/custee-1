@@ -158,7 +158,8 @@ export default function page() {
                 className="text-xs text-[#784BE6] cursor-pointer hover:underline"
                 onClick={() => {
                   setEditModeOn(!editModeOn);
-                  document.getElementById("first-edit")?.focus();
+                  if (!editModeOn)
+                    document.getElementById("first-edit")?.focus();
                 }}
               >
                 {editModeOn ? "Confirm" : "Edit info"}
