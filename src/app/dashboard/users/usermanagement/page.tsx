@@ -62,12 +62,12 @@ const UserManagement = () => {
     <div className={styles.container}>
       <h3 className={styles.h3}>User Management</h3>
       <div className={styles.top}>
-        <Link href="/dashboard/users/usermanagement/add">
+        {/* <Link href="/dashboard/users/usermanagement/add">
           <button className={styles.addButton}>
             <MdOutlineAdd />
             Add New User
           </button>
-        </Link>
+        </Link> */}
         <Search placeholder="Search for a user..." />
       </div>
       <table className={styles.table}>

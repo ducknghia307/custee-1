@@ -45,6 +45,7 @@
     border-left: 1px solid #D8D8D8;
     border-right: 1px solid #D8D8D8;
     border-bottom: 1px solid #D8D8D8;
+    margin-top: 15px;
 }
 
 .user {
@@ -58,7 +59,7 @@
 .table thead tr {
     background-color: #fff;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .table thead tr:first-child td:first-child {
@@ -88,7 +89,7 @@
 }
 
 .table tbody tr td {
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .table th, .table td {
@@ -189,8 +190,8 @@
 .button {
     padding: 2px; 
     border-radius: 5px;
-    width: 20px; 
-    height: 20px;
+    width: 23px; 
+    height: 23px;
     cursor: pointer;
     margin: auto;
     background-color: #FAFBFD;
