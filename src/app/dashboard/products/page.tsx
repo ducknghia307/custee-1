@@ -81,7 +81,7 @@ export default function ProductsPage() {
                 </td>
                 <td>{product.name}</td>
                 <td>{product.pattern}</td>
-                <td>{product.price}</td>
+                <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
                 <td>
                   <div className={styles.buttons}>
                     <Link href={`/dashboard/products/edit/${product._id}`}>

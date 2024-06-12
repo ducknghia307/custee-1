@@ -15,6 +15,8 @@ const OrderList = () => {
 
     const [orders, setOrders] = useState([]);
 
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+
     //màu test thoai
     const getStatusStyle = (status) => {
         const baseStyle = {
@@ -56,6 +58,15 @@ const OrderList = () => {
         fetchTotalOrders();
     }, []);
 
+    const handleEditClick = (orderId) => {
+        setSelectedOrderId(orderId);
+        setOpen(true);
+    };
+
+    const handleStatusChange = (orderId, newStatus) => {
+        setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
+      };
+
 
     return (
         <div className={styles.container}>
@@ -84,16 +95,15 @@ const OrderList = () => {
                                 <td>{order.deliveryInfo.phone}</td>
                                 <td>{order.deliveryInfo.address}</td>
                                 <td>{order.paymentMethod}</td>
-                                <td>{order.total}</td>
+                                <td>{parseInt(order.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
                                 <td>{order.deliveryOptions.method}</td>
-                                <td>{order.deliveryOptions.cost}</td>
-                                <td>
+                                <td>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>                                <td>
                                     <span style={getStatusStyle(order.status)}>
                                         {order.status}
                                     </span>
                                 </td>
                                 <td>
-                                    <MdOutlineEdit onClick={() => setOpen(true)} size={20} className={styles.button} />
+                                    <MdOutlineEdit onClick={() => handleEditClick(order._id)} size={20} className={styles.button} />
                                 </td>
                             </tr>
                         ))
@@ -107,7 +117,14 @@ const OrderList = () => {
                 </tbody>
             </table>
             <Pagination />
-            <ModalEditStatus open={open} onClose={() => setOpen(false)} />
+            {selectedOrderId && (
+                <ModalEditStatus
+                open={open}
+                onClose={() => setOpen(false)}
+                orderId={selectedOrderId}
+                onStatusChange={handleStatusChange}
+              />
+            )}
 
         </div>
     )
