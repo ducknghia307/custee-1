@@ -14,9 +14,11 @@ import { logOut as logOutAction } from "../../../../redux/features/auth/authSlic
 
 
 const Navbar = () => {
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const [isIconClicked, setIsIconClicked] = useState(false);
+console.log(isIconClicked);
 
     const dropdownRef = useRef(null);
 

@@ -96,6 +96,7 @@ const EditUserPage = () => {
             const response = await axiosInstance.patch(`/api/user/${userId}`, updatedData);
             console.log("User data updated successfully", response.data);
             router.push('/dashboard/users/usermanagement');
+            showToast("Update user successfully", "success")
         } catch (error) {
             console.error("Error updating user data:", error);
         }

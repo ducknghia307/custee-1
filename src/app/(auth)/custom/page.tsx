@@ -19,7 +19,7 @@ export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
   const canvasFrontRef = useRef(null);
   const canvasBackRef = useRef(null);
-  const [sizes, setSizes] = useState({ S: "", M: "", L: "", XL: "", XXL: "" });
+  const [sizes, setSizes] = useState({ S: "0", M: "0", L: "0", XL: "0", XXL: "0", XXXL:"0" });
   const [currentView, setCurrentView] = useState("front");
   const [selectedImage, setSelectedImage] = useState("front");
   const [selectedColor, setSelectedColor] = useState("Beige");
@@ -98,12 +98,13 @@ export default function Custom() {
   }, [currentView, selectedColor]);
 
   async function createProduct(product) {
+    console.log("myPRODUCT",product)
     try {
       const response = await axiosInstance.post("/api/product", product);
-      console.log(response);
+      console.log('12312321',response);
 
       if (response.status === 200) {
-        showToast("Product created successfully", "success");
+        showToast("Add to cart successfully", "success");
       }
 
       setCartItem((prevCartItem) => ({
@@ -114,7 +115,7 @@ export default function Custom() {
       // Add the item to the cart
       const addToCartResponse = await axiosInstance.post("/api/cartItem", {
         ...cartItem,
-        productId: response.data._id, // Ensure productId is correct
+        productId: response.data.metadata._id, // Ensure productId is correct
       });
 
       console.log('addtocartresponse:::',addToCartResponse);
@@ -181,34 +182,33 @@ export default function Custom() {
     }
   };
 
-  const uploadDesignImages = (frontDataURL, backDataURL) => {
-    const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
-    const backFile = dataURLtoFile(backDataURL, "back_design.png");
-    let frontURL; // Define frontURL in the outer scope
-
-    dispatch(uploadImage("userId123", frontFile))
-      .then((response) => {
-        frontURL = response; // Store the frontURL from the response
-        console.log("Front design uploaded. Download URL:", frontURL);
-        return dispatch(uploadImage("userId123", backFile));
-      })
-      .then((backURL) => {
-        console.log("Back design uploaded. Download URL:", backURL);
-        setProduct((prevProduct) => ({
-          ...prevProduct,
-          name: productName,
-          price: totalPrice,
-          images: {
-            front: frontURL,
-            back: backURL,
-          },
-        }));
-        createProduct(product);
-      })
-      .catch((error) => {
-        console.error("Error uploading design:", error);
-      });
+  const uploadDesignImages = async (frontDataURL, backDataURL) => {
+    try {
+      const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
+      const backFile = dataURLtoFile(backDataURL, "back_design.png");
+  
+      const frontURL = await dispatch(uploadImage("userId123", frontFile));
+      console.log("Front design uploaded. Download URL:", frontURL);
+  
+      const backURL = await dispatch(uploadImage("userId123", backFile));
+      console.log("Back design uploaded. Download URL:", backURL);
+  
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        name: productName,
+        price: totalPrice,
+        images: {
+          front: frontURL,
+          back: backURL,
+        },
+      }));
+  
+      createProduct(product);
+    } catch (error) {
+      console.error("Error uploading design:", error);
+    }
   };
+  
 
   const dataURLtoFile = (dataurl, filename) => {
     const arr = dataurl.split(",");
@@ -440,7 +440,7 @@ export default function Custom() {
                   position: "absolute",
                   top: 130,
                   left: 146,
-                  border: "1px dashed blue",
+                  border: "1px dashed #b3b3ff",
                   display: currentView === "front" ? "block" : "none",
                 }}
               >
@@ -451,7 +451,7 @@ export default function Custom() {
                   position: "absolute",
                   top: 130,
                   left: 146,
-                  border: "1px dashed blue",
+                  border: "1px dashed #b3b3ff",
                   display: currentView === "back" ? "block" : "none",
                 }}
               >

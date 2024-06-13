@@ -14,78 +14,48 @@ import EmptyCartImage from "../../assets/images/cart/empty-cart.png";
 import Link from "next/link";
 import { Image, InputNumber } from "antd";
 
-interface Product {
-  _id: string;
-  userId: string;
-  name: string;
-  price: number;
-  pattern: string;
-  image: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-interface CartItem {
-  _id: string;
-  userId: string;
-  productId: Product;
-  quantityPerSize: {
-    size: string;
-    quantity: number;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export default function page() {
-  const [checkedList, setCheckedList] = useState<CartItem[]>([]);
+export default function Page() {
+  const [checkedList, setCheckedList] = useState([]);
   const [currentTotal, setCurrentTotal] = useState(0);
-  const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
+  const [cartItemList, setCartItemList] = useState([]);
+  console.log("CART", cartItemList);
 
   const userId = localStorage.getItem("userId");
 
   const fetchCartItem = async () => {
-    if (userId)
-      axiosInstance
-        .get(`/api/cartItem/user/${userId}`)
-        .then((res: any) => {
-          console.log("FETCHED: ", res.data.metadata);
-          const fetched = res.data.metadata;
-          fetched.map((item: CartItem) => {
-            return sortSize(item);
-          });
-          setCartItemList(fetched);
-        })
-        .catch((err: any) => {
-          console.log(err);
-        });
-  };
-
-  const sumQuantity = (quantityArray: any) => {
-    return quantityArray.reduce(
-      (n: any, { quantity }: { quantity: any }) => n + quantity,
-      0
-    );
-  };
-
-  const checkboxChanged = (event: any) => {
-    const checkedItem = cartItemList.find(
-      (element) => element._id == event.target.defaultValue
-    );
-    if (checkedItem) {
-      const allCheckboxes = document.querySelector("#choose-all-checkbox");
-      if (event.target.checked) {
-        setCheckedList([...checkedList, checkedItem]);
-      } else {
-        (allCheckboxes as any).checked = false;
-        const newCheckList = checkedList.filter(
-          (item) => item._id != checkedItem._id
-        );
-        setCheckedList(newCheckList);
+    if (userId) {
+      try {
+        const res = await axiosInstance.get(`/api/cartItem/user/${userId}`);
+        console.log("FETCHED: ", res.data.metadata);
+        setCartItemList(res.data.metadata);
+      } catch (err) {
+        console.log(err);
       }
     }
   };
 
-  const allCheckboxChanged = (event: any) => {
+  const sumQuantity = (quantityArray) => {
+    return quantityArray.reduce((n, { quantity }) => n + quantity, 0);
+  };
+
+  const checkboxChanged = (event) => {
+    const checkedItem = cartItemList.find(
+      (element) => element._id == event.target.value
+    );
+    if (checkedItem) {
+      const allCheckboxes = document.querySelector("#choose-all-checkbox");
+      if (event.target.checked) {
+        setCheckedList((prevCheckedList) => [...prevCheckedList, checkedItem]);
+      } else {
+        allCheckboxes.checked = false;
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id != checkedItem._id)
+        );
+      }
+    }
+  };
+
+  const allCheckboxChanged = (event) => {
     if (event.target.checked) {
       setCheckedList(cartItemList);
     } else {
@@ -94,61 +64,46 @@ export default function page() {
   };
 
   const updateTotal = () => {
-    setCurrentTotal(0);
-    checkedList.map((item) => {
-      setCurrentTotal(
-        (oldTotal) =>
-          oldTotal + sumQuantity(item.quantityPerSize) * item.productId.price
-      );
+    let total = 0;
+    checkedList.forEach((item) => {
+      total += sumQuantity(item.quantityPerSize) * item.productId.price;
     });
+    setCurrentTotal(total);
   };
 
-  const updateQuantity = async (
-    cartItemId: string,
-    size: string,
-    quantity: number
-  ) => {
-    if (quantity >= 0 && quantity < 100)
-      await axiosInstance
-        .patch(`/api/cartItem/${cartItemId}`, {
+  const updateQuantity = async (cartItemId, size, quantity) => {
+    if (quantity >= 0 && quantity < 100) {
+      try {
+        const res = await axiosInstance.patch(`/api/cartItem/${cartItemId}`, {
           size: size,
           quantity: quantity,
-        })
-        .then((res: any) => {
-          console.log("Update quantity: ", res.data);
-          fetchCartItem();
-          setCheckedList(checkedList.filter((item) => item._id !== cartItemId));
-        })
-        .catch((err: any) => {
-          console.log(err);
         });
-  };
-
-  const deleteCartItem = async (id: string) => {
-    await axiosInstance
-      .delete(`/api/cartItem/${id}`)
-      .then((res: any) => {
-        console.log("Delete cartItem: ", res.data);
-        fetchCartItem();
-      })
-      .catch((err: any) => {
+        console.log("Update quantity: ", res.data);
+        await fetchCartItem();
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id !== cartItemId)
+        );
+      } catch (err) {
         console.log(err);
-      });
+      }
+    }
   };
 
-  const sortSize = (cartItem: CartItem) => {
-    var ordering: any = {},
-      sortOrder = ["S", "M", "L", "XL", "XXL"];
-    for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
-    return cartItem.quantityPerSize.sort(function (a: any, b: any) {
-      return (
-        ordering[a.size] - ordering[b.size] || a.name.localeCompare(b.quantity)
-      );
-    });
+  const deleteCartItem = async (id) => {
+    try {
+      const res = await axiosInstance.delete(`/api/cartItem/${id}`);
+      console.log("Delete cartItem: ", res.data);
+      await fetchCartItem();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
     fetchCartItem();
+  }, []);
+
+  useEffect(() => {
     updateTotal();
   }, [checkedList]);
 
@@ -191,38 +146,49 @@ export default function page() {
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
+                console.log("123", item);
+
                 return (
                   <div
                     key={key}
-                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-40 max-h-40 pl-[20px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
+                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-40 max-h-40 pl-[10px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
                   >
-                    <div className="flex flex-row items-center gap-2 justify-start w-full text-center">
-                      <input
-                        id={`checkbox-${item._id}`}
-                        type="checkbox"
-                        className="border-gray-200 rounded text-yellow-600 cursor-pointer focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                        onChange={(event) => checkboxChanged(event)}
-                        value={item._id}
-                        checked={
-                          checkedList.find(
-                            (element) => element._id === item._id
-                          )
-                            ? true
-                            : false
-                        }
-                      />
-                      <Image width="64px" src={item.productId.image} />
-                      <p className="">{item.productId.name}</p>
+                    <div className="flex flex-row items-center w-full">
+                      <div className="flex">
+                        <input
+                          id={`checkbox-${item._id}`}
+                          type="checkbox"
+                          className="border-gray-200 rounded text-yellow-600 cursor-pointer focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                          onChange={(event) => checkboxChanged(event)}
+                          value={item._id}
+                          checked={
+                            checkedList.find(
+                              (element) => element._id === item._id
+                            )
+                              ? true
+                              : false
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center justify-center flex-row w-full">
+                        <Image width="64px" src={item.productId.images.front} />
+                        <Image width="64px" src={item.productId.images.back} />
+                        <p className="">{item.productId.name}</p>
+                      </div>
                     </div>
+
                     <div className="min-w-fit w-3/4 text-center">
                       {CurrencySplitter(item.productId.price)} &#8363;
                     </div>
                     <div
                       className={`group flex flex-col items-center min-w-fit w-1/4 text-center`}
                     >
-                      {item.quantityPerSize.map((q) => {
+                      {item.quantityPerSize.map((q, key) => {
                         return (
-                          <div className="group/size w-full flex flex-row justify-between items-center text-sm">
+                          <div
+                            key={key}
+                            className="group/size w-full flex flex-row justify-between items-center text-sm"
+                          >
                             <span
                               className={`font-extrabold flex flex-row items-center justify-between gap-2 ${
                                 q.quantity === 0
