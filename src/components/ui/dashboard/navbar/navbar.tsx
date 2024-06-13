@@ -1,5 +1,5 @@
 "use client"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import styles from "../navbar/navbar.module.css"
 import { MdOutlineNotifications } from "react-icons/md"
 import Image from "next/image"
@@ -17,10 +17,16 @@ const Navbar = () => {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
+
     const [isIconClicked, setIsIconClicked] = useState(false);
 console.log(isIconClicked);
 
     const dropdownRef = useRef(null);
+
+    const adminDropdownRef = useRef(null);
+
+    const router = useRouter();
 
     const handleIconClick = () => {
         setIsIconClicked(prev => !prev); // Đảo trạng thái của isIconClicked
@@ -31,9 +37,17 @@ console.log(isIconClicked);
         }
     };
 
+    const handleUserClick = () => {
+        setIsAdminDropdownOpen(prev => !prev);
+    };
+
     const handleOutsideClick = (e) => {
         if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
             setIsDropdownOpen(false);
+        }
+
+        if (adminDropdownRef.current && !adminDropdownRef.current.contains(e.target)) {
+            setIsAdminDropdownOpen(false);
         }
     };
 
@@ -52,8 +66,9 @@ console.log(isIconClicked);
     async function logOut() {
         try {
             const response = await axiosInstance.post("/auth/logout", {});
-            dispatch(logOutAction());
+            dispatch(logOutAction(null));
             showToast("Logged out successfully", "");
+            router.push("/login"); // Redirect to the login page after logout
         } catch (error) {
             showToast("Something went wrong", "error");
             throw error;
@@ -125,15 +140,28 @@ console.log(isIconClicked);
                     </div>
                 )}
             </div>
-            {/* <div className={styles.user}>
+
+            <div className={styles.user} onClick={handleUserClick}>
                 <Image src={logo} alt="" className={styles.userImage} />
                 <div className={styles.userDetail}>
                     <span className={styles.username}>Moni Roy</span>
                     <span className={styles.userTitle}>Administrator</span>
                 </div>
-            </div> */}
+                {isAdminDropdownOpen && (
+                    <div ref={adminDropdownRef} className={styles.adminDropdown}>
+                        <div className={styles.adminDropdownHeader}>
+                            <span>Admin Zone</span>
+                        </div>
+                        <div className={styles.adminDropdownContent}>
+                            <button className={styles.logoutButton} onClick={logOut}>
+                                Log out
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
 
-            <div className="hs-dropdown relative inline-flex">
+            {/* <div className="hs-dropdown relative inline-flex">
                 <button
                     id="hs-dropdown-with-title"
                     type="button"
@@ -172,7 +200,7 @@ console.log(isIconClicked);
                         </Link>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }
