@@ -19,11 +19,11 @@ interface Product {
   userId: string;
   name: string;
   price: number;
-  color: string;
   pattern: string;
-  image: string;
-  wordDecoration: string;
-  imageDecoration: string;
+  images: {
+    front: string;
+    back: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -141,7 +141,7 @@ export default function page() {
 
   const sortSize = (cartItem: CartItem) => {
     var ordering: any = {},
-      sortOrder = ["S", "M", "L", "XL", "XXL"];
+      sortOrder = ["S", "M", "L", "XL", "XXL", "XXXL"];
     for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
     return cartItem.quantityPerSize.sort(function (a: any, b: any) {
       return (
@@ -197,7 +197,7 @@ export default function page() {
                 return (
                   <div
                     key={key}
-                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-40 max-h-40 pl-[20px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
+                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-48 max-h-48 pl-[20px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
                   >
                     <div className="flex flex-row items-center gap-2 justify-start w-full text-center">
                       <input
@@ -214,7 +214,7 @@ export default function page() {
                             : false
                         }
                       />
-                      <Image width="64px" src={item.productId.image} />
+                      <Image width="64px" src={item.productId.images.front} />
                       <p className="">{item.productId.name}</p>
                     </div>
                     <div className="min-w-fit w-3/4 text-center">
