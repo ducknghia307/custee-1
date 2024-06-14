@@ -49,11 +49,11 @@ export default function AccountMenu() {
     {
       key: "1",
       label: (
-        <div className="flex flex-col items-start justify-center px-3 py-2">
-          <Link
-            href="/profile"
-            className="flex items-center justify-center gap-2"
-          >
+        <Link
+          href="/profile"
+          className="flex flex-col items-start justify-center px-3 py-2"
+        >
+          <div className="flex items-center justify-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -64,18 +64,18 @@ export default function AccountMenu() {
               <path d="M21.0082 3C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082ZM20 5H4V19H20V5ZM18 15V17H6V15H18ZM12 7V13H6V7H12ZM18 11V13H14V11H18ZM10 9H8V11H10V9ZM18 7V9H14V7H18Z"></path>
             </svg>
             Profile
-          </Link>
-        </div>
+          </div>
+        </Link>
       ),
     },
     {
       key: "2",
       label: (
-        <div className="flex flex-col items-start justify-center px-3 py-2">
-          <Link
-            href="/order"
-            className="flex items-center justify-center gap-2"
-          >
+        <Link
+          href="/order"
+          className="flex flex-col items-start justify-center px-3 py-2"
+        >
+          <div className="flex items-center justify-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -86,15 +86,18 @@ export default function AccountMenu() {
               <path d="M9 6H15C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6ZM7 6C7 3.23858 9.23858 1 12 1C14.7614 1 17 3.23858 17 6H20C20.5523 6 21 6.44772 21 7V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM5 8V20H19V8H5ZM9 10C9 11.6569 10.3431 13 12 13C13.6569 13 15 11.6569 15 10H17C17 12.7614 14.7614 15 12 15C9.23858 15 7 12.7614 7 10H9Z"></path>
             </svg>
             Orders
-          </Link>
-        </div>
+          </div>
+        </Link>
       ),
     },
     {
       key: "3",
       label: (
-        <div className="flex flex-col items-start justify-center px-3 py-2">
-          <Link href="/" className="flex items-center justify-center gap-2">
+        <Link
+          href="/"
+          className="flex flex-col items-start justify-center px-3 py-2"
+        >
+          <div className="flex items-center justify-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -105,18 +108,18 @@ export default function AccountMenu() {
               <path d="M5 8V20H9V8H5ZM3 7L7 2L11 7V22H3V7ZM19 16V14H16V12H19V10H17V8H19V6H15V20H19V18H17V16H19ZM14 4H20C20.5523 4 21 4.44772 21 5V21C21 21.5523 20.5523 22 20 22H14C13.4477 22 13 21.5523 13 21V5C13 4.44772 13.4477 4 14 4Z"></path>
             </svg>
             My designs
-          </Link>
-        </div>
+          </div>
+        </Link>
       ),
     },
     {
       key: "4",
       label: (
-        <div className="flex flex-col items-start justify-center px-3 py-2">
-          <Link
-            href="/changepassword"
-            className="flex items-center justify-center gap-2"
-          >
+        <Link
+          href="/changepassword"
+          className="flex flex-col items-start justify-center px-3 py-2"
+        >
+          <div className="flex items-center justify-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -127,18 +130,18 @@ export default function AccountMenu() {
               <path d="M10.7577 11.8281L18.6066 3.97919L20.0208 5.3934L18.6066 6.80761L21.0815 9.28249L19.6673 10.6967L17.1924 8.22183L15.7782 9.63604L17.8995 11.7574L16.4853 13.1716L14.364 11.0503L12.1719 13.2423C13.4581 15.1837 13.246 17.8251 11.5355 19.5355C9.58291 21.4882 6.41709 21.4882 4.46447 19.5355C2.51184 17.5829 2.51184 14.4171 4.46447 12.4645C6.17493 10.754 8.81633 10.5419 10.7577 11.8281ZM10.1213 18.1213C11.2929 16.9497 11.2929 15.0503 10.1213 13.8787C8.94975 12.7071 7.05025 12.7071 5.87868 13.8787C4.70711 15.0503 4.70711 16.9497 5.87868 18.1213C7.05025 19.2929 8.94975 19.2929 10.1213 18.1213Z"></path>
             </svg>
             Change password
-          </Link>
-        </div>
+          </div>
+        </Link>
       ),
     },
     {
       key: "5",
       label: (
-        <div className="flex flex-col items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-lg">
-          <button
-            onClick={logOut}
-            className="flex items-center justify-center gap-2"
-          >
+        <div
+          onClick={logOut}
+          className="flex flex-col items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded-lg"
+        >
+          <button className="flex items-center justify-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

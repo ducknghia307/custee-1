@@ -13,6 +13,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import EmptyCartImage from "../../assets/images/cart/empty-cart.png";
 import Link from "next/link";
 import { Image, InputNumber } from "antd";
+import Loading from "@/components/loading/Loading";
 
 interface Product {
   _id: string;
@@ -20,7 +21,10 @@ interface Product {
   name: string;
   price: number;
   pattern: string;
-  image: string;
+  images: {
+    front: string;
+    back: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,11 +44,13 @@ export default function page() {
   const [checkedList, setCheckedList] = useState<CartItem[]>([]);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userId = localStorage.getItem("userId");
 
   const fetchCartItem = async () => {
-    if (userId)
+    if (userId) {
+      setIsLoading(true);
       axiosInstance
         .get(`/api/cartItem/user/${userId}`)
         .then((res: any) => {
@@ -58,6 +64,8 @@ export default function page() {
         .catch((err: any) => {
           console.log(err);
         });
+    }
+    setIsLoading(false);
   };
 
   const sumQuantity = (quantityArray: any) => {
@@ -138,7 +146,7 @@ export default function page() {
 
   const sortSize = (cartItem: CartItem) => {
     var ordering: any = {},
-      sortOrder = ["S", "M", "L", "XL", "XXL"];
+      sortOrder = ["S", "M", "L", "XL", "XXL", "XXXL"];
     for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
     return cartItem.quantityPerSize.sort(function (a: any, b: any) {
       return (
@@ -157,6 +165,7 @@ export default function page() {
       <Navbar />
       <div className="w-full flex flex-col justify-center items-center mt-28">
         <p className={`text-3xl font-black ${dela.className}`}>CART</p>
+        {isLoading ? <Loading /> : null}
         {cartItemList.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 font-thin py-16">
             <img src={EmptyCartImage.src} alt="" className="w-36 -z-10" />
@@ -177,7 +186,7 @@ export default function page() {
             </p>
           </div>
         ) : (
-          <div className="relative w-3/4 rounded-xl flex flex-col mt-8 overflow-x-hidden overflow-y-visible">
+          <div className="relative w-3/4 rounded-xl flex flex-col mt-8 overflow-x-hidden overflow-y-auto">
             <div
               className={`w-full h-10 bg-[#784BE6]/50 ${montserrat_500.className} flex flex-row items-center justify-center`}
             >
@@ -187,14 +196,14 @@ export default function page() {
               <p className="w-3/4 text-center">Total</p>
             </div>
             <div
-              className={`w-full min-h-fit max-h-96 bg-[#F1E15B]/40 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto scrollbar scrollbar-track-violet-200 scrollbar-thumb-violet-500 active:scrollbar-thumb-violet-800
+              className={`w-full min-h-fit max-h-96 bg-[#F1E15B]/40 flex flex-col items-start justify-start overflow-x-hidden overflow-y-auto scrollbar scrollbar-track-violet-200 scrollbar-thumb-violet-500 active:scrollbar-thumb-violet-800
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
                 return (
                   <div
                     key={key}
-                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-40 max-h-40 pl-[20px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
+                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-48 max-h-48 pl-[20px] border-b border-gray-600 last:border-none overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
                   >
                     <div className="flex flex-row items-center gap-2 justify-start w-full text-center">
                       <input
@@ -211,7 +220,7 @@ export default function page() {
                             : false
                         }
                       />
-                      <Image width="64px" src={item.productId.image} />
+                      <Image width="64px" src={item.productId.images.front} />
                       <p className="">{item.productId.name}</p>
                     </div>
                     <div className="min-w-fit w-3/4 text-center">

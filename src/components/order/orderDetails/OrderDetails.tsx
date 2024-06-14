@@ -74,7 +74,11 @@ export default function OrderDetails({ order }: { order: Order }) {
           </div>
           <div className="flex flex-col items-start gap-1">
             <p className="opacity-50 text-xs">Delivery method</p>
-            <p>{order?.deliveryOptions.method} delivery</p>
+            <p>
+              {order?.deliveryOptions.method.charAt(0).toUpperCase() +
+                order.deliveryOptions.method.substring(1)}{" "}
+              delivery
+            </p>
           </div>
         </div>
       </div>

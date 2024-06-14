@@ -2,11 +2,7 @@
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import React, { useState } from "react";
-import {
-  dela,
-  montserrat_400,
-  montserrat_700,
-} from "@/assets/fonts/font";
+import { dela, montserrat_400, montserrat_700 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter";
 import { generateNumericCode } from "@/assistants/generators";
 import CheckoutProductList from "@/components/checkout/ProductList";
@@ -15,9 +11,10 @@ import CheckoutPaymentMethod from "@/components/checkout/PaymentMethod";
 import CheckoutDeliveryMethod from "@/components/checkout/DeliveryMethod";
 import CheckoutDiscount from "@/components/checkout/Discount";
 import { axiosInstance } from "@/utils/axiosInstance";
+import Loading from "@/components/loading/Loading";
 
 export default function page() {
-  const [checkoutList, setCheckoutList] = useState<any[]>([])
+  const [checkoutList, setCheckoutList] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [totalIncludingDelivery, setTotalIncludingDelivery] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -37,14 +34,16 @@ export default function page() {
   });
   const [discountValue, setDiscountValue] = useState(0);
 
-  const userId = localStorage.userId
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userId = localStorage.userId;
 
   const getDeliveryInfo = (value: any) => {
-    setDeliveryInfo(value)
-  }
+    setDeliveryInfo(value);
+  };
 
   const getProductList = (value: any) => {
-    setCheckoutList(value)
+    setCheckoutList(value);
     setTotal(0);
     value.map((item: any) => {
       setTotal(
@@ -52,22 +51,22 @@ export default function page() {
           oldTotal + sumQuantity(item.quantityPerSize) * item.productId.price
       );
     });
-  }
+  };
 
   const getPaymentMethod = (value: any) => {
-    setPaymentMethod(value)
-  }
+    setPaymentMethod(value);
+  };
 
   const getDeliveryMethod = (value: any) => {
-    setDeliveryOptions(value)
+    setDeliveryOptions(value);
     setTotalIncludingDelivery(0);
     setTotalIncludingDelivery(total + value.cost);
-  }
+  };
 
   const getDiscountValue = (value: any) => {
-    setDiscountValue(value)
+    setDiscountValue(value);
     setDiscountAmount(total * value);
-  }
+  };
 
   const sumQuantity = (quantityArray: any[]) => {
     var sum = 0;
@@ -78,81 +77,69 @@ export default function page() {
   };
 
   const getHiddenPhoneNumber = (phone: string) => {
-    const lastFourNumber = phone.slice(-4)
-    return "0" + "*****" + lastFourNumber
-  }
+    return "0 " + "*****" + phone.slice(-4, -3) + " " + phone.slice(-3);
+  };
 
   const handleCompleteOrder = async () => {
     const newOrderCode = generateNumericCode(8);
+    const packedData = {
+      order: {
+        userId: userId,
+        code: newOrderCode,
+        total:
+          totalIncludingDelivery > 0
+            ? totalIncludingDelivery - discountAmount
+            : total - discountAmount,
+        paymentMethod: paymentMethod,
+        deliveryInfo: deliveryInfo,
+        deliveryOptions: deliveryOptions,
+        discountValue: discountValue,
+      },
+      checkoutList: checkoutList,
+    };
+    sessionStorage.setItem("orderPackedData", JSON.stringify(packedData));
 
     //Data to create payment link
-    var items: any[] = []
-    checkoutList.map((item) => {
-      const newItem = {
-        name: item.productId.name,
-        price: item.productId.price,
-        quantity: sumQuantity(item.quantityPerSize)
-      }
-      items.push(newItem)
-    })
-    console.log("ITEMS: ", items.length);
-    const createPaymentLinkData = {
-      orderCode: parseInt(newOrderCode),
-      amount: totalIncludingDelivery > 0
-        ? totalIncludingDelivery - discountAmount
-        : total - discountAmount,
-      description: "Custee Order",
-      buyerName: deliveryInfo.recipientName,
-      buyerPhone: getHiddenPhoneNumber(deliveryInfo.phone),
-      buyerAddress: deliveryInfo.address,
-      items: items,
-      expiredAt: 2047403647
+    if (paymentMethod.toLowerCase().match("card")) {
+      setIsLoading(true);
+      var transactionItems: any[] = [];
+      checkoutList.map((item) => {
+        const newItem = {
+          name: item.productId.name,
+          price: item.productId.price,
+          quantity: sumQuantity(item.quantityPerSize),
+        };
+        transactionItems.push(newItem);
+      });
+      const createPaymentLinkData = {
+        orderCode: parseInt(newOrderCode),
+        amount:
+          totalIncludingDelivery > 0
+            ? totalIncludingDelivery - discountAmount
+            : total - discountAmount,
+        description: "Custee Order",
+        cancelUrl: "http://localhost:3000/cart",
+        returnUrl: "http://localhost:3000/checkout/completed",
+        buyerName: deliveryInfo.recipientName,
+        buyerPhone: getHiddenPhoneNumber(deliveryInfo.phone),
+        buyerAddress: deliveryInfo.address,
+        items: transactionItems,
+        expiredAt: Math.round(new Date().getTime() / 1000) + 5 * 60,
+      };
+      axiosInstance
+        .post("/api/payos/createPaymentLink", createPaymentLinkData)
+        .then((res) => {
+          console.log("createPaymentLinkData result: ", res.data);
+          setTimeout(() => {
+            window.location.replace(res.data.metadata.checkoutUrl);
+            setIsLoading(false);
+          }, 3000);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log("COD selected");
+      window.location.replace("/checkout/completed");
     }
-    console.log("createPaymentLinkData: ", createPaymentLinkData);
-    axiosInstance.post('/api/payos/createPaymentLink', createPaymentLinkData)
-      .then((res) => {
-        console.log("createPaymentLinkData result: ", res.data);
-      }).catch(err => console.log(err))
-
-    // await axiosInstance
-    //   .post(`/api/order`, {
-    //     userId: userId,
-    //     code: newOrderCode,
-    //     total:
-    //       totalIncludingDelivery > 0
-    //         ? totalIncludingDelivery - discountAmount
-    //         : total - discountAmount,
-    //     paymentMethod: paymentMethod,
-    //     deliveryInfo: deliveryInfo,
-    //     deliveryOptions: deliveryOptions,
-    //     discountValue: discountValue,
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //   })
-    //   .catch((err) => console.log(err));
-
-    // await axiosInstance
-    //   .get(`/api/order/code/${newOrderCode}`)
-    //   .then((res) => {
-    //     const orderId = res.data.metadata._id;
-    //     checkoutList.map((item) => {
-    //       axiosInstance
-    //         .post(`/api/orderItem`, {
-    //           productId: item.productId,
-    //           orderId: orderId,
-    //           unitPrice: item.productId.price,
-    //           quantityPerSize: item.quantityPerSize,
-    //         })
-    //         .then((res) => {
-    //           console.log(res.data);
-    //           sessionStorage.setItem("orderCode", newOrderCode);
-    //           window.location.replace("/checkout/completed");
-    //         })
-    //         .catch((err) => console.log(err));
-    //     });
-    //   })
-    //   .catch((err) => console.log(err));
   };
 
   return (
@@ -208,6 +195,7 @@ export default function page() {
               COMPLETE ORDER
             </button>
           </div>
+          {isLoading ? <Loading /> : null}
         </div>
         <Footer />
       </main>

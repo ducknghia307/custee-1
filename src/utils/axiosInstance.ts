@@ -47,7 +47,6 @@ publicAxios.interceptors.request.use(
     // }
     // console.log(config.headers);
     config.headers["Content-Type"] = "application/json";
-    console.log("Request headers before request:", config.headers);
     return config;
   },
   (error) => {

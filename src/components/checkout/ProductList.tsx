@@ -51,7 +51,7 @@ export default function CheckoutProductList({ getProductList }: any) {
                         >
                             <span className="w-full">
                                 <img
-                                    src={item.productId.image}
+                                    src={item.productId.images.front}
                                     alt=""
                                     className="w-24 mx-auto"
                                 />

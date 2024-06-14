@@ -11,11 +11,11 @@ interface Product {
   userId: string;
   name: string;
   price: number;
-  color: string;
   pattern: string;
-  image: string;
-  wordDecoration: string;
-  imageDecoration: string;
+  images: {
+    front: string;
+    back: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,6 +61,10 @@ export default function page() {
               size: "XXL",
               quantity: 1,
             },
+            {
+              size: "XXXL",
+              quantity: 1,
+            },
           ],
         })
         .then((res: any) => {
@@ -82,7 +86,7 @@ export default function page() {
       ) : (
         <div className="w-full flex items-center justify-start gap-4 px-8">
           <p className="w-min text-[8px]">
-            Default size: 1 of each size &#40;S,M,L,XL,XLL&#41;
+            Default size: 1 of each size &#40;S,M,L,XL,XXL,XXL&#41;
           </p>
           {productList.map((product) => {
             return (
@@ -91,7 +95,7 @@ export default function page() {
                 title={product.name}
                 className="w-56 mt-32 border-2 border-black flex flex-col items-center justify-center"
               >
-                <Image src={product.image} alt="" className="w-16" />
+                <Image src={product.images.front} alt="" className="w-16" />
                 <button
                   className="w-full p-1 rounded-md border border-black text-sm mx-auto hover:bg-slate-200"
                   onClick={() => {
