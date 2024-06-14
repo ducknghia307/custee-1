@@ -5,11 +5,68 @@ import Navbar from "@/components/navbar/Navbar";
 import background from "@/assets/images/thankYou/gradient01.png";
 import { dela, montserrat_500, montserrat_700 } from "@/assets/fonts/font";
 import Link from "next/link";
+import { axiosInstance } from "@/utils/axiosInstance";
 
 export default function page() {
-  const orderCode = sessionStorage.orderCode;
+  const packedData = JSON.parse(sessionStorage.orderPackedData);
+  const orderCode = packedData.order.code;
+
+  const createOrder = async () => {
+    if (packedData) {
+      await axiosInstance
+        .post(`/api/order`, packedData.order)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => console.log(err));
+
+      await axiosInstance
+        .get(`/api/order/code/${orderCode}`)
+        .then((res) => {
+          console.log("FOUND ORDER: ", res.data.metadata._id)
+          const orderId = res.data.metadata._id;
+          packedData.checkoutList.map((item: any) => {
+            axiosInstance
+              .post(`/api/orderItem`, {
+                productId: item.productId._id,
+                orderId: orderId,
+                quantityPerSize: item.quantityPerSize,
+                unitPrice: item.productId.price,
+              })
+              .then((res) => {
+                console.log("CREATE ORDER ITEM: ", res.data);
+              })
+              .catch((err) => console.log(err));
+          });
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log("Packed data: ", packedData);
+    }
+  };
+
+  const updatePaidStatus = async () => {
+    await axiosInstance
+      .get(`/api/payos/getPaymentLinkInformation/${orderCode}`)
+      .then((res) => {
+        console.log("Payment data: ", res.data);
+        if (res.data.metadata.status === "PAID") {
+          axiosInstance
+            .patch(`/api/order/paidStatus/${orderCode}`)
+            .then((res) => console.log(res.data))
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
+    console.log("Packed data: ", packedData);
     if (!orderCode) window.location.replace("/");
+    createOrder();
+    if (packedData.order.paymentMethod.toLowerCase().match("card")) {
+      updatePaidStatus();
+    }
   }, []);
 
   return (

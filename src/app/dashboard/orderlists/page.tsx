@@ -5,14 +5,17 @@ import styles from "../../../components/ui/dashboard/orderlists/orderlists.modul
 import Link from "next/link"
 import Image from "next/image"
 import { MdOutlineEdit } from "react-icons/md"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ModalEditStatus from "@/components/ui/dashboard/orderlists/modalstatus/modalstatus"
-import shirt from "../../../assets/logo/shirt.webp";
-
+import { axiosInstance } from "@/utils/axiosInstance"
 
 const OrderList = () => {
 
     const [open, setOpen] = useState<boolean>(false)
+
+    const [orders, setOrders] = useState([]);
+
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
 
     //màu test thoai
     const getStatusStyle = (status) => {
@@ -26,20 +29,43 @@ const OrderList = () => {
         };
 
         switch (status) {
-            case 'Completed':
+            case 'completed':
                 return { ...baseStyle, color: '#00B69B', backgroundColor: '#E0F2F1' };
-            case 'Processing':
+            case 'processing':
                 return { ...baseStyle, color: '#6226EF', backgroundColor: '#EDE7F6' };
-            case 'Rejected':
+            case 'cancelled':
                 return { ...baseStyle, color: '#EF3826', backgroundColor: '#FCE4EC' };
-            case 'Pending':
+            case 'pending':
                 return { ...baseStyle, color: '#FFA756', backgroundColor: '#FFF3E0' };
-            case 'Delivering':
+            case 'delivering':
                 return { ...baseStyle, color: '#6D9CF6', backgroundColor: '#E3F2FD' };
             default:
                 return {};
         }
     };
+
+    useEffect(() => {
+        const fetchTotalOrders = async () => {
+            try {
+                const response = await axiosInstance.get("/api/order");
+                console.log("Response Data:", response.data);
+                setOrders(response.data.metadata || []);
+            } catch (error) {
+                console.error("Error fetching total orders:", error);
+            }
+        };
+
+        fetchTotalOrders();
+    }, []);
+
+    const handleEditClick = (orderId) => {
+        setSelectedOrderId(orderId);
+        setOpen(true);
+    };
+
+    const handleStatusChange = (orderId, newStatus) => {
+        setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
+      };
 
 
     return (
@@ -48,105 +74,57 @@ const OrderList = () => {
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <td>ID</td>
-                        <td>NAME</td>
+                        <td>ORDER CODE</td>
+                        <td>RECIPIENT NAME</td>
+                        <td>PHONE</td>
                         <td>ADDRESS</td>
-                        <td>DATE</td>
-                        <td>AMOUNT OF ORDER</td>
-                        <td>TOTAL</td>
+                        <td>PAYMENT METHOD</td>
+                        <td>TOTAL PRICE</td>
+                        <td>SHIPPING METHOD</td>
+                        <td>SHIPPING PRICE</td>
                         <td>STATUS</td>
-                        <td>Action</td>
+                        <td>ACTION</td>
                     </tr>
                 </thead>
                 <tbody style={{ backgroundColor: "#fff" }}>
-                    <tr>
-                        <td>00001</td>
-                        <td>Christine Brooks</td>
-                        <td>089 Kutch Green Apt. 448</td>
-                        <td>04 Sep 2019</td>
-                        <td>1</td>
-                        <td>2.000.000₫</td>
-                        <td>
-                            <span style={getStatusStyle('Pending')}>
-                                Pending
-                            </span>
-                        </td>
-
-                        <td>
-                            <MdOutlineEdit onClick={() => setOpen(true)} size={5} className={styles.button} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>00001</td>
-                        <td>Christine Brooks</td>
-                        <td>089 Kutch Green Apt. 448</td>
-                        <td>04 Sep 2019</td>
-                        <td>1</td>
-                        <td>2.000.000₫</td>
-                        <td>
-                            <span style={getStatusStyle('Completed')}>
-                                Completed
-                            </span>
-                        </td>
-
-                        <td>
-                            <MdOutlineEdit onClick={() => setOpen(true)} size={5} className={styles.button} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>00001</td>
-                        <td>Christine Brooks</td>
-                        <td>089 Kutch Green Apt. 448</td>
-                        <td>04 Sep 2019</td>
-                        <td>1</td>
-                        <td>2.000.000₫</td>
-                        <td>
-                            <span style={getStatusStyle('Delivering')}>
-                                Delivering
-                            </span>
-                        </td>
-
-                        <td>
-                            <MdOutlineEdit onClick={() => setOpen(true)} size={5} className={styles.button} />
-                        </td>
-                    </tr><tr>
-                        <td>00001</td>
-                        <td>Christine Brooks</td>
-                        <td>089 Kutch Green Apt. 448</td>
-                        <td>04 Sep 2019</td>
-                        <td>1</td>
-                        <td>2.000.000₫</td>
-                        <td>
-                            <span style={getStatusStyle('Processing')}>
-                                Processing
-                            </span>
-                        </td>
-
-                        <td>
-                            <MdOutlineEdit onClick={() => setOpen(true)} size={5} className={styles.button} />
-                        </td>
-                    </tr><tr>
-                        <td>00001</td>
-                        <td>Christine Brooks</td>
-                        <td>089 Kutch Green Apt. 448</td>
-                        <td>04 Sep 2019</td>
-                        <td>1</td>
-                        <td>2.000.000₫</td>
-                        <td>
-                            <span style={getStatusStyle('Rejected')}>
-                                Rejected
-                            </span>
-                        </td>
-
-                        <td>
-                            <MdOutlineEdit onClick={() => setOpen(true)} size={5} className={styles.button} />
-                        </td>
-                    </tr>
-
+                    {orders.length > 0 ? (
+                        orders.map((order, index) => (
+                            <tr key={index}>
+                                <td>{order.code}</td>
+                                <td>{order.deliveryInfo.recipientName}</td>
+                                <td>{order.deliveryInfo.phone}</td>
+                                <td>{order.deliveryInfo.address}</td>
+                                <td>{order.paymentMethod}</td>
+                                <td>{parseInt(order.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                                <td>{order.deliveryOptions.method}</td>
+                                <td>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>                                <td>
+                                    <span style={getStatusStyle(order.status)}>
+                                        {order.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <MdOutlineEdit onClick={() => handleEditClick(order._id)} size={20} className={styles.button} />
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="10" style={{ textAlign: "center" }}>
+                                No orders found.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
             <Pagination />
-            <ModalEditStatus open={open} onClose={() => setOpen(false)} />
+            {selectedOrderId && (
+                <ModalEditStatus
+                open={open}
+                onClose={() => setOpen(false)}
+                orderId={selectedOrderId}
+                onStatusChange={handleStatusChange}
+              />
+            )}
 
         </div>
     )

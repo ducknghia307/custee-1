@@ -10,6 +10,7 @@ interface Order {
   userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -29,6 +30,34 @@ interface Order {
 export default function OrderListItemInfo({ order }: { order: Order | null }) {
   const [statusColor, setStatusColor] = useState<string>("#F3EBA0");
 
+  const getOrderStatus = () => {
+    if (order?.status.match("pending")) {
+      return (
+        <p className="text-yellow-600 hover:text-yellow-700 cursor-default">
+          PENDING
+        </p>
+      );
+    } else if (order?.status.match("delivering")) {
+      return (
+        <p className="text-sky-700 hover:text-sky-800 cursor-default">
+          IN DELIVERY
+        </p>
+      );
+    } else if (order?.status.match("completed")) {
+      return (
+        <p className="text-green-700 hover:text-green-800 cursor-default">
+          COMPLETED
+        </p>
+      );
+    } else if (order?.status.match("cancelled")) {
+      return (
+        <p className="text-red-700 hover:text-red-800 cursor-default">
+          CANCELLED
+        </p>
+      );
+    }
+  };
+
   useEffect(() => {
     if (order?.status.match("delivering")) {
       setStatusColor("#BAE6FD");
@@ -38,6 +67,7 @@ export default function OrderListItemInfo({ order }: { order: Order | null }) {
       setStatusColor("#FECACA");
     }
   }, []);
+
   return order === null ? null : (
     <div
       className={`w-full flex items-center justify-between rounded-t-lg px-4 py-2 ${montserrat_400.className}`}
@@ -60,15 +90,34 @@ export default function OrderListItemInfo({ order }: { order: Order | null }) {
       <div
         className={`flex items-center gap-16 ${dela.className} text-slate-600 text-xl`}
       >
-        <p>
-          {CurrencySplitter(order.total)}&ensp;
-          <span className="underline">đ</span>
-        </p>
-        <button
-          className={`text-blue-700 ${montserrat_400.className} text-sm hover:text-blue-900 hover:underline`}
+        <span
+          className={`${
+            order.isPaid ? "text-green-600" : ""
+          } flex items-center gap-2`}
         >
-          <Link href={`/order/details/${order.code}`}>View details</Link>
-        </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className={`${order.isPaid ? "inline" : "hidden"}`}
+          >
+            <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
+          </svg>
+          <p
+            className={`${montserrat_400.className} ${
+              order.isPaid ? "inline" : "hidden"
+            } text-xs mr-2`}
+          >
+            PAID
+          </p>
+          <p>{CurrencySplitter(order.total)}&nbsp;</p>
+          <span className="underline">đ</span>
+        </span>
+        <div className={`${montserrat_400.className} text-sm`}>
+          {getOrderStatus()}
+        </div>
       </div>
     </div>
   );

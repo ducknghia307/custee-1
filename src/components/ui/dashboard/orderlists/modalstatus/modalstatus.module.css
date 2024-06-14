@@ -70,8 +70,8 @@
     text-align: end;
     margin-top: 10px;
     font-weight: bolder;
-    margin-right: 20px;
-    font-size: 13px;
+    margin-right: 10px;
+    font-size: 16px;
 }
 
 .productList {
@@ -83,12 +83,17 @@
 
 .productListHeader {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 2fr 2fr 2fr;
     /* Adjusted to fit four columns */
     text-align: center;
+    align-items: center;
     background-color: #f2f2f2;
-    padding: 10px 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* padding: 10px 20px; */
     font-weight: bold;
+    /* justify-content: space-between;
+    display: flex; */
 }
 
 .productImage {
@@ -99,7 +104,11 @@
 
 .productRow {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 2fr 2fr 2fr;
+    /* display: flex;
+    justify-content: space-between; */
+    padding-top: 10px;
+    padding-bottom: 10px;
     /* Adjusted to fit four columns */
     align-items: center;
     text-align: center;

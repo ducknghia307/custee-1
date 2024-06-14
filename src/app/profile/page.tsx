@@ -54,7 +54,6 @@ const Profile = () => {
           address: res.data.metadata.address,
           dateOfBirth, // Initialize dateOfBirth
         });
-        console.log(res);
       })
       .catch((error) => {
         console.error(error);
