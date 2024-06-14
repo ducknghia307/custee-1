@@ -15,7 +15,7 @@ const authSlice = createSlice({
       state.token = action.payload.accessToken;
       state.userId = action.payload.id;
       state.user = action.payload.user;
-      console.log(state.user);
+      console.log(state.userId);
     },
     logOut: (state, action) => {
       state.token = "";
@@ -65,6 +65,7 @@ export const uploadImage = (userId, file) => async (dispatch) => {
       );
     });
   };
+  
   
 export const { setCredentials, logOut } = authSlice.actions;
 

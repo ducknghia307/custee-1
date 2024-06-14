@@ -13,17 +13,18 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import EmptyCartImage from "../../assets/images/cart/empty-cart.png";
 import Link from "next/link";
 import { Image, InputNumber } from "antd";
+import Loading from "@/components/loading/Loading";
 
 interface Product {
   _id: string;
   userId: string;
   name: string;
   price: number;
-  color: string;
   pattern: string;
-  image: string;
-  wordDecoration: string;
-  imageDecoration: string;
+  images: {
+    front: string;
+    back: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,11 +44,13 @@ export default function page() {
   const [checkedList, setCheckedList] = useState<CartItem[]>([]);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userId = localStorage.getItem("userId");
 
   const fetchCartItem = async () => {
-    if (userId)
+    if (userId) {
+      setIsLoading(true);
       axiosInstance
         .get(`/api/cartItem/user/${userId}`)
         .then((res: any) => {
@@ -61,35 +64,36 @@ export default function page() {
         .catch((err: any) => {
           console.log(err);
         });
+    }
+    setIsLoading(false);
   };
 
   const sumQuantity = (quantityArray: any) => {
     return quantityArray.reduce(
-      (n: any, { quantity }: { quantity: any }) => n + quantity,
+      (n: number, { quantity }: { quantity: number }) => n + quantity,
       0
     );
   };
 
   const checkboxChanged = (event: any) => {
     const checkedItem = cartItemList.find(
-      (element) => element._id == event.target.defaultValue
+      (element) => element._id == event.target.value
     );
-    if (checkedItem) {
-      const allCheckboxes = document.querySelector("#choose-all-checkbox");
+    const allCheckboxes = document.querySelector("#choose-all-checkbox") as any;
+    if (checkedItem && allCheckboxes) {
       if (event.target.checked) {
-        setCheckedList([...checkedList, checkedItem]);
+        setCheckedList((prevCheckedList) => [...prevCheckedList, checkedItem]);
       } else {
-        (allCheckboxes as any).checked = false;
-        const newCheckList = checkedList.filter(
-          (item) => item._id != checkedItem._id
+        allCheckboxes.checked = false;
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id != checkedItem._id)
         );
-        setCheckedList(newCheckList);
       }
     }
   };
 
-  const allCheckboxChanged = (event: any) => {
-    if (event.target.checked) {
+  const allCheckboxChanged = (e: any) => {
+    if (e.target.checked) {
       setCheckedList(cartItemList);
     } else {
       setCheckedList([]);
@@ -97,13 +101,11 @@ export default function page() {
   };
 
   const updateTotal = () => {
-    setCurrentTotal(0);
-    checkedList.map((item) => {
-      setCurrentTotal(
-        (oldTotal) =>
-          oldTotal + sumQuantity(item.quantityPerSize) * item.productId.price
-      );
+    let total = 0;
+    checkedList.forEach((item) => {
+      total += sumQuantity(item.quantityPerSize) * item.productId.price;
     });
+    setCurrentTotal(total);
   };
 
   const updateQuantity = async (
@@ -111,37 +113,26 @@ export default function page() {
     size: string,
     quantity: number
   ) => {
-    if (quantity >= 0 && quantity < 100)
-      await axiosInstance
-        .patch(`/api/cartItem/${cartItemId}`, {
+    if (quantity >= 0 && quantity < 100) {
+      try {
+        const res = await axiosInstance.patch(`/api/cartItem/${cartItemId}`, {
           size: size,
           quantity: quantity,
-        })
-        .then((res: any) => {
-          console.log("Update quantity: ", res.data);
-          fetchCartItem();
-          setCheckedList(checkedList.filter((item) => item._id !== cartItemId));
-        })
-        .catch((err: any) => {
-          console.log(err);
         });
-  };
-
-  const deleteCartItem = async (id: string) => {
-    await axiosInstance
-      .delete(`/api/cartItem/${id}`)
-      .then((res: any) => {
-        console.log("Delete cartItem: ", res.data);
-        fetchCartItem();
-      })
-      .catch((err: any) => {
+        console.log("Update quantity: ", res.data);
+        await fetchCartItem();
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id !== cartItemId)
+        );
+      } catch (err) {
         console.log(err);
-      });
+      }
+    }
   };
 
   const sortSize = (cartItem: CartItem) => {
     var ordering: any = {},
-      sortOrder = ["S", "M", "L", "XL", "XXL"];
+      sortOrder = ["S", "M", "L", "XL", "XXL", "XXXL"];
     for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
     return cartItem.quantityPerSize.sort(function (a: any, b: any) {
       return (
@@ -152,6 +143,9 @@ export default function page() {
 
   useEffect(() => {
     fetchCartItem();
+  }, []);
+
+  useEffect(() => {
     updateTotal();
   }, [checkedList]);
 
@@ -160,6 +154,7 @@ export default function page() {
       <Navbar />
       <div className="w-full flex flex-col justify-center items-center mt-28">
         <p className={`text-3xl font-black ${dela.className}`}>CART</p>
+        {isLoading ? <Loading /> : null}
         {cartItemList.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 font-thin py-16">
             <img src={EmptyCartImage.src} alt="" className="w-36 -z-10" />
@@ -180,7 +175,7 @@ export default function page() {
             </p>
           </div>
         ) : (
-          <div className="relative w-3/4 rounded-xl flex flex-col mt-8 overflow-x-hidden overflow-y-visible">
+          <div className="relative w-3/4 rounded-xl flex flex-col mt-8 overflow-x-hidden overflow-y-auto">
             <div
               className={`w-full h-10 bg-[#784BE6]/50 ${montserrat_500.className} flex flex-row items-center justify-center`}
             >
@@ -190,14 +185,16 @@ export default function page() {
               <p className="w-3/4 text-center">Total</p>
             </div>
             <div
-              className={`w-full min-h-fit max-h-96 bg-[#F1E15B]/40 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto scrollbar scrollbar-track-violet-200 scrollbar-thumb-violet-500 active:scrollbar-thumb-violet-800
+              className={`w-full min-h-fit max-h-96 bg-[#F1E15B]/40 flex flex-col items-start justify-start overflow-x-hidden overflow-y-auto scrollbar scrollbar-track-violet-200 scrollbar-thumb-violet-500 active:scrollbar-thumb-violet-800
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
+                console.log("123", item);
+
                 return (
                   <div
                     key={key}
-                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-40 max-h-40 pl-[20px] overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
+                    className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-48 max-h-48 pl-[20px] border-b border-gray-600 last:border-none overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
                   >
                     <div className="flex flex-row items-center gap-2 justify-start w-full text-center">
                       <input
@@ -214,18 +211,22 @@ export default function page() {
                             : false
                         }
                       />
-                      <Image width="64px" src={item.productId.image} />
+                      <Image width="64px" src={item.productId.images.front} />
                       <p className="">{item.productId.name}</p>
                     </div>
+
                     <div className="min-w-fit w-3/4 text-center">
                       {CurrencySplitter(item.productId.price)} &#8363;
                     </div>
                     <div
                       className={`group flex flex-col items-center min-w-fit w-1/4 text-center`}
                     >
-                      {item.quantityPerSize.map((q) => {
+                      {item.quantityPerSize.map((q, key) => {
                         return (
-                          <div className="group/size w-full flex flex-row justify-between items-center text-sm">
+                          <div
+                            key={key}
+                            className="group/size w-full flex flex-row justify-between items-center text-sm"
+                          >
                             <span
                               className={`font-extrabold flex flex-row items-center justify-between gap-2 ${
                                 q.quantity === 0

@@ -58,7 +58,7 @@
 .table thead tr {
     background-color: #fff;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .table thead tr:first-child td:first-child {
@@ -88,7 +88,7 @@
 }
 
 .table tbody tr td {
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .table th, .table td {
@@ -110,8 +110,8 @@
 .buttonEdit {
     padding: 2px; 
     border-radius: 5px;
-    width: 20px; 
-    height: 20px;
+    width: 25px; 
+    height: 25px;
     cursor: pointer;
     background-color: #FAFBFD;
     border: 1px solid #D5D5D5;
@@ -123,8 +123,8 @@
 .buttonDelete {
     padding: 2px; 
     border-radius: 5px;
-    width: 20px; 
-    height: 20px;
+    width: 25px; 
+    height: 25px;
     cursor: pointer;
     background-color: #FAFBFD;
     border: 1px solid #D5D5D5;
@@ -168,3 +168,8 @@
     border-radius: 14px;
 }
 
+.imageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

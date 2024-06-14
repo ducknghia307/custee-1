@@ -10,6 +10,7 @@ import Search from "@/components/ui/dashboard/search/search";
 import { useState, useEffect } from "react";
 import ModalDelete from "@/components/ui/dashboard/usermanagement/deleteUser/deleteModal";
 import { axiosInstance } from "@/utils/axiosInstance";
+import { showToast } from "@/components/toast/toast";
 
 const UserManagement = () => {
   const [selectedReason, setSelectedReason] = useState('');
@@ -45,6 +46,7 @@ const UserManagement = () => {
       await axiosInstance.patch(`/api/user/${selectedUser._id}`, { status: 'Non-Available' });
       setUsers(users.map(user => user._id === selectedUser._id ? { ...user, status: 'Non-Available' } : user));
       setOpen(false);
+      showToast("Ban user successfully","success")
     } catch (error) {
       console.error("Error banning user:", error);
     }
@@ -62,12 +64,12 @@ const UserManagement = () => {
     <div className={styles.container}>
       <h3 className={styles.h3}>User Management</h3>
       <div className={styles.top}>
-        <Link href="/dashboard/users/usermanagement/add">
+        {/* <Link href="/dashboard/users/usermanagement/add">
           <button className={styles.addButton}>
             <MdOutlineAdd />
             Add New User
           </button>
-        </Link>
+        </Link> */}
         <Search placeholder="Search for a user..." />
       </div>
       <table className={styles.table}>

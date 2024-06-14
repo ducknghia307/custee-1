@@ -1,0 +1,172 @@
+.container {
+    max-width: 90%;
+    margin: auto;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 40px;
+    padding-top: 40px;
+    background: #fff;
+    border-radius: 10px;
+    /* box-shadow: 0px 0px 20px rgba(54, 54, 54, 0.1); */
+    margin-top: 15px;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.backIcon {
+    position: absolute;
+    left: 50px;
+    cursor: pointer;
+}
+
+.headerTitle {
+    text-align: center;
+    color: #000;
+    /* margin-bottom: 10px; */
+    font-size: 20px;
+    font-weight: bolder;
+    margin-top: 15px;
+
+}
+
+.form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0 20px;
+}
+
+.inputGroup label {
+    font-weight: bold;
+    color: #606060;
+    font-size: 13px;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #000;
+    font-size: 13px;
+    background-color: #F5F6FA;
+}
+
+.sizeSelector {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.sizeSelector label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.submitButton {
+    width: 25%;  
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;  
+    display: block;  
+    padding: 8px 10px;
+    background-color: #4880FF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+    background-color: rgb(0, 111, 230);
+}
+
+
+.row {
+    display: grid;
+    /* grid-template-columns: repeat(2, 1fr); */
+    gap: 25px;
+}
+
+.inputGroup:last-child {
+    /* grid-column: 1 / -1; */
+    /* Để description và size chiếm hết 2 cột */
+}
+
+.textarea {
+    height: 100px;
+    resize: none;
+}
+
+.fileInput {
+    display: none; /* Hide the default file input */
+}
+
+.imageUploadLabel {
+    cursor: pointer;
+    width: 100px;  
+    height: 100px; 
+    border-radius: 50%;  
+    background: #EEE;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;  
+    border: 2px dashed #CCC;  
+    transition: background-color 0.3s;  
+    margin: auto; 
+}
+
+.imageUploadLabel:hover {
+    background-color: #DDD; 
+}
+
+.imagePreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 50%; 
+}
+
+.imagePlaceholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagePlaceholder i {
+    font-size: 24px; 
+}
+
+.uploadText {
+    text-align: center;
+    color: #4379EE;
+    font-size: 12px;
+    margin-top: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.uploadImage{
+    margin-bottom: 30px;
+}
+
+.uploadImageContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    justify-content: center;
+}

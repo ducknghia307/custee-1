@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 const publicAxios = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: "http://localhost:5000",
   withCredentials: true,
 });
 
@@ -47,7 +47,6 @@ publicAxios.interceptors.request.use(
     // }
     // console.log(config.headers);
     config.headers["Content-Type"] = "application/json";
-    console.log("Request headers before request:", config.headers);
     return config;
   },
   (error) => {

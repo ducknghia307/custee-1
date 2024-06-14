@@ -1,27 +1,28 @@
 "use client";
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
-import React, { useEffect, useState } from "react";
-import {
-  dela,
-  montserrat_400,
-  montserrat_600,
-  montserrat_700,
-} from "@/assets/fonts/font";
-import { axiosInstance } from "@/utils/axiosInstance";
-import { Collapse, Select } from "antd";
+import React, { useState } from "react";
+import { dela, montserrat_400, montserrat_700 } from "@/assets/fonts/font";
 import CurrencySplitter from "@/assistants/currencySpliter";
 import { generateNumericCode } from "@/assistants/generators";
-import "./style.css";
+import CheckoutProductList from "@/components/checkout/ProductList";
+import CheckoutContactDetails from "@/components/checkout/ContactDetails";
+import CheckoutPaymentMethod from "@/components/checkout/PaymentMethod";
+import CheckoutDeliveryMethod from "@/components/checkout/DeliveryMethod";
+import CheckoutDiscount from "@/components/checkout/Discount";
+import { axiosInstance } from "@/utils/axiosInstance";
+import Loading from "@/components/loading/Loading";
 
 export default function page() {
-  const [currentUser, setCurrentUser] = useState<any>({});
   const [checkoutList, setCheckoutList] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [totalIncludingDelivery, setTotalIncludingDelivery] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [editModeOn, setEditModeOn] = useState(false);
-
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [deliveryOptions, setDeliveryOptions] = useState<{
+    method: string;
+    cost: number;
+  }>({ method: "", cost: 0 });
   const [deliveryInfo, setDeliveryInfo] = useState<{
     recipientName: string;
     phone: string;
@@ -31,36 +32,20 @@ export default function page() {
     phone: "",
     address: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [deliveryOptions, setDeliveryOptions] = useState<{
-    method: string;
-    cost: number;
-  }>({ method: "", cost: 0 });
   const [discountValue, setDiscountValue] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const userId = localStorage.userId;
 
-  const getUserInfo = async () => {
-    if (userId) {
-      await axiosInstance
-        .get(`/api/user/${userId}`)
-        .then((res: any) => {
-          setCurrentUser(res.data.metadata);
-          setDeliveryInfo({
-            recipientName: res.data.metadata.username,
-            phone: res.data.metadata.phone,
-            address: res.data.metadata.address,
-          });
-        })
-        .catch((err: any) => console.log(err));
-    }
+  const getDeliveryInfo = (value: any) => {
+    setDeliveryInfo(value);
   };
 
-  const getCheckoutList = () => {
-    const list = JSON.parse(sessionStorage.checkoutList);
-    setCheckoutList(list);
+  const getProductList = (value: any) => {
+    setCheckoutList(value);
     setTotal(0);
-    list.map((item: any) => {
+    value.map((item: any) => {
       setTotal(
         (oldTotal) =>
           oldTotal + sumQuantity(item.quantityPerSize) * item.productId.price
@@ -68,22 +53,19 @@ export default function page() {
     });
   };
 
-  useEffect(() => {
-    getUserInfo();
-    getCheckoutList();
-  }, []);
-
-  const handleSelectPaymentMethod = (value: string) => {
+  const getPaymentMethod = (value: any) => {
     setPaymentMethod(value);
   };
-  const handleSelectDelivery = (value: string) => {
-    setDeliveryOptions(JSON.parse(value));
+
+  const getDeliveryMethod = (value: any) => {
+    setDeliveryOptions(value);
     setTotalIncludingDelivery(0);
-    setTotalIncludingDelivery(total + JSON.parse(value).cost);
+    setTotalIncludingDelivery(total + value.cost);
   };
-  const handleSelectDiscount = (value: string) => {
-    setDiscountValue(parseFloat(value));
-    setDiscountAmount(total * parseFloat(value));
+
+  const getDiscountValue = (value: any) => {
+    setDiscountValue(value);
+    setDiscountAmount(total * value);
   };
 
   const sumQuantity = (quantityArray: any[]) => {
@@ -94,10 +76,14 @@ export default function page() {
     return sum;
   };
 
+  const getHiddenPhoneNumber = (phone: string) => {
+    return "0 " + "*****" + phone.slice(-4, -3) + " " + phone.slice(-3);
+  };
+
   const handleCompleteOrder = async () => {
     const newOrderCode = generateNumericCode(8);
-    await axiosInstance
-      .post(`/api/order`, {
+    const packedData = {
+      order: {
         userId: userId,
         code: newOrderCode,
         total:
@@ -108,33 +94,52 @@ export default function page() {
         deliveryInfo: deliveryInfo,
         deliveryOptions: deliveryOptions,
         discountValue: discountValue,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
+      },
+      checkoutList: checkoutList,
+    };
+    sessionStorage.setItem("orderPackedData", JSON.stringify(packedData));
 
-    await axiosInstance
-      .get(`/api/order/code/${newOrderCode}`)
-      .then((res) => {
-        const orderId = res.data.metadata._id;
-        checkoutList.map((item) => {
-          axiosInstance
-            .post(`/api/orderItem`, {
-              productId: item.productId,
-              orderId: orderId,
-              unitPrice: item.productId.price,
-              quantityPerSize: item.quantityPerSize,
-            })
-            .then((res) => {
-              console.log(res.data);
-              sessionStorage.setItem("orderCode", newOrderCode);
-              window.location.replace("/checkout/completed");
-            })
-            .catch((err) => console.log(err));
-        });
-      })
-      .catch((err) => console.log(err));
+    //Data to create payment link
+    if (paymentMethod.toLowerCase().match("card")) {
+      setIsLoading(true);
+      var transactionItems: any[] = [];
+      checkoutList.map((item) => {
+        const newItem = {
+          name: item.productId.name,
+          price: item.productId.price,
+          quantity: sumQuantity(item.quantityPerSize),
+        };
+        transactionItems.push(newItem);
+      });
+      const createPaymentLinkData = {
+        orderCode: parseInt(newOrderCode),
+        amount:
+          totalIncludingDelivery > 0
+            ? totalIncludingDelivery - discountAmount
+            : total - discountAmount,
+        description: "Custee Order",
+        cancelUrl: "http://localhost:3000/cart",
+        returnUrl: "http://localhost:3000/checkout/completed",
+        buyerName: deliveryInfo.recipientName,
+        buyerPhone: getHiddenPhoneNumber(deliveryInfo.phone),
+        buyerAddress: deliveryInfo.address,
+        items: transactionItems,
+        expiredAt: Math.round(new Date().getTime() / 1000) + 5 * 60,
+      };
+      axiosInstance
+        .post("/api/payos/createPaymentLink", createPaymentLinkData)
+        .then((res) => {
+          console.log("createPaymentLinkData result: ", res.data);
+          setTimeout(() => {
+            window.location.replace(res.data.metadata.checkoutUrl);
+            setIsLoading(false);
+          }, 3000);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log("COD selected");
+      window.location.replace("/checkout/completed");
+    }
   };
 
   return (
@@ -148,311 +153,15 @@ export default function page() {
             CHECKOUT
           </p>
 
-          {/* Personal information */}
-          <div className="w-full flex justify-between items-start gap-32 px-8 py-4 rounded-lg bg-[#F1E15B]/25 text-sm">
-            <div className="w-1/3 flex flex-col gap-4">
-              <p className={`${montserrat_600.className} text-lg`}>
-                Contact details
-              </p>
-              <p
-                className="text-xs text-[#784BE6] cursor-pointer hover:underline"
-                onClick={() => {
-                  setEditModeOn(!editModeOn);
-                  if (!editModeOn)
-                    document.getElementById("first-edit")?.focus();
-                }}
-              >
-                {editModeOn ? "Confirm" : "Edit info"}
-              </p>
-            </div>
-            <div className="w-full flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <p className={`${editModeOn ? "inline" : "hidden"}`}>
-                  Recipient's name:
-                </p>
-                <input
-                  id="first-edit"
-                  type="text"
-                  value={deliveryInfo.recipientName}
-                  onChange={(e) => {
-                    setDeliveryInfo({
-                      ...deliveryInfo,
-                      recipientName: e.target.value,
-                    });
-                  }}
-                  className="rounded-xl text-xs bg-transparent border-none focus:border"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <p className={`${editModeOn ? "inline" : "hidden"}`}>
-                  Phone number:
-                </p>
-                <input
-                  type="text"
-                  value={deliveryInfo.phone}
-                  onChange={(e) => {
-                    setDeliveryInfo({
-                      ...deliveryInfo,
-                      phone: e.target.value,
-                    });
-                  }}
-                  className="rounded-xl text-xs bg-transparent border-none focus:border"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <p className={`${editModeOn ? "inline" : "hidden"}`}>
-                  Address:
-                </p>
-                <input
-                  type="text"
-                  value={deliveryInfo.address}
-                  onChange={(e) => {
-                    setDeliveryInfo({
-                      ...deliveryInfo,
-                      address: e.target.value,
-                    });
-                  }}
-                  className="rounded-xl text-xs bg-transparent border-none focus:border"
-                />
-              </div>
-            </div>
-          </div>
+          <CheckoutContactDetails getDeliveryInfo={getDeliveryInfo} />
 
-          {/* Checkout product list */}
-          <div className="w-full flex flex-col justify-center items-center rounded-t-lg bg-[#F1E15B]/25 text-sm mt-2">
-            <div
-              className={`w-full flex flex-row py-3 border-b-2 border-[#784BE6]/25 ${montserrat_600.className} text-lg`}
-            >
-              <p className="w-full text-center">Product</p>
-              <p className="w-full text-center">Price</p>
-              <p className="w-full text-center">Quantity</p>
-              <p className="w-full text-center">Total</p>
-            </div>
-            <div className="w-full flex flex-col items-center justify-center gap-1 mt-2">
-              {checkoutList.map((item: any) => {
-                return (
-                  <div
-                    key={item._id}
-                    className="w-full flex flex-row items-center justify-center"
-                  >
-                    <span className="w-full">
-                      <img
-                        src={item.productId.image}
-                        alt=""
-                        className="w-24 mx-auto"
-                      />
-                    </span>
-                    <p className="w-full text-center">
-                      {CurrencySplitter(item.productId.price)} &#8363;
-                    </p>
-                    <div className="w-full text-center flex items-center justify-center gap-4">
-                      {item.quantityPerSize.map((q: any) => {
-                        if (q.quantity > 0)
-                          return (
-                            <span
-                              key={q.size}
-                              className="flex items-center gap-1"
-                            >
-                              <p>{q.size}: </p>
-                              <p className="font-bold">{q.quantity} </p>
-                            </span>
-                          );
-                      })}
-                    </div>
-                    <p className="w-full text-center">
-                      {CurrencySplitter(
-                        item.productId.price * sumQuantity(item.quantityPerSize)
-                      )}{" "}
-                      &#8363;
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <CheckoutProductList getProductList={getProductList} />
 
-          {/* Payment method */}
-          <div className="w-full flex justify-between items-start gap-32 px-8 py-4 bg-[#F1E15B]/25 text-sm border-b-2 border-[#784BE6]">
-            <div className="w-1/3 flex flex-col gap-4">
-              <p className={`${montserrat_600.className} text-lg`}>
-                Payment method
-              </p>
-            </div>
-            <div className="w-full flex flex-row justify-between gap-4">
-              <Select
-                placeholder="Select"
-                size="small"
-                dropdownStyle={{
-                  backgroundColor: "",
-                }}
-                menuItemSelectedIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="12"
-                    height="12"
-                    fill="currentColor"
-                  >
-                    <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
-                  </svg>
-                }
-                suffixIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                    className="fill-[#784BE6]"
-                  >
-                    <path d="M12 16L6 10H18L12 16Z"></path>
-                  </svg>
-                }
-                options={[
-                  {
-                    value: "COD",
-                    label: "Cash on delivery",
-                  },
-                  {
-                    value: "Card",
-                    label: "Credit/Debit card",
-                  },
-                ]}
-                onSelect={(value: string) => handleSelectPaymentMethod(value)}
-                className={`w-1/2 ${montserrat_400.className}`}
-              ></Select>
-              <div
-                className={`${montserrat_400.className} min-w-fit text-sm flex items-center text-xs text-gray-800`}
-              >
-                {paymentMethod === "Card" ? "**** ***** ****** 7890" : null}
-              </div>
-            </div>
-          </div>
+          <CheckoutPaymentMethod getPaymentMethod={getPaymentMethod} />
 
-          {/* Delivery method */}
-          <div className="w-full flex justify-between items-start gap-32 px-8 py-4 bg-[#F1E15B]/25 text-sm border-b-2 border-[#784BE6]">
-            <div className="w-1/3 flex flex-col gap-4">
-              <p className={`${montserrat_600.className} text-lg`}>
-                Shipping agent
-              </p>
-            </div>
-            <div className="w-full flex flex-row justify-between gap-4">
-              <Select
-                placeholder="Select"
-                size="small"
-                dropdownStyle={{
-                  backgroundColor: "",
-                }}
-                menuItemSelectedIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="12"
-                    height="12"
-                    fill="currentColor"
-                  >
-                    <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
-                  </svg>
-                }
-                suffixIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                    className="fill-[#784BE6]"
-                  >
-                    <path d="M12 16L6 10H18L12 16Z"></path>
-                  </svg>
-                }
-                options={[
-                  {
-                    value: JSON.stringify({
-                      method: "ultra fast",
-                      cost: 50000,
-                    }),
-                    label: "Ultra-fast",
-                  },
-                  {
-                    value: JSON.stringify({
-                      method: "fast",
-                      cost: 30000,
-                    }),
-                    label: "Fast",
-                  },
-                  {
-                    value: JSON.stringify({
-                      method: "regular",
-                      cost: 10000,
-                    }),
-                    label: "Regular",
-                  },
-                ]}
-                onSelect={(value: string) => handleSelectDelivery(value)}
-                className={`w-1/2 ${montserrat_400.className}`}
-              ></Select>
-              <div
-                className={`${montserrat_400.className} min-w-fit text-sm flex items-center text-xs text-gray-800`}
-              >
-                {deliveryOptions.cost > 0 ? (
-                  <>{CurrencySplitter(deliveryOptions.cost)} &#8363;</>
-                ) : null}
-              </div>
-            </div>
-          </div>
+          <CheckoutDeliveryMethod getDeliveryMethod={getDeliveryMethod} />
 
-          {/* Discount */}
-          <div className="w-full flex justify-between items-start gap-32 px-8 py-4 rounded-b-lg bg-[#F1E15B]/25 text-sm border-b-2 border-[#784BE6]">
-            <div className="w-1/3 min-w-fit flex flex-col gap-4">
-              <p className={`${montserrat_600.className} text-lg`}>Coupon</p>
-            </div>
-            <div className="w-full flex flex-row justify-between gap-4">
-              <Select
-                allowClear={true}
-                placeholder="Select or type"
-                size="small"
-                dropdownStyle={{
-                  backgroundColor: "",
-                }}
-                menuItemSelectedIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="12"
-                    height="12"
-                    fill="currentColor"
-                  >
-                    <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
-                  </svg>
-                }
-                suffixIcon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                    className="fill-[#784BE6]"
-                  >
-                    <path d="M12 16L6 10H18L12 16Z"></path>
-                  </svg>
-                }
-                options={[
-                  {
-                    value: "0.1",
-                    label: "First purchase (-10%)",
-                  },
-                ]}
-                onSelect={(value: string) => handleSelectDiscount(value)}
-                className={`w-1/2 ${montserrat_400.className}`}
-              ></Select>
-              <div
-                className={`${montserrat_400.className} min-w-fit text-sm flex items-center text-xs text-gray-800`}
-              >
-                {discountAmount > 0 ? (
-                  <>- {CurrencySplitter(discountAmount)} &#8363;</>
-                ) : null}
-              </div>
-            </div>
-          </div>
+          <CheckoutDiscount getDiscountValue={getDiscountValue} total={total} />
 
           {/* Total */}
           <div
@@ -483,9 +192,10 @@ export default function page() {
               disabled={paymentMethod === "" || deliveryOptions.method === ""}
               onClick={() => handleCompleteOrder()}
             >
-              COMPLETE
+              COMPLETE ORDER
             </button>
           </div>
+          {isLoading ? <Loading /> : null}
         </div>
         <Footer />
       </main>

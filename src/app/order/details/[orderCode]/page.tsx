@@ -28,6 +28,19 @@ interface Order {
   updatedAt: Date;
 }
 
+interface OrderItem {
+  _id: string;
+  productId: any;
+  orderId: Order;
+  quantityPerSize: {
+    size: string;
+    quantity: number;
+  }[];
+  unitPrice: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export default function page({
   params,
 }: {
@@ -56,11 +69,19 @@ export default function page({
     updatedAt: new Date(),
   });
 
+  const [orderItemList, setOrderItemList] = useState<OrderItem[]>([]);
+
   const getOrderData = async () => {
     await axiosInstance
       .get(`/api/order/code/${params.orderCode}`)
       .then((res) => {
         setOrder(res.data.metadata);
+        axiosInstance
+          .get(`/api/orderItem/order/${res.data.metadata._id}`)
+          .then((res) => {
+            console.log("OrderItem fetched: ", res.data);
+            setOrderItemList(res.data.metadata);
+          });
       })
       .catch((err) => console.log(err));
   };
@@ -75,7 +96,7 @@ export default function page({
       <div
         className={`w-full flex justify-center items-center gap-8 mt-32 px-8 ${montserrat_500.className}`}
       >
-        <OrderInfo order={order} />
+        <OrderInfo order={order} orderItemList={orderItemList} />
         <OrderDetails order={order} />
       </div>
       <Footer />

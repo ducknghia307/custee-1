@@ -2,10 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axiosInstance, {
-  publicAxios,
-  setAuthToken,
-} from "../../utils/axiosInstance";
+import { publicAxios, setAuthToken } from "../../utils/axiosInstance";
 import { auth, provider } from "../../config/config"; // Import Firebase auth and provider
 import { signInWithPopup } from "firebase/auth"; // Import signInWithPopup function
 import {
@@ -114,17 +111,34 @@ export function SigninForm() {
 
   const handleLogInGoogle = async () => {
     try {
+      console.log("Attempting to sign in with Google...");
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      console.log("Sign-in result:", result);
 
-      console.log("Logged in user:", user);
+      // Send the user details to your backend
+      const response = await publicAxios.post("/auth/google_login", {
+        username: result.user.displayName,
+        email: result.user.email,
+        avatar: result.user.photoURL,
+      });
+
+      console.log("Backend response:", response);
+      console.log("Logged in user:", result.user);
       // Additional logic if needed
+      const { accessToken,user } = response.data;
+      const id = response.data.user.id
+      setAuthToken(accessToken);
+     
+
+      console.log("Login successful, token set");
+      dispatch(setCredentials({ accessToken, id, user }));
+      showToast("Login successful!", "success");
+      router.push("/");
     } catch (error) {
       console.error("Error signing in with Google:", error);
       showToast("Error signing in with Google", "error");
     }
   };
-
   return (
     <div
       style={{

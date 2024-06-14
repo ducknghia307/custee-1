@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
-import {
-  dela,
-  montserrat_400,
-  montserrat_600,
-  montserrat_700,
-} from "@/assets/fonts/font";
+import { montserrat_400, montserrat_600 } from "@/assets/fonts/font";
 import { Steps } from "antd";
 import dateFormat from "@/assistants/date.format";
 import moment from "moment";
 import "./Order.css";
+import CancelOrderModal from "./CancelOrderModal";
+import ChangeDeliveryModal from "./ChangeDeliveryModal";
+import { toast } from "react-toastify";
+import SendFeedbackModal from "./SendFeedbackModal";
+import Link from "next/link";
+import { payNowRedirect } from "./PayNowRedirect";
 
 interface Order {
   _id: string;
+  userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -29,13 +32,32 @@ interface Order {
   createdAt: Date;
   updatedAt: Date;
 }
+interface OrderItem {
+  _id: string;
+  productId: any;
+  orderId: Order;
+  quantityPerSize: {
+    size: string;
+    quantity: number;
+  }[];
+  unitPrice: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export default function OrderListItemDetails({
   order,
+  orderItemList,
 }: {
-  order: Order | null;
+  order: Order;
+  orderItemList: OrderItem[];
 }) {
   const [statusColor, setStatusColor] = useState<string>("#F9F4CE");
+  const [isCancellingOrder, setIsCancellingOrder] = useState(false);
+  const [isUpdatingDelivery, setIsUpdatingDelivery] = useState(false);
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+  const [isRedirectingToPaymentLink, setIsRedirectingToPaymentLink] =
+    useState(false);
   const estimatedDelivery = moment(order?.createdAt).add(4, "days").toDate();
 
   useEffect(() => {
@@ -45,6 +67,16 @@ export default function OrderListItemDetails({
       setStatusColor("#DCFCE7");
     } else if (order?.status.match("cancelled")) {
       setStatusColor("#FEE2E2");
+    }
+
+    if (
+      sessionStorage.updatedDeliveryInfo &&
+      sessionStorage.updatedDeliveryInfo.match("true")
+    ) {
+      toast.success(
+        `Order ${order?.code} delivery information has been successfully updated.`
+      );
+      sessionStorage.removeItem("updatedDeliveryInfo");
     }
   }, []);
 
@@ -59,48 +91,50 @@ export default function OrderListItemDetails({
   const getDeliveryStatus = (status: string) => {
     if (status.toLowerCase().match("pending")) {
       return (
-        <div className="w-full flex items-center justify-center gap-1 text-xs opacity-90">
-          <p className="min-w-fit">Waiting for order confirmation</p>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            className="mt-2"
-          >
-            <circle cx="4" cy="12" r="3">
-              <animate
-                id="spinner_qFRN"
-                begin="0;spinner_OcgL.end+0.25s"
-                attributeName="cy"
-                calcMode="spline"
-                dur="0.6s"
-                values="12;6;12"
-                keySplines=".33,.66,.66,1;.33,0,.66,.33"
-              />
-            </circle>
-            <circle cx="12" cy="12" r="3">
-              <animate
-                begin="spinner_qFRN.begin+0.1s"
-                attributeName="cy"
-                calcMode="spline"
-                dur="0.6s"
-                values="12;6;12"
-                keySplines=".33,.66,.66,1;.33,0,.66,.33"
-              />
-            </circle>
-            <circle cx="20" cy="12" r="3">
-              <animate
-                id="spinner_OcgL"
-                begin="spinner_qFRN.begin+0.2s"
-                attributeName="cy"
-                calcMode="spline"
-                dur="0.6s"
-                values="12;6;12"
-                keySplines=".33,.66,.66,1;.33,0,.66,.33"
-              />
-            </circle>
-          </svg>
+        <div className="max-w-full flex items-center justify-center gap-1 text-xs opacity-90">
+          <p className="text-wrap max-w-56 opacity-70">
+            We are figuring out the last check and preparing to deliver &nbsp;
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              className="mt-2 inline"
+            >
+              <circle cx="4" cy="12" r="3">
+                <animate
+                  id="spinner_qFRN"
+                  begin="0;spinner_OcgL.end+0.25s"
+                  attributeName="cy"
+                  calcMode="spline"
+                  dur="0.6s"
+                  values="12;6;12"
+                  keySplines=".33,.66,.66,1;.33,0,.66,.33"
+                />
+              </circle>
+              <circle cx="12" cy="12" r="3">
+                <animate
+                  begin="spinner_qFRN.begin+0.1s"
+                  attributeName="cy"
+                  calcMode="spline"
+                  dur="0.6s"
+                  values="12;6;12"
+                  keySplines=".33,.66,.66,1;.33,0,.66,.33"
+                />
+              </circle>
+              <circle cx="20" cy="12" r="3">
+                <animate
+                  id="spinner_OcgL"
+                  begin="spinner_qFRN.begin+0.2s"
+                  attributeName="cy"
+                  calcMode="spline"
+                  dur="0.6s"
+                  values="12;6;12"
+                  keySplines=".33,.66,.66,1;.33,0,.66,.33"
+                />
+              </circle>
+            </svg>
+          </p>
         </div>
       );
     } else if (status.toLowerCase().match("delivering")) {
@@ -186,17 +220,58 @@ export default function OrderListItemDetails({
   const getButtonGroup = (status: string) => {
     if (status.toLowerCase().match("pending")) {
       return (
-        <div className={`${montserrat_600.className} w-full`}>
-          <button className="text-red-500 mr-4 hover:text-red-700 hover:underline">
+        <div
+          className={`${montserrat_600.className} flex items-center justify-center gap-2 mr-4`}
+        >
+          <button
+            onClick={() => setIsCancellingOrder(true)}
+            className="text-red-500 mr-4 hover:text-red-700 hover:underline"
+          >
             Cancel order
+            <CancelOrderModal
+              orderCode={order!.code}
+              open={isCancellingOrder}
+              setOpen={setIsCancellingOrder}
+            />
           </button>
+          {order?.paymentMethod.toLowerCase().match("card") ? null : (
+            <button
+              onClick={() => {
+                payNowRedirect({
+                  order: order,
+                  items: orderItemList,
+                });
+              }}
+              className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                fill="currentColor"
+              >
+                <path d="M18.0049 6.99979H21.0049C21.5572 6.99979 22.0049 7.4475 22.0049 7.99979V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H18.0049V6.99979ZM4.00488 8.99979V18.9998H20.0049V8.99979H4.00488ZM4.00488 4.99979V6.99979H16.0049V4.99979H4.00488ZM15.0049 12.9998H18.0049V14.9998H15.0049V12.9998Z"></path>
+              </svg>
+              Pay now
+            </button>
+          )}
         </div>
       );
     } else if (status.toLowerCase().match("delivering")) {
       return (
-        <div className={`${montserrat_600.className} w-full`}>
-          <button className="text-sky-600 mr-4 hover:text-sky-700 hover:underline">
+        <div className={`${montserrat_600.className}`}>
+          <button
+            onClick={() => setIsUpdatingDelivery(true)}
+            className="text-sky-600 mr-4 hover:text-sky-700 hover:underline"
+          >
             Change delivery information
+            <ChangeDeliveryModal
+              orderCode={order!.code}
+              deliveryInfo={order!.deliveryInfo}
+              open={isUpdatingDelivery}
+              setOpen={setIsUpdatingDelivery}
+            />
           </button>
         </div>
       );
@@ -205,19 +280,10 @@ export default function OrderListItemDetails({
         <div
           className={`${montserrat_600.className} flex items-center justify-center gap-2 mr-4`}
         >
-          <button className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="currentColor"
-            >
-              <path d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26ZM12.0006 15.968L16.2473 18.3451L15.2988 13.5717L18.8719 10.2674L14.039 9.69434L12.0006 5.27502L9.96214 9.69434L5.12921 10.2674L8.70231 13.5717L7.75383 18.3451L12.0006 15.968Z"></path>
-            </svg>
-            Send feedback
-          </button>
-          <button className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white">
+          <Link
+            href="/cart"
+            className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -228,13 +294,11 @@ export default function OrderListItemDetails({
               <path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path>
             </svg>
             Buy more
-          </button>
-        </div>
-      );
-    } else if (status.toLowerCase().match("cancelled")) {
-      return (
-        <div className={`${montserrat_600.className}`}>
-          <button className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white mr-4">
+          </Link>
+          <button
+            onClick={() => setIsSendingFeedback(true)}
+            className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -242,13 +306,39 @@ export default function OrderListItemDetails({
               height="16"
               fill="currentColor"
             >
-              <path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path>
+              <path d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26ZM12.0006 15.968L16.2473 18.3451L15.2988 13.5717L18.8719 10.2674L14.039 9.69434L12.0006 5.27502L9.96214 9.69434L5.12921 10.2674L8.70231 13.5717L7.75383 18.3451L12.0006 15.968Z"></path>
             </svg>
-            Re-order
+            Send feedback
+            <SendFeedbackModal
+              orderCode={order!.code}
+              open={isSendingFeedback}
+              setOpen={setIsSendingFeedback}
+            />
           </button>
         </div>
       );
     }
+    // else if (status.toLowerCase().match("cancelled")) {
+    //   return (
+    //     <div className={`${montserrat_600.className}`}>
+    //       <Link
+    //         href="/cart"
+    //         className="px-4 py-1 flex items-center gap-2 rounded-lg bg-sky-500 hover:bg-sky-700 text-white mr-4"
+    //       >
+    //         <svg
+    //           xmlns="http://www.w3.org/2000/svg"
+    //           viewBox="0 0 24 24"
+    //           width="16"
+    //           height="16"
+    //           fill="currentColor"
+    //         >
+    //           <path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path>
+    //         </svg>
+    //         Re-order
+    //       </Link>
+    //     </div>
+    //   );
+    // }
   };
 
   return order === null ? null : (
@@ -275,6 +365,9 @@ export default function OrderListItemDetails({
                 <path d="M18.0049 6.99979H21.0049C21.5572 6.99979 22.0049 7.4475 22.0049 7.99979V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H18.0049V6.99979ZM4.00488 8.99979V18.9998H20.0049V8.99979H4.00488ZM4.00488 4.99979V6.99979H16.0049V4.99979H4.00488ZM15.0049 12.9998H18.0049V14.9998H15.0049V12.9998Z"></path>
               </svg>
               {getPaymentMethods(order.paymentMethod)}
+              <span className="text-[10px] opacity-70">
+                {order.isPaid ? "(Completed)" : ""}
+              </span>
             </span>
             <span className="flex items-center gap-2">
               <svg
@@ -294,7 +387,7 @@ export default function OrderListItemDetails({
 
           <div className="w-full flex flex-col items-start gap-2 text-xs">
             <p className="w-full text-start text-xs opacity-70">
-              Order is delivered to
+              Delivery Info
             </p>
             <p>{order.deliveryInfo.recipientName}</p>
             <p>{order.deliveryInfo.phone}</p>
@@ -312,7 +405,12 @@ export default function OrderListItemDetails({
         </div>
       </div>
 
-      <div className="w-full flex flex-col items-end justify-center gap-2 my-auto text-end">
+      <div className="w-full flex flex-row items-center justify-between gap-4 my-auto pl-4 text-end">
+        <button
+          className={`text-blue-700 ${montserrat_400.className} text-xs hover:text-blue-900 hover:underline`}
+        >
+          <Link href={`/order/details/${order.code}`}>View details</Link>
+        </button>
         {getButtonGroup(order.status)}
       </div>
     </div>
