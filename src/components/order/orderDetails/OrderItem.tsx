@@ -5,6 +5,7 @@ interface Order {
   userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -15,7 +16,7 @@ interface Order {
     method: string;
     cost: number;
   };
-  discountValue: number;
+  discountValue: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;

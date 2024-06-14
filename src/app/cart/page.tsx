@@ -201,8 +201,6 @@ export default function page() {
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
-                console.log("123", item);
-
                 return (
                   <div
                     key={key}

@@ -6,12 +6,14 @@ import OrderDetails from "@/components/order/orderDetails/OrderDetails";
 import OrderInfo from "@/components/order/orderDetails/OrderInfo";
 import { axiosInstance } from "@/utils/axiosInstance";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface Order {
   _id: string;
   userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -22,12 +24,11 @@ interface Order {
     method: string;
     cost: number;
   };
-  discountValue: number;
+  discountValue: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;
 }
-
 interface OrderItem {
   _id: string;
   productId: any;
@@ -53,6 +54,7 @@ export default function page({
     userId: "",
     code: "",
     total: 0,
+    isPaid: false,
     paymentMethod: "",
     deliveryInfo: {
       recipientName: "",
@@ -63,7 +65,7 @@ export default function page({
       method: "",
       cost: 0,
     },
-    discountValue: 0,
+    discountValue: "",
     status: "",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -86,8 +88,24 @@ export default function page({
       .catch((err) => console.log(err));
   };
 
+  const getNotifications = () => {
+    if (sessionStorage.payNowSucceeded) {
+      toast.success(
+        `You have successfully paid order ${sessionStorage.payNowSucceeded}.`
+      );
+    } else if (sessionStorage.payNowCancelled) {
+      toast.info(
+        `Aborted online payment order ${sessionStorage.payNowCancelled}.`
+      );
+    }
+    setTimeout(() => {
+      sessionStorage.clear();
+    }, 10000);
+  };
+
   useEffect(() => {
     getOrderData();
+    getNotifications();
   }, []);
 
   return (

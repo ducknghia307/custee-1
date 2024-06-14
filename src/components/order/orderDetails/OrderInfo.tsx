@@ -6,12 +6,15 @@ import OrderItemComponent from "./OrderItem";
 import CancelOrderModal from "../CancelOrderModal";
 import ChangeDeliveryModal from "../ChangeDeliveryModal";
 import SendFeedbackModal from "../SendFeedbackModal";
+import { payNowRedirect } from "../PayNowRedirect";
+import { montserrat_600 } from "@/assets/fonts/font";
 
 interface Order {
   _id: string;
   userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -22,7 +25,7 @@ interface Order {
     method: string;
     cost: number;
   };
-  discountValue: number;
+  discountValue: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -66,20 +69,75 @@ export default function OrderInfo({
     },
   ];
 
+  const getOrderStatus = () => {
+    if (order?.status.match("pending")) {
+      return (
+        <p className="text-yellow-600 hover:text-yellow-700 cursor-default">
+          PENDING
+        </p>
+      );
+    } else if (order?.status.match("delivering")) {
+      return (
+        <p className="text-sky-700 hover:text-sky-800 cursor-default">
+          IN DELIVERY
+        </p>
+      );
+    } else if (order?.status.match("completed")) {
+      return (
+        <p className="text-green-700 hover:text-green-800 cursor-default">
+          COMPLETED
+        </p>
+      );
+    } else if (order?.status.match("cancelled")) {
+      return (
+        <p className="text-red-700 hover:text-red-800 cursor-default">
+          CANCELLED
+        </p>
+      );
+    }
+  };
+
   const getButtonGroup = () => {
     if (order.status.toLowerCase() === "pending") {
       return (
-        <button
-          onClick={() => setIsCancellingOrder(true)}
-          className="text-red-500 mr-4 hover:text-red-700 hover:underline"
+        <div
+          className={`${montserrat_600.className} flex items-center justify-center gap-2 mr-4`}
         >
-          Cancel order
-          <CancelOrderModal
-            orderCode={order.code}
-            open={isCancellingOrder}
-            setOpen={setIsCancellingOrder}
-          />
-        </button>
+          <button
+            onClick={() => setIsCancellingOrder(true)}
+            className="text-red-500 mr-4 hover:text-red-700 hover:underline"
+          >
+            Cancel order
+            <CancelOrderModal
+              orderCode={order.code}
+              open={isCancellingOrder}
+              setOpen={setIsCancellingOrder}
+            />
+          </button>
+          {order?.paymentMethod.toLowerCase().match("card") ||
+          order.isPaid ? null : (
+            <button
+              onClick={() => {
+                payNowRedirect({
+                  order: order,
+                  items: orderItemList,
+                });
+              }}
+              className="px-4 py-1 flex items-center gap-2 rounded-lg bg-green-500 hover:bg-green-700 text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                fill="currentColor"
+              >
+                <path d="M18.0049 6.99979H21.0049C21.5572 6.99979 22.0049 7.4475 22.0049 7.99979V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H18.0049V6.99979ZM4.00488 8.99979V18.9998H20.0049V8.99979H4.00488ZM4.00488 4.99979V6.99979H16.0049V4.99979H4.00488ZM15.0049 12.9998H18.0049V14.9998H15.0049V12.9998Z"></path>
+              </svg>
+              Pay now
+            </button>
+          )}
+        </div>
       );
     } else if (order.status.toLowerCase() === "delivering") {
       return (

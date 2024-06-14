@@ -7,6 +7,7 @@ interface Order {
   userId: any;
   code: string;
   total: number;
+  isPaid: boolean;
   paymentMethod: string;
   deliveryInfo: {
     recipientName: string;
@@ -17,7 +18,7 @@ interface Order {
     method: string;
     cost: number;
   };
-  discountValue: number;
+  discountValue: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -25,9 +26,13 @@ interface Order {
 
 export default function OrderDetails({ order }: { order: Order }) {
   const getPaymentMethod = () => {
-    if (order?.paymentMethod.toLowerCase().match("CARD")) {
+    if (order?.paymentMethod.toLowerCase().match("card")) {
       return (
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center gap-2 ${
+            order.isPaid ? "text-green-600" : ""
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -37,7 +42,8 @@ export default function OrderDetails({ order }: { order: Order }) {
           >
             <path d="M3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979ZM20.0049 10.9998H4.00488V18.9998H20.0049V10.9998ZM20.0049 8.99979V4.99979H4.00488V8.99979H20.0049ZM14.0049 14.9998H18.0049V16.9998H14.0049V14.9998Z"></path>
           </svg>
-          Paid online
+          Paid online&nbsp;
+          {order.isPaid ? <>(Paid)</> : null}
         </div>
       );
     } else {
@@ -156,10 +162,10 @@ export default function OrderDetails({ order }: { order: Order }) {
           <div className="w-full flex justify-between">
             <p>Subtotal</p>
             <p>
-              {order?.discountValue! > 0
+              {parseFloat(order.discountValue)! > 0
                 ? CurrencySplitter(
                     order?.total! +
-                      order?.total! * order?.discountValue! -
+                      order?.total! * parseFloat(order.discountValue)! -
                       order?.deliveryOptions.cost!
                   )
                 : CurrencySplitter(
@@ -178,12 +184,14 @@ export default function OrderDetails({ order }: { order: Order }) {
           <div className="w-full flex justify-between text-xs opacity-60 border-b border-black border-dashed pb-4">
             <p>Discount</p>
             <p>
-              {order?.discountValue === 0 ? (
+              {parseFloat(order.discountValue) === 0 ? (
                 <>0&ensp;&#8363;</>
               ) : (
                 <>
-                  &#40;{order?.discountValue! * 100}%&#41; &ensp;
-                  {CurrencySplitter(order?.total! * order?.discountValue!)}
+                  &#40;{parseFloat(order.discountValue)! * 100}%&#41; &ensp;
+                  {CurrencySplitter(
+                    order?.total! * parseFloat(order.discountValue)!
+                  )}
                   &ensp;&#8363;
                 </>
               )}
