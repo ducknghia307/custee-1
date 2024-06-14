@@ -25,7 +25,7 @@ interface Order {
   };
   deliveryOptions: {
     method: string;
-    cose: number;
+    cost: number;
   };
   discountValue: string;
   status: string;
@@ -234,7 +234,8 @@ export default function OrderListItemDetails({
               setOpen={setIsCancellingOrder}
             />
           </button>
-          {order?.paymentMethod.toLowerCase().match("card") ? null : (
+          {order?.paymentMethod.toLowerCase().match("card") ||
+          order.isPaid ? null : (
             <button
               onClick={() => {
                 payNowRedirect({
@@ -366,7 +367,22 @@ export default function OrderListItemDetails({
               </svg>
               {getPaymentMethods(order.paymentMethod)}
               <span className="text-[10px] opacity-70">
-                {order.isPaid ? "(Completed)" : ""}
+                {order.isPaid ? (
+                  <span className="flex items-center gap-1 text-green-600">
+                    Paid
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      fill="currentColor"
+                    >
+                      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11.0026 16L6.75999 11.7574L8.17421 10.3431L11.0026 13.1716L16.6595 7.51472L18.0737 8.92893L11.0026 16Z"></path>
+                    </svg>
+                  </span>
+                ) : (
+                  ""
+                )}
               </span>
             </span>
             <span className="flex items-center gap-2">
@@ -397,7 +413,7 @@ export default function OrderListItemDetails({
 
         <div className="w-full flex flex-col items-start gap-2 text-sm">
           <p className="w-full text-center text-xs opacity-70 mb-2">
-            Order delivery status
+            Order status details
           </p>
           <div className="w-full flex items-center justify-center">
             {getDeliveryStatus(order.status)}
@@ -409,7 +425,9 @@ export default function OrderListItemDetails({
         <button
           className={`text-blue-700 ${montserrat_400.className} text-xs hover:text-blue-900 hover:underline`}
         >
-          <Link href={`/order/details/${order.code}`}>View details</Link>
+          {order.status !== "cancelled" ? (
+            <Link href={`/order/details/${order.code}`}>View details</Link>
+          ) : null}
         </button>
         {getButtonGroup(order.status)}
       </div>

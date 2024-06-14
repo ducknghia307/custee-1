@@ -141,6 +141,18 @@ export default function page() {
     });
   };
 
+  const deleteCartItem = async (id: string) => {
+    await axiosInstance
+      .delete(`/api/cartItem/${id}`)
+      .then((res: any) => {
+        console.log("Delete cartItem: ", res.data);
+        fetchCartItem();
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     fetchCartItem();
   }, []);
@@ -189,8 +201,6 @@ export default function page() {
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
-                console.log("123", item);
-
                 return (
                   <div
                     key={key}

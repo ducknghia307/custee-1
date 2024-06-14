@@ -75,10 +75,10 @@ export default function CheckoutDeliveryMethod({ getDeliveryMethod }: any) {
             },
             {
               value: JSON.stringify({
-                method: "no ship",
+                method: "free ship",
                 cost: 0,
               }),
-              label: "No shipping",
+              label: "Free Ship",
             },
           ]}
           onSelect={(value: string) => handleSelectDelivery(value)}

@@ -97,6 +97,7 @@ export default function page() {
       },
       checkoutList: checkoutList,
     };
+    console.log("Data: ", packedData);
     sessionStorage.setItem("orderPackedData", JSON.stringify(packedData));
 
     //Data to create payment link
@@ -180,20 +181,31 @@ export default function page() {
             </div>
           </div>
 
-          <div className="w-full mt-4 flex items-center justify-end gap-8">
-            <p
-              className={`${montserrat_400.className} text-[#784BE6] text-sm cursor-pointer hover:underline`}
-              onClick={() => window.location.replace("/cart")}
-            >
-              Cancel
+          <div className="w-full mt-4 flex items-center justify-between">
+            <p className="w-1/2 text-xs opacity-70">
+              * Please make sure you have provided your phone number and the
+              address that you would love to receive your shirts by.
             </p>
-            <button
-              className={`px-10 py-4 bg-[#784BE6] ${montserrat_700.className} text-white rounded-full hover:bg-[#4317B0] disabled:opacity-70 disabled:bg-gray-300 disabled:cursor-not-allowed`}
-              disabled={paymentMethod === "" || deliveryOptions.method === ""}
-              onClick={() => handleCompleteOrder()}
-            >
-              COMPLETE ORDER
-            </button>
+            <div className="flex items-center gap-4 ">
+              <p
+                className={`${montserrat_400.className} text-[#784BE6] text-sm cursor-pointer hover:underline`}
+                onClick={() => window.location.replace("/cart")}
+              >
+                Cancel
+              </p>
+              <button
+                className={`px-10 py-4 bg-[#784BE6] ${montserrat_700.className} min-w-fit text-white rounded-full hover:bg-[#4317B0] disabled:opacity-70 disabled:bg-gray-300 disabled:cursor-not-allowed`}
+                disabled={
+                  paymentMethod === "" ||
+                  deliveryOptions.method === "" ||
+                  deliveryInfo.phone === "" ||
+                  deliveryInfo.address === ""
+                }
+                onClick={() => handleCompleteOrder()}
+              >
+                COMPLETE ORDER
+              </button>
+            </div>
           </div>
           {isLoading ? <Loading /> : null}
         </div>
