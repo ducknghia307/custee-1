@@ -68,16 +68,19 @@ export default function page() {
     setIsLoading(false);
   };
 
-  const sumQuantity = (quantityArray) => {
-    return quantityArray.reduce((n, { quantity }) => n + quantity, 0);
+  const sumQuantity = (quantityArray: any) => {
+    return quantityArray.reduce(
+      (n: number, { quantity }: { quantity: number }) => n + quantity,
+      0
+    );
   };
 
-  const checkboxChanged = (event) => {
+  const checkboxChanged = (event: any) => {
     const checkedItem = cartItemList.find(
       (element) => element._id == event.target.value
     );
-    if (checkedItem) {
-      const allCheckboxes = document.querySelector("#choose-all-checkbox");
+    const allCheckboxes = document.querySelector("#choose-all-checkbox") as any;
+    if (checkedItem && allCheckboxes) {
       if (event.target.checked) {
         setCheckedList((prevCheckedList) => [...prevCheckedList, checkedItem]);
       } else {
@@ -89,8 +92,8 @@ export default function page() {
     }
   };
 
-  const allCheckboxChanged = (event) => {
-    if (event.target.checked) {
+  const allCheckboxChanged = (e: any) => {
+    if (e.target.checked) {
       setCheckedList(cartItemList);
     } else {
       setCheckedList([]);
@@ -105,7 +108,11 @@ export default function page() {
     setCurrentTotal(total);
   };
 
-  const updateQuantity = async (cartItemId, size, quantity) => {
+  const updateQuantity = async (
+    cartItemId: string,
+    size: string,
+    quantity: number
+  ) => {
     if (quantity >= 0 && quantity < 100) {
       try {
         const res = await axiosInstance.patch(`/api/cartItem/${cartItemId}`, {
