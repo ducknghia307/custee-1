@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["firebasestorage.googleapis.com","lh3.googleusercontent.com"], // Add your Firebase Storage domain here
+    domains: ["firebasestorage.googleapis.com","lh3.googleusercontent.com", 'hrcwelive.com', 'images-cdn.ubuy.co.id', ], // Add your Firebase Storage domain here
   },
   webpack: (config) => {
     config.externals.push({

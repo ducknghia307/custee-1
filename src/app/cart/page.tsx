@@ -68,32 +68,28 @@ export default function page() {
     setIsLoading(false);
   };
 
-  const sumQuantity = (quantityArray: any) => {
-    return quantityArray.reduce(
-      (n: any, { quantity }: { quantity: any }) => n + quantity,
-      0
-    );
+  const sumQuantity = (quantityArray) => {
+    return quantityArray.reduce((n, { quantity }) => n + quantity, 0);
   };
 
-  const checkboxChanged = (event: any) => {
+  const checkboxChanged = (event) => {
     const checkedItem = cartItemList.find(
-      (element) => element._id == event.target.defaultValue
+      (element) => element._id == event.target.value
     );
     if (checkedItem) {
       const allCheckboxes = document.querySelector("#choose-all-checkbox");
       if (event.target.checked) {
-        setCheckedList([...checkedList, checkedItem]);
+        setCheckedList((prevCheckedList) => [...prevCheckedList, checkedItem]);
       } else {
-        (allCheckboxes as any).checked = false;
-        const newCheckList = checkedList.filter(
-          (item) => item._id != checkedItem._id
+        allCheckboxes.checked = false;
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id != checkedItem._id)
         );
-        setCheckedList(newCheckList);
       }
     }
   };
 
-  const allCheckboxChanged = (event: any) => {
+  const allCheckboxChanged = (event) => {
     if (event.target.checked) {
       setCheckedList(cartItemList);
     } else {
@@ -102,46 +98,29 @@ export default function page() {
   };
 
   const updateTotal = () => {
-    setCurrentTotal(0);
-    checkedList.map((item) => {
-      setCurrentTotal(
-        (oldTotal) =>
-          oldTotal + sumQuantity(item.quantityPerSize) * item.productId.price
-      );
+    let total = 0;
+    checkedList.forEach((item) => {
+      total += sumQuantity(item.quantityPerSize) * item.productId.price;
     });
+    setCurrentTotal(total);
   };
 
-  const updateQuantity = async (
-    cartItemId: string,
-    size: string,
-    quantity: number
-  ) => {
-    if (quantity >= 0 && quantity < 100)
-      await axiosInstance
-        .patch(`/api/cartItem/${cartItemId}`, {
+  const updateQuantity = async (cartItemId, size, quantity) => {
+    if (quantity >= 0 && quantity < 100) {
+      try {
+        const res = await axiosInstance.patch(`/api/cartItem/${cartItemId}`, {
           size: size,
           quantity: quantity,
-        })
-        .then((res: any) => {
-          console.log("Update quantity: ", res.data);
-          fetchCartItem();
-          setCheckedList(checkedList.filter((item) => item._id !== cartItemId));
-        })
-        .catch((err: any) => {
-          console.log(err);
         });
-  };
-
-  const deleteCartItem = async (id: string) => {
-    await axiosInstance
-      .delete(`/api/cartItem/${id}`)
-      .then((res: any) => {
-        console.log("Delete cartItem: ", res.data);
-        fetchCartItem();
-      })
-      .catch((err: any) => {
+        console.log("Update quantity: ", res.data);
+        await fetchCartItem();
+        setCheckedList((prevCheckedList) =>
+          prevCheckedList.filter((item) => item._id !== cartItemId)
+        );
+      } catch (err) {
         console.log(err);
-      });
+      }
+    }
   };
 
   const sortSize = (cartItem: CartItem) => {
@@ -157,6 +136,9 @@ export default function page() {
 
   useEffect(() => {
     fetchCartItem();
+  }, []);
+
+  useEffect(() => {
     updateTotal();
   }, [checkedList]);
 
@@ -200,6 +182,8 @@ export default function page() {
              ${montserrat_500.className}`}
             >
               {cartItemList.map((item, key) => {
+                console.log("123", item);
+
                 return (
                   <div
                     key={key}
@@ -223,15 +207,19 @@ export default function page() {
                       <Image width="64px" src={item.productId.images.front} />
                       <p className="">{item.productId.name}</p>
                     </div>
+
                     <div className="min-w-fit w-3/4 text-center">
                       {CurrencySplitter(item.productId.price)} &#8363;
                     </div>
                     <div
                       className={`group flex flex-col items-center min-w-fit w-1/4 text-center`}
                     >
-                      {item.quantityPerSize.map((q) => {
+                      {item.quantityPerSize.map((q, key) => {
                         return (
-                          <div className="group/size w-full flex flex-row justify-between items-center text-sm">
+                          <div
+                            key={key}
+                            className="group/size w-full flex flex-row justify-between items-center text-sm"
+                          >
                             <span
                               className={`font-extrabold flex flex-row items-center justify-between gap-2 ${
                                 q.quantity === 0

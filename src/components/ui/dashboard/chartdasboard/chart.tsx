@@ -2,121 +2,126 @@
 
 import styles from "../chartdasboard/chart.module.css"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MdCalendarMonth, MdErrorOutline, MdLogout, MdOutlineFileDownload } from "react-icons/md";
-import React, { useState } from 'react';
+import { MdCalendarMonth, MdErrorOutline, MdOutlineFileDownload } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-const data = [
-    {
-        name: 'Jan',
-        users: 4000,
-        orders: 2400,
-        sales: 1000,
-        pending: 2000
-    },
-    {
-        name: 'Feb',
-        users: 3000,
-        orders: 1398,
-        sales: 2000,
-        pending: 3000
-    },
-    {
-        name: 'Mar',
-        users: 2000,
-        orders: 9800,
-        sales: 1500,
-        pending: 2300
-    },
-    {
-        name: 'Apr',
-        users: 2780,
-        orders: 3908,
-        sales: 1088,
-        pending: 2020
-    },
-    {
-        name: 'May',
-        users: 1890,
-        orders: 4800,
-        sales: 3400,
-        pending: 3000
-    },
-    {
-        name: 'Jun',
-        users: 2390,
-        orders: 3800,
-        sales: 3567,
-        pending: 1233
-    },
-    {
-        name: 'Jul',
-        users: 3490,
-        orders: 4300,
-        sales: 3675,
-        pending: 3043
-    },
-    {
-        name: 'Aug',
-        users: 2390,
-        orders: 3800,
-        sales: 1233,
-        pending: 7687
-    },
-    {
-        name: 'Sep',
-        users: 3490,
-        orders: 4300,
-        sales: 1246,
-        pending: 3455
-    },
-    {
-        name: 'Oct',
-        users: 4000,
-        orders: 2400,
-        sales: 1239,
-        pending: 9097
-    },
-    {
-        name: 'Nov',
-        users: 3000,
-        orders: 1398,
-        sales: 1239,
-        pending: 5423
-    },
-    {
-        name: 'Dec',
-        users: 3490,
-        orders: 4300,
-        sales: 1567,
-        pending: 5423
-    },
-];
+import { axiosInstance } from "@/utils/axiosInstance";
+import { Parser } from 'json2csv';
 
 const ChartDashboard = () => {
-
+    const [data, setData] = useState([]);
     const [dateRange, setDateRange] = useState([null, null]);
     const [dateRangeString, setDateRangeString] = useState('');
     const [startDate, endDate] = dateRange;
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const usersResponse = await axiosInstance.get("/api/user");
+                const ordersResponse = await axiosInstance.get("/api/order");
+
+                console.log("Users Response:", usersResponse.data);
+                console.log("Orders Response:", ordersResponse.data);
+
+                const users = usersResponse.data.metadata?.users || [];
+                const orders = ordersResponse.data.metadata || [];
+
+                let processedData;
+
+                // If both startDate and endDate are selected, process the data accordingly
+                if (startDate && endDate) {
+                    processedData = processChartData(users, orders, startDate, endDate);
+                } else {
+                    processedData = processChartData(users, orders);
+                }
+
+                setData(processedData);
+
+                console.log("Processed Data:", processedData);
+            } catch (error) {
+                console.error("Error fetching chart data:", error);
+            }
+        };
+
+        fetchData();
+    }, [startDate, endDate]);
+
+    const processChartData = (users, orders, startDate = null, endDate = null) => {
+        const monthlyData = {};
+
+        const isInRange = (date) => {
+            if (!startDate && !endDate) return true;
+            const d = new Date(date);
+            if (startDate && endDate) {
+                return d >= startDate && d <= endDate;
+            }
+            return false;
+        };
+
+        users.forEach(user => {
+            const date = new Date(user.createdAt);
+            if (!isInRange(date)) return;
+            const month = date.toLocaleString('default', { month: 'short' });
+            if (!monthlyData[month]) {
+                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 };
+            }
+            monthlyData[month].totalUsers += 1;
+        });
+
+        orders.forEach(order => {
+            const date = new Date(order.createdAt);
+            if (!isInRange(date)) return;
+            const month = date.toLocaleString('default', { month: 'short' });
+            if (!monthlyData[month]) {
+                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 };
+            }
+            monthlyData[month].totalOrders += 1;
+            if (order.status === "pending") {
+                monthlyData[month].totalPending += 1;
+            }
+        });
+
+        // Sort data by month
+        const sortedMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const sortedData = sortedMonths.map(month => monthlyData[month] || { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 });
+
+        return sortedData;
+    };
 
     const handleDateRangeChange = (update) => {
         setDateRange(update);
-        const startMonth = update[0]?.getMonth() + 1;
-        const startYear = update[0]?.getFullYear();
-
-        if (update[1]) {
+        if (update[0] && update[1]) {
+            const startMonth = update[0]?.getMonth() + 1;
+            const startYear = update[0]?.getFullYear();
             const endMonth = update[1]?.getMonth() + 1;
             const endYear = update[1]?.getFullYear();
             const rangeString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
             setDateRangeString(rangeString);
         } else {
-            const monthString = `${startMonth}/${startYear}`;
-            setDateRangeString(monthString);
+            setDateRangeString(''); // Clear date range string if only one date is selected
         }
     };
 
+    const handleExport = () => {
+        const fields = ['month', 'totalUsers', 'totalOrders', 'totalSales', 'totalPending'];
+        const opts = { fields };
+        try {
+            const parser = new Parser(opts);
+            const csv = parser.parse(data);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "chart_data.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -130,9 +135,9 @@ const ChartDashboard = () => {
                         onChange={handleDateRangeChange}
                         dateFormat="MM/yyyy"
                         showMonthYearPicker
-                        customInput={<button className={styles.button}><MdCalendarMonth size={18}/> {dateRangeString}</button>}
+                        customInput={<button className={styles.button}><MdCalendarMonth size={18} /> {dateRangeString || "Select Date Range"}</button>}
                     />
-                    <button className={styles.button}>Export <MdOutlineFileDownload /></button>
+                    <button className={styles.button} onClick={handleExport}>Export <MdOutlineFileDownload /></button>
                 </div>
             </div>
             <ResponsiveContainer width="100%" height="100%">
@@ -148,18 +153,18 @@ const ChartDashboard = () => {
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" style={{ fontSize: '10px' }} />
+                    <XAxis dataKey="month" style={{ fontSize: '10px' }} />
                     <YAxis style={{ fontSize: '10px' }} />
                     <Tooltip contentStyle={{ fontSize: '13px', fontWeight: 500 }} />
                     <Legend wrapperStyle={{ fontSize: '13px', fontWeight: 500 }} />
-                    <Line type="monotone" dataKey="orders" stroke="#8884d8" />
-                    {/* activeDot={{ r: 6 }} */}
-                    <Line type="monotone" dataKey="users" stroke="#82ca9d" />
-                    <Line type="monotone" dataKey="sales" stroke="violet" />
-                    <Line type="monotone" dataKey="pending" stroke="#FF6A6A" />
+                    <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" />
+                    <Line type="monotone" dataKey="totalUsers" stroke="#82ca9d" />
+                    <Line type="monotone" dataKey="totalSales" stroke="violet" />
+                    <Line type="monotone" dataKey="totalPending" stroke="#FF6A6A" />
                 </LineChart>
             </ResponsiveContainer>
         </div>
     )
 }
-export default ChartDashboard
+
+export default ChartDashboard;
