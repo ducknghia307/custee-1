@@ -69,8 +69,12 @@ export default function page() {
         })
         .then((res: any) => {
           console.log("New cartItem: ", res.data.metadata);
+          toast("Added to cart !");
         })
-        .catch((err: any) => console.log(err));
+        .catch((err: any) => {
+          console.log(err);
+          toast.error("Failed to add to cart!");
+        });
     }
   };
 
@@ -86,7 +90,7 @@ export default function page() {
       ) : (
         <div className="w-full flex items-center justify-start gap-4 px-8">
           <p className="w-min text-[8px]">
-            Default size: 1 of each size &#40;S,M,L,XL,XXL,XXL&#41;
+            Default size: 1 of each size &#40;S,M,L,XL,XXL,XXXL&#41;
           </p>
           {productList.map((product) => {
             return (
@@ -100,7 +104,6 @@ export default function page() {
                   className="w-full p-1 rounded-md border border-black text-sm mx-auto hover:bg-slate-200"
                   onClick={() => {
                     addToCart(product._id);
-                    toast("Added to cart !");
                   }}
                 >
                   Add to cart
