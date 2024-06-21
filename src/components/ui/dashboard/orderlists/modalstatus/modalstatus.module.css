@@ -16,7 +16,7 @@
     padding: 20px;
     border-radius: 10px;
     width: 80%;
-    max-width: 600px;
+    max-width: 820px;
     position: relative;
     border: 1.5px solid #000;
 }
@@ -63,7 +63,7 @@
 .orderInfo p,
 .productRow {
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .totalPrice {
@@ -71,7 +71,7 @@
     margin-top: 10px;
     font-weight: bolder;
     margin-right: 10px;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .productList {
@@ -85,7 +85,7 @@
 
 .productListHeader {
     display: grid;
-    grid-template-columns: 2fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 1fr;
     /* Adjusted to fit four columns */
     text-align: center;
     align-items: center;
@@ -96,6 +96,7 @@
     font-weight: bold;
     /* justify-content: space-between;
     display: flex; */
+    font-size: 18px;
 }
 
 .productImage {
@@ -106,7 +107,7 @@
 
 .productRow {
     display: grid;
-    grid-template-columns: 2fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 1fr;
     /* display: flex;
     justify-content: space-between; */
     padding-top: 10px;
@@ -126,7 +127,7 @@
 }
 
 .productRow span {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
 }
 
@@ -160,3 +161,17 @@
     cursor: pointer;
 }
 
+.sizeSpan {
+    /* display: inline-block; */
+    padding: 5px;
+    border-radius: 5px;
+    margin: 2px 0;
+    border: 1px solid #ddd;
+}
+
+.quantitySpan{
+    padding: 5px;
+    border-radius: 5px;
+    margin: 2px 0;
+    border: 1px solid #ddd;
+}

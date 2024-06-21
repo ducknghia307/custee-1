@@ -1,6 +1,5 @@
 "use client"
 
-import Pagination from "@/components/ui/dashboard/pagination/pagination"
 import styles from "../../../components/ui/dashboard/orderlists/orderlists.module.css"
 import Link from "next/link"
 import Image from "next/image"
@@ -8,6 +7,7 @@ import { MdOutlineEdit } from "react-icons/md"
 import { useEffect, useState } from "react"
 import ModalEditStatus from "@/components/ui/dashboard/orderlists/modalstatus/modalstatus"
 import { axiosInstance } from "@/utils/axiosInstance"
+import PaginationOrder from "@/components/ui/dashboard/paginationorder/paginationorder"
 
 const OrderList = () => {
 
@@ -16,6 +16,9 @@ const OrderList = () => {
     const [orders, setOrders] = useState([]);
 
     const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 10;
 
     //màu test thoai
     const getStatusStyle = (status) => {
@@ -65,8 +68,16 @@ const OrderList = () => {
 
     const handleStatusChange = (orderId, newStatus) => {
         setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
-      };
+    };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const indexOfLastOrder = currentPage * ordersPerPage;
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+    const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+    const totalPages = Math.ceil(orders.length / ordersPerPage);
 
     return (
         <div className={styles.container}>
@@ -87,8 +98,8 @@ const OrderList = () => {
                     </tr>
                 </thead>
                 <tbody style={{ backgroundColor: "#fff" }}>
-                    {orders.length > 0 ? (
-                        orders.map((order, index) => (
+                    {currentOrders.length > 0 ? (
+                        currentOrders.map((order, index) => (
                             <tr key={index}>
                                 <td>{order.code}</td>
                                 <td>{order.deliveryInfo.recipientName}</td>
@@ -116,14 +127,18 @@ const OrderList = () => {
                     )}
                 </tbody>
             </table>
-            <Pagination />
+            <PaginationOrder 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={handlePageChange} 
+            />
             {selectedOrderId && (
                 <ModalEditStatus
-                open={open}
-                onClose={() => setOpen(false)}
-                orderId={selectedOrderId}
-                onStatusChange={handleStatusChange}
-              />
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    orderId={selectedOrderId}
+                    onStatusChange={handleStatusChange}
+                />
             )}
 
         </div>

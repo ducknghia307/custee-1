@@ -3,6 +3,16 @@ import styles from "../modalstatus/modalstatus.module.css";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
+import { showToast } from "@/components/toast/toast";
+
+// const sizeColors = {
+//   S: "#FFEBEE",
+//   M: "#E3F2FD",
+//   L: "#E8F5E9",
+//   XL: "#FFFDE7",
+//   XXL: "#F3E5F5",
+//   XXXL: "rgb(255 198 198)",
+// };
 
 const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
   const [order, setOrder] = useState(null);
@@ -36,7 +46,6 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
     }
   };
 
-  
   const getButtonStyle = (status) => {
     const baseStyle = {
       padding: "5px 10px",
@@ -46,7 +55,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
       display: "inline-block",
       fontWeight: "600",
     };
-  
+
     switch (status) {
       case "processing":
         return { ...baseStyle, color: "#6226EF", backgroundColor: "#EDE7F6" };
@@ -60,7 +69,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
         return baseStyle;
     }
   };
-  
+
   const renderActionButtons = (status) => {
     switch (status) {
       case "pending":
@@ -95,6 +104,8 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
       await axiosInstance.put(`/api/order/${orderId}`, { status: newStatus });
       setOrder({ ...order, status: newStatus });
       onStatusChange(orderId, newStatus);  // Gọi hàm callback sau khi cập nhật trạng thái thành công
+
+      showToast("Change status successful", "success");
     } catch (error) {
       console.error("Error updating order status:", error);
     }
@@ -117,7 +128,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
       try {
         const response = await axiosInstance.get(`/api/orderItem/order/${orderId}`);
         console.log(response.data.metadata);
-        setOrderItems(response.data.metadata); 
+        setOrderItems(response.data.metadata);
       } catch (error) {
         console.error("Error fetching order items:", error);
         setError(error.message || "Unknown error");
@@ -191,23 +202,25 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
         </div>
         <div className={styles.productList}>
           <div className={styles.productListHeader}>
-            {/* <span>Image</span> */}
+            <span>Image</span>
             <span>Product</span>
             <span>Unit Price</span>
-            <span>Amount</span>
+            <span>Size</span>
+            <span>Quantity</span>
+            {/* <span>Amount</span> */}
             {/* <span>Total</span> */}
             <span>Shipping Price</span>
           </div>
           {orderItems && orderItems.length > 0 ? (
             orderItems.map((item, index) => (
               <div key={index} className={styles.productRow}>
-                {/* <div className={styles.productDetail}>
+                <div className={styles.productDetail}>
                   <Image width={40} height={40} src={item.productId.images.front} alt={item.productId.name} className={styles.productImage} objectFit="contain"/>
                   <Image width={40} height={40} src={item.productId.images.back} alt={item.productId.name} className={styles.productImage} objectFit="contain"/>
-                </div> */}
-                <span >{item.productId.name}</span>
+                </div>
+                <span>{item.productId.name}</span>
                 <span>{parseInt(item.unitPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
-                <span>
+                {/* <span>
                   {item.quantityPerSize.map((q, index) => (
                     q.quantity > 0 && (
                       <div key={index}>
@@ -215,6 +228,31 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
                       </div>
                     )
                   ))}
+                </span> */}
+                <span>
+                  {/* {item.quantityPerSize.map((q, index) => (
+                    q.quantity > 0 && (
+                      <div key={index} style={{ backgroundColor: sizeColors[q.size] || "#fff" }} className={styles.sizeSpan}>
+                        {q.size}
+                      </div>
+                    )
+                  ))} */}
+                  {item.quantityPerSize.map((q, index) => (
+                q.quantity > 0 && (
+                  <div key={index}>
+                    {q.size}
+                  </div>
+                )
+              ))}
+                </span>
+                <span>
+              {item.quantityPerSize.map((q, index) => (
+                q.quantity > 0 && (
+                  <div key={index}>
+                    {q.quantity}
+                  </div>
+                )
+              ))}
                 </span>
                 {/* <span>{(item.unitPrice * item.quantityPerSize.reduce((total, q) => total + q.quantity, 0)).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span> */}
                 <span>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>

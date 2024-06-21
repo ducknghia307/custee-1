@@ -64,7 +64,7 @@ const ChartDashboard = () => {
             if (!isInRange(date)) return;
             const month = date.toLocaleString('default', { month: 'short' });
             if (!monthlyData[month]) {
-                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 };
+                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 };
             }
             monthlyData[month].totalUsers += 1;
         });
@@ -74,17 +74,20 @@ const ChartDashboard = () => {
             if (!isInRange(date)) return;
             const month = date.toLocaleString('default', { month: 'short' });
             if (!monthlyData[month]) {
-                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 };
+                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 };
             }
             monthlyData[month].totalOrders += 1;
             if (order.status === "pending") {
                 monthlyData[month].totalPending += 1;
             }
+            if (order.status === "completed") {
+                monthlyData[month].totalSales += order.total;
+            }
         });
 
         // Sort data by month
         const sortedMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const sortedData = sortedMonths.map(month => monthlyData[month] || { month, totalUsers: 0, totalOrders: 0, totalSales: 10.123, totalPending: 0 });
+        const sortedData = sortedMonths.map(month => monthlyData[month] || { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 });
 
         return sortedData;
     };
@@ -159,7 +162,7 @@ const ChartDashboard = () => {
                     <Legend wrapperStyle={{ fontSize: '13px', fontWeight: 500 }} />
                     <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" />
                     <Line type="monotone" dataKey="totalUsers" stroke="#82ca9d" />
-                    <Line type="monotone" dataKey="totalSales" stroke="violet" />
+                    {/* <Line type="monotone" dataKey="totalSales" stroke="violet" /> */}
                     <Line type="monotone" dataKey="totalPending" stroke="#FF6A6A" />
                 </LineChart>
             </ResponsiveContainer>

@@ -1,7 +1,7 @@
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 import styles from '../pagination/pagination.module.css';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const PaginationOrder = ({ currentPage, totalPages, onPageChange }) => {
     return (
         <div className={styles.container}>
             <div className={styles.buttonGroup}>
@@ -25,4 +25,4 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     )
 }
 
-export default Pagination;
+export default PaginationOrder;
