@@ -19,13 +19,25 @@ export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
   const canvasFrontRef = useRef(null);
   const canvasBackRef = useRef(null);
-  const [sizes, setSizes] = useState({ S: "0", M: "0", L: "0", XL: "0", XXL: "0", XXXL:"0" });
+  const [drawingMode, setDrawingMode] = useState(null);
+
+  const [sizes, setSizes] = useState({
+    S: "0",
+    M: "0",
+    L: "0",
+    XL: "0",
+    XXL: "0",
+    XXXL: "0",
+  });
   const [currentView, setCurrentView] = useState("front");
   const [selectedImage, setSelectedImage] = useState("front");
   const [selectedColor, setSelectedColor] = useState("Beige");
   const [selectedText, setSelectedText] = useState(null);
-  const [totalPrice, setTotalPrice] = useState(150000); // Default price
+  const [totalPrice, setTotalPrice] = useState(100000); // Default price
   const [productName, setProductName] = useState("Áo Thun Cổ Tròn"); // Default product name
+  const [pattern, setPattern] = useState("tshirt");
+  const [numberOfDrawings, setNumberOfDrawings] = useState(0);
+  const [numberOfUploads, setNumberOfUploads] = useState(0);
 
   const userId = useAppSelector((state) => state.auth.userId);
   const [product, setProduct] = useState({
@@ -38,29 +50,61 @@ export default function Custom() {
       back: "",
     },
   });
+  console.log('product""""""""""', product);
+
   const [cartItem, setCartItem] = useState({
     userId,
     productId: "",
     quantityPerSize: [],
   });
 
-  console.log('::::::::::::',cartItem);
-  
+  console.log("::::::::::::", cartItem);
+
   const dispatch = useAppDispatch();
   const imageMapping = {
-    Black: {
-      front: "/TeeFrontBlack.png",
-      back: "/TeeBackBlack.png",
+    tshirt: {
+      Black: {
+        front: "/TeeFrontBlack.png",
+        back: "/TeeBackBlack.png",
+      },
+      White: {
+        front: "/TeeFrontWhite.png",
+        back: "/TeeBackWhite.png",
+      },
+      Beige: {
+        front: "/TeeFrontBeige.png",
+        back: "/TeeBackBeige.png",
+      },
+      // Add more mappings as needed
     },
-    White: {
-      front: "/TeeFrontWhite.png",
-      back: "/TeeBackWhite.png",
+    polo: {
+      Black: {
+        front: "/PoloFrontBlack.png",
+        back: "/PoloBackBlack.png",
+      },
+      White: {
+        front: "/PoloFrontWhite.png",
+        back: "/PoloBackWhite.png",
+      },
+      Beige: {
+        front: "/PoloFrontBeige.png",
+        back: "/PoloBackBeige.png",
+      },
+      // Add more mappings as needed
     },
-    Beige: {
-      front: "/TeeFrontBeige.png",
-      back: "/TeeBackBeige.png",
-    },
-    // Add more mappings as needed
+  };
+  const handleTypeSelection = (type) => {
+    console.log(type);
+
+    setPattern(type);
+    if (type === "tshirt") {
+      setProductName("Áo Thun Cổ Tròn");
+    } else if (type === "polo") {
+      setProductName("Áo Polo");
+    }
+    if (imageMapping[type][selectedColor]) {
+      setImageDisplay(imageMapping[type][selectedColor][currentView]);
+    }
   };
 
   const handleTextSelection = (e) => {
@@ -71,7 +115,130 @@ export default function Custom() {
       setSelectedText(target);
     }
   };
+  useEffect(() => {
+    const canvas =
+      currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
 
+    if (canvas) {
+      const handleMouseDown = (options) => {
+        if (drawingMode) {
+          const pointer = canvas.getPointer(options.e);
+          const origX = pointer.x;
+          const origY = pointer.y;
+          let shape;
+
+          if (drawingMode === "rectangle") {
+            shape = new fabric.Rect({
+              left: origX,
+              top: origY,
+              width: 0,
+              height: 0,
+              fill: "transparent",
+              stroke: "#000",
+              strokeWidth: 2,
+            });
+          } else if (drawingMode === "circle") {
+            shape = new fabric.Circle({
+              left: origX,
+              top: origY,
+              radius: 1,
+              fill: "transparent",
+              stroke: "#000",
+              strokeWidth: 2,
+            });
+          } else if (drawingMode === "line") {
+            shape = new fabric.Line([origX, origY, origX, origY], {
+              stroke: "#000",
+              strokeWidth: 2,
+            });
+          } else if (drawingMode === "heart") {
+            const heartPath = new fabric.Path(
+              "M 272.70141,238.71731 \
+    C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731  \
+    C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
+    C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
+    C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731  \
+    C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
+    C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731  \
+    z ",
+              {
+                left: origX,
+                top: origY,
+                fill: "transparent",
+                stroke: "#000",
+                strokeWidth: 2,
+                scaleX: 0.001,
+                scaleY: 0.001,
+                originX: "center",
+                originY: "center",
+              }
+            );
+            shape = heartPath;
+          }
+
+          canvas.add(shape);
+
+          const handleMouseMove = (options) => {
+            const pointer = canvas.getPointer(options.e);
+            if (drawingMode === "rectangle") {
+              shape.set({
+                width: Math.abs(pointer.x - origX),
+                height: Math.abs(pointer.y - origY),
+              });
+              shape.set({
+                left: pointer.x < origX ? pointer.x : origX,
+                top: pointer.y < origY ? pointer.y : origY,
+              });
+            } else if (drawingMode === "circle") {
+              const radius =
+                Math.sqrt(
+                  Math.pow(pointer.x - origX, 2) +
+                    Math.pow(pointer.y - origY, 2)
+                ) / 2;
+              shape.set({
+                radius: radius,
+              });
+              shape.set({
+                left: pointer.x < origX ? pointer.x : origX,
+                top: pointer.y < origY ? pointer.y : origY,
+              });
+            } else if (drawingMode === "line") {
+              shape.set({
+                x2: pointer.x,
+                y2: pointer.y,
+              });
+            } else if (drawingMode === "heart") {
+              const scale =
+                Math.max(
+                  Math.abs(pointer.x - origX),
+                  Math.abs(pointer.y - origY)
+                ) / 100;
+              shape.set({
+                scaleX: scale,
+                scaleY: scale,
+              });
+            }
+            canvas.renderAll();
+          };
+
+          const handleMouseUp = () => {
+            canvas.off("mouse:move", handleMouseMove);
+            canvas.off("mouse:up", handleMouseUp);
+            setDrawingMode(null); // Reset drawing mode after shape is drawn
+          };
+
+          canvas.on("mouse:move", handleMouseMove);
+          canvas.on("mouse:up", handleMouseUp);
+        }
+      };
+
+      canvas.on("mouse:down", handleMouseDown);
+
+      return () => {
+        canvas.off("mouse:down", handleMouseDown);
+      };
+    }
+  }, [drawingMode, currentView]);
   useEffect(() => {
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
@@ -87,8 +254,8 @@ export default function Custom() {
   }, [currentView]);
 
   useEffect(() => {
-    if (imageMapping[selectedColor]) {
-      const newImageDisplay = imageMapping[selectedColor][currentView];
+    if (imageMapping[pattern][selectedColor]) {
+      const newImageDisplay = imageMapping[pattern][selectedColor][currentView];
       setImageDisplay(newImageDisplay);
     } else {
       console.error(
@@ -98,10 +265,10 @@ export default function Custom() {
   }, [currentView, selectedColor]);
 
   async function createProduct(product) {
-    console.log("myPRODUCT",product)
+    console.log("myPRODUCT", product);
     try {
       const response = await axiosInstance.post("/api/product", product);
-      console.log('12312321',response);
+      console.log("12312321", response);
 
       if (response.status === 200) {
         showToast("Add to cart successfully", "success");
@@ -109,7 +276,7 @@ export default function Custom() {
 
       setCartItem((prevCartItem) => ({
         ...prevCartItem,
-        productId: response.data._id,
+        productId: response.data.metadata._id,
       }));
 
       // Add the item to the cart
@@ -118,7 +285,7 @@ export default function Custom() {
         productId: response.data.metadata._id, // Ensure productId is correct
       });
 
-      console.log('addtocartresponse:::',addToCartResponse);
+      console.log("addtocartresponse:::", addToCartResponse);
     } catch (error) {
       console.error("Error creating product:", error);
     }
@@ -132,10 +299,6 @@ export default function Custom() {
       const ctx = offscreenCanvas.getContext("2d");
 
       const backgroundImg = new Image();
-      backgroundImg.src =
-        view === "front"
-          ? imageMapping[selectedColor].front
-          : imageMapping[selectedColor].back;
       backgroundImg.onload = () => {
         ctx.drawImage(
           backgroundImg,
@@ -157,10 +320,13 @@ export default function Custom() {
         const dataURL = offscreenCanvas.toDataURL("image/png");
         resolve(dataURL);
       };
+
+      backgroundImg.src = imageMapping[pattern][selectedColor][view];
     });
   };
-
   const saveDesign = () => {
+    console.log("12312");
+
     const canvasFront = canvasFrontRef.current;
     const canvasBack = canvasBackRef.current;
 
@@ -186,29 +352,29 @@ export default function Custom() {
     try {
       const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
       const backFile = dataURLtoFile(backDataURL, "back_design.png");
-  
+
       const frontURL = await dispatch(uploadImage("userId123", frontFile));
       console.log("Front design uploaded. Download URL:", frontURL);
-  
+
       const backURL = await dispatch(uploadImage("userId123", backFile));
       console.log("Back design uploaded. Download URL:", backURL);
-  
-      setProduct((prevProduct) => ({
-        ...prevProduct,
+
+      const updatedProduct = {
+        ...product,
         name: productName,
         price: totalPrice,
         images: {
           front: frontURL,
           back: backURL,
         },
-      }));
-  
-      createProduct(product);
+      };
+
+      setProduct(updatedProduct);
+      createProduct(updatedProduct);
     } catch (error) {
       console.error("Error uploading design:", error);
     }
   };
-  
 
   const dataURLtoFile = (dataurl, filename) => {
     const arr = dataurl.split(",");
@@ -224,17 +390,16 @@ export default function Custom() {
 
   const handleColorClick = (color) => {
     console.log("Selected color:", color);
-    console.log("z", imageMapping[color]);
-    console.log(imageMapping.color);
+    console.log("z", imageMapping[pattern][color]);
 
-    if (imageMapping[color]) {
+    if (imageMapping[pattern][color]) {
       setSelectedColor(color);
       console.log("Updated selected color:", color); // Add this line
-      const newImageDisplay = imageMapping[color][currentView];
+      const newImageDisplay = imageMapping[pattern][color][currentView];
       setImageDisplay(newImageDisplay);
     } else {
       console.error(
-        `Selected color "${color}" does not exist in imageMapping.`
+        `Selected color "${color}" does not exist in [imageMapping].`
       );
     }
   };
@@ -253,16 +418,19 @@ export default function Custom() {
   ];
 
   const addText = (textOptions) => {
+    console.log("::::::::::::123", textOptions);
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
     if (canvas) {
       const text = new fabric.Textbox(textOptions.text, {
-        // Set text content
         left: 50,
         top: 50,
         fill: textOptions.textColor,
-        fontFamily: "Arial",
-        fontSize: 20,
+        fontFamily: textOptions.fontFamily || "Arial",
+        fontSize: textOptions.fontSize || 20,
+        fontWeight: textOptions.fontWeight,
+        fontStyle: textOptions.fontStyle,
+        underline: textOptions.textDecoration !== "none",
       });
 
       canvas.add(text);
@@ -274,7 +442,8 @@ export default function Custom() {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
+    setNumberOfUploads((prevCount) => prevCount + 1);
     const reader = new FileReader();
     reader.onload = (e) => {
       const imgObj = new Image();
@@ -303,6 +472,13 @@ export default function Custom() {
 
     reader.readAsDataURL(file);
   };
+  
+
+  const handleAddDrawing = () => {
+    setDrawingMode(!drawingMode);
+    setNumberOfDrawings((prevCount) => prevCount + 1); // Update numberOfDrawings
+    setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
+  };
 
   const handleSizeChange = (event) => {
     const { name, value } = event.target;
@@ -311,12 +487,13 @@ export default function Custom() {
       [name]: value,
     };
     setSizes(newSizes);
+
     const updatedQuantityPerSize = Object.keys(newSizes)
       .map((size) => ({
         size,
         quantity: newSizes[size] ? parseInt(newSizes[size]) : 0,
       }))
-      .filter((item) => item.quantity > 0);
+      .filter((item) => item.quantity > 0); // Filter out sizes with quantity 0
 
     setCartItem((prevCartItem) => ({
       ...prevCartItem,
@@ -360,6 +537,8 @@ export default function Custom() {
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
     if (canvas) {
       const activeObject = canvas.getActiveObject();
+      console.log('activeObject::',activeObject);
+      
       if (activeObject) {
         canvas.remove(activeObject);
         canvas.requestRenderAll();
@@ -399,10 +578,13 @@ export default function Custom() {
               />
 
               <ToolBox
+                handleTypeSelection={handleTypeSelection}
                 addText={addText}
                 handleImageUpload={handleImageUpload}
                 deleteSelectedImage={deleteSelectedImage}
                 selectedText={selectedText}
+                setDrawingMode={setDrawingMode}
+              
               />
             </div>
 
@@ -469,11 +651,13 @@ export default function Custom() {
                 }}
               >
                 <img
-                  src={imageMapping[selectedColor].front}
+                  src={imageMapping[pattern]?.[selectedColor]?.front}
                   alt="White Shirt Front"
                   style={{ width: 80, height: 80, cursor: "pointer" }}
                   onClick={() => {
-                    setImageDisplay(imageMapping[selectedColor].front);
+                    setImageDisplay(
+                      imageMapping[pattern]?.[selectedColor].front
+                    );
                     setCurrentView("front");
                     setSelectedImage("front");
                   }}
@@ -491,11 +675,13 @@ export default function Custom() {
                 }}
               >
                 <img
-                  src={imageMapping[selectedColor].back}
+                  src={imageMapping[pattern]?.[selectedColor]?.back}
                   alt="White Shirt Back"
                   style={{ width: 80, height: 80, cursor: "pointer" }}
                   onClick={() => {
-                    setImageDisplay(imageMapping[selectedColor].back);
+                    setImageDisplay(
+                      imageMapping[pattern]?.[selectedColor].back
+                    );
                     setCurrentView("back");
                     setSelectedImage("back");
                   }}
@@ -508,6 +694,8 @@ export default function Custom() {
               saveDesign={saveDesign}
               totalPrice={totalPrice}
               name={productName}
+              numberOfDrawings={numberOfDrawings}
+              numberOfUploads={numberOfUploads}
             />
           </div>
         </div>

@@ -206,23 +206,28 @@ export default function page() {
                     key={key}
                     className="relative group w-full bg-transparent flex flex-row justify-center items-center min-h-48 max-h-48 pl-[20px] border-b border-gray-600 last:border-none overflow-hidden hover:bg-[#F1E15B]/50 transition-all duration-75"
                   >
-                    <div className="flex flex-row items-center gap-2 justify-start w-full text-center">
-                      <input
-                        id={`checkbox-${item._id}`}
-                        type="checkbox"
-                        className="border-gray-200 rounded text-yellow-600 cursor-pointer focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                        onChange={(event) => checkboxChanged(event)}
-                        value={item._id}
-                        checked={
-                          checkedList.find(
-                            (element) => element._id === item._id
-                          )
-                            ? true
-                            : false
-                        }
-                      />
-                      <Image width="64px" src={item.productId.images.front} />
-                      <p className="">{item.productId.name}</p>
+                      <div className="flex flex-row items-center w-full">
+                      <div className="flex">
+                        <input
+                          id={`checkbox-${item._id}`}
+                          type="checkbox"
+                          className="border-gray-200 rounded text-yellow-600 cursor-pointer focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                          onChange={(event) => checkboxChanged(event)}
+                          value={item._id}
+                          checked={
+                            checkedList.find(
+                              (element) => element._id === item._id
+                            )
+                              ? true
+                              : false
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center justify-center flex-row w-full">
+                        <Image width="100px" src={item.productId.images.front} />
+                        <Image width="100px" src={item.productId.images.back} />
+                        <p className="ml-1">{item.productId.name}</p>
+                      </div>
                     </div>
 
                     <div className="min-w-fit w-3/4 text-center">
@@ -266,8 +271,8 @@ export default function page() {
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       viewBox="0 0 24 24"
-                                      width="12"
-                                      height="12"
+                                      width="15"
+                                      height="15"
                                       fill="currentColor"
                                       className="rounded-sm hover:bg-[#CDBC2A] cursor-pointer"
                                       onClick={() =>
@@ -283,8 +288,8 @@ export default function page() {
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       viewBox="0 0 24 24"
-                                      width="12"
-                                      height="12"
+                                      width="15"
+                                      height="15"
                                       fill="currentColor"
                                       className="rounded-sm hover:bg-[#CDBC2A] cursor-pointer"
                                       onClick={() =>
@@ -301,8 +306,8 @@ export default function page() {
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
-                                    width="12"
-                                    height="18"
+                                    width="15"
+                                    height="20"
                                     className={`fill-red-500 hover:fill-red-600 cursor-pointer ${
                                       q.quantity === 0 ? "!invisible" : ""
                                     }`}
@@ -329,8 +334,8 @@ export default function page() {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        width="18"
-                        height="18"
+                        width="28"
+                        height="28"
                         className="fill-red-500 hover:fill-red-600 cursor-pointer"
                         onClick={() => deleteCartItem(item._id)}
                       >

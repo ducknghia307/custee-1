@@ -28,35 +28,36 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
   const handleFontFamilyChange = (e) => setFontFamily(e.target.value);
   const handleFontSizeChange = (e) => setFontSize(e.target.value);
   const handleTextColorChange = (e) => setTextColor(e.target.value);
-  const handleBoldToggle = () => setIsBold(!isBold);
-  const handleItalicToggle = () => setIsItalic(!isItalic);
-  const handleUnderlineToggle = () => setIsUnderline(!isUnderline);
+  const handleBoldToggle = () => setIsBold(prev => !prev);
+  const handleItalicToggle = () => setIsItalic(prev => !prev);
+  const handleUnderlineToggle = () => setIsUnderline(prev => !prev);
 
   const handleAddText = () => {
+    const textStyles = {
+      fontFamily,
+      fontSize,
+      textColor,
+      fontWeight: isBold ? "bold" : "normal",
+      fontStyle: isItalic ? "italic" : "normal",
+      textDecoration: isUnderline ? "underline" : "none",
+      text: inputText,
+    };
+
     if (selectedText) {
-      // Update existing text
-      updateText({
-        fontFamily,
-        fontSize,
-        textColor,
-        isBold,
-        isItalic,
-        isUnderline,
-        text: inputText,
-      });
+      updateText(textStyles);
     } else {
-      // Add new text
-      addText({
-        fontFamily,
-        fontSize,
-        textColor,
-        isBold,
-        isItalic,
-        isUnderline,
-        text: inputText,
-      });
+      addText(textStyles);
     }
     closePopup();
+  };
+
+  const textPreviewStyle = {
+    fontFamily,
+    fontSize: `${fontSize}px`,
+    color: textColor,
+    fontWeight: isBold ? "bold" : "normal",
+    fontStyle: isItalic ? "italic" : "normal",
+    textDecoration: isUnderline ? "underline" : "none",
   };
 
   return (
@@ -71,6 +72,7 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
           placeholder="Enter text here"
           className="w-full p-2 border rounded mb-4"
         />
+
         <div className="mb-4 flex flex-row items-center">
           <label>Font:</label>
           <select value={fontFamily} onChange={handleFontFamilyChange} className="w-full p-2 border rounded">
@@ -81,6 +83,7 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             <option value="Verdana">Verdana</option>
           </select>
         </div>
+
         <div className="flex items-center mb-4">
           <label>Color:</label>
           <input type="color" value={textColor} onChange={handleTextColorChange} className="ml-2" />
@@ -94,6 +97,7 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             className="w-20 h-7 border rounded ml-2"
           />
         </div>
+
         <div className="mb-3 flex items-center">
           <label className="">Style:</label>
 
@@ -120,8 +124,10 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             size={20}
             className={`cursor-pointer mr-2 ${hoverU || isUnderline ? "bg-blue-500 text-white" : ""}`}
           />
+        </div>
 
-        
+        <div className="mb-4 border-2 h-10">
+          <p style={textPreviewStyle}>{inputText}</p>
         </div>
 
         <div className="flex justify-center space-x-4 items-center">

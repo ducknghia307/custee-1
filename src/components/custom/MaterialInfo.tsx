@@ -1,19 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ShoppingCart } from "@phosphor-icons/react";
+import { Lightbulb, ShoppingCart } from "@phosphor-icons/react";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import SizeInfoModal from "./SizeInfoModel"; // Import the SizeInfoModal component
 
 const MaterialInfo = ({
   sizes,
   handleSizeChange,
   saveDesign,
   totalPrice,
-  name
+  name,
+  numberOfDrawings, // New prop
+  numberOfUploads, // New prop
 }) => {
-  const [showDialog, setShowDialog] = useState(false);
+  console.log("numberOfDrawings", numberOfDrawings);
+  console.log("numberOfUploads", numberOfUploads);
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [showSizeInfoModal, setShowSizeInfoModal] = useState(false); // State for SizeInfoModal
+
+  const drawingCost = 10000;
+  const uploadCost = 30000;
+
+  // Calculate additional costs
+  const additionalCost =
+    numberOfDrawings * drawingCost + numberOfUploads * uploadCost;
+
+  const finalTotalPrice = totalPrice + additionalCost;
+  console.log("SIZESSSSSSSS", sizes);
   const handleAddToCart = () => {
     setShowDialog(true);
   };
@@ -25,6 +41,14 @@ const MaterialInfo = ({
 
   const handleCancel = () => {
     setShowDialog(false); // Close the dialog without performing the action
+  };
+
+  const handleSizeInfoClick = () => {
+    setShowSizeInfoModal(true); // Open the SizeInfoModal
+  };
+
+  const handleSizeInfoClose = () => {
+    setShowSizeInfoModal(false); // Close the SizeInfoModal
   };
 
   return (
@@ -40,15 +64,25 @@ const MaterialInfo = ({
           <div className="p-3">
             <div className="flex items-center">
               <p className="text-sm font-black mr-1">Product Name:</p>
-              <p className="text-sm font-black">{name}</p>
+              <p className="text-sm ">{name}</p>
+            </div>
+            <div className="flex flex-row items-center">
+              <p className="text-sm  font-black mr-1">Type fabric: </p>
+              <p className="text-sm ">95% cotton, 5% spandex</p>
             </div>
 
-            <p className="text-sm font-black">
-              Type fabric: 95% cotton, 5% spandex
-            </p>
-            <p className="text-sm font-black">Type print: DTF/ Decal</p>
+            <div className="flex flex-row items-center">
+              <p className="text-sm font-black  mr-1">Type print: </p>
+              <p className="text-sm ">DTF/ Decal</p>
+            </div>
           </div>
-          <p className="text-base font-bold p-3">Size áo</p>
+          <div className="flex flex-row justify-center items-center p-3">
+          
+            <Button variant={"outline"} onClick={handleSizeInfoClick}>
+              <Lightbulb className="mr-1" size={22} />
+              Size Information
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-1 ml-4  mt-1 mb-5">
             {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
               <div
@@ -80,26 +114,31 @@ const MaterialInfo = ({
             ))}
           </div>
           <div style={{ borderBottom: "2px solid black" }}></div>
-<div className="p-3">
-
-          <div className="text-base font-black mb-1">Total:</div>
-          <div className="justify-between flex">
-            <p className="text-base font-black mb-1">Shirt price:</p>
-            <p className="text-base font-black mb-1">150.000đ</p>
-          </div>
-          <div className="justify-between flex">
-            <p className="text-base font-black mb-1">Print price:</p>
-            <p className="text-base font-black mb-1">0đ</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <p className=" text-base font-black mb-1">Total Price</p>
-            <p className="text-base font-black mb-1">
-              {totalPrice.toLocaleString()}đ
-            </p>
+          <div className="p-3">
+            <div className="text-base font-black mb-1">Total:</div>
+            <div className="justify-between flex">
+              <p className="text-base font-black mb-1">Shirt price:</p>
+              <p className="text-base  mb-1">100.000đ</p>
+            </div>
+        
+            <div className="justify-between flex">
+              <p className="text-base font-black mb-1">Draw price:</p>
+              <p className="text-base  mb-1">
+                {numberOfDrawings * drawingCost}đ
+              </p>
+            </div>
+            <div className="justify-between flex">
+              <p className="text-base font-black mb-1">Image price:</p>
+              <p className="text-base  mb-1">{numberOfUploads * uploadCost}đ</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className=" text-base font-black mb-1">Total Price</p>
+              <p className="text-base  mb-1">
+                {finalTotalPrice.toLocaleString()}đ
+              </p>
+            </div>
           </div>
         </div>
-          
-</div>
         <div className="text-center mb-3">
           <Button
             className="mt-3 font-black justify-center text-lg h-14"
@@ -119,6 +158,10 @@ const MaterialInfo = ({
           onClose={handleCancel}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+        />
+        <SizeInfoModal
+          isOpen={showSizeInfoModal}
+          onClose={handleSizeInfoClose}
         />
       </div>
     </div>
