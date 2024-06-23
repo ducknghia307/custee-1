@@ -14,7 +14,7 @@ interface Order {
   };
   deliveryOptions: {
     method: string;
-    cose: number;
+    cost: number;
   };
   discountValue: string;
   status: string;
@@ -68,8 +68,8 @@ export const payNowRedirect = async ({
     orderCode: parseInt(order.code),
     amount: order.total,
     description: "Custee Order",
-    cancelUrl: "http://localhost:3000/order",
-    returnUrl: "http://localhost:3000/order",
+    cancelUrl: "http://localhost:3000/order/handleOrderChanges",
+    returnUrl: "http://localhost:3000/order/handleOrderChanges",
     buyerName: order.deliveryInfo.recipientName,
     buyerPhone: getHiddenPhoneNumber(order.deliveryInfo.phone),
     buyerAddress: order.deliveryInfo.address,

@@ -5,7 +5,7 @@ export default function NavigationGroup() {
   return (
     <div className="w-full flex-row gap-8 text-sm font-bold font-monospace items-center justify-center hidden sm:flex">
       <Link
-        href="/"
+        href="/custom"
         className="w-max text-center ease-in-out duration-100 hover:text-[#784be6] relative hoverMenuItem"
       >
         DESIGN YOUR SHIRT

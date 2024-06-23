@@ -1,4 +1,5 @@
 "use client";
+import CurrencySplitter from "@/assistants/currencySpliter";
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { axiosInstance } from "@/utils/axiosInstance";
@@ -100,6 +101,7 @@ export default function page() {
                 className="w-56 mt-32 border-2 border-black flex flex-col items-center justify-center"
               >
                 <Image src={product.images.front} alt="" className="w-16" />
+                {CurrencySplitter(product.price)} đ
                 <button
                   className="w-full p-1 rounded-md border border-black text-sm mx-auto hover:bg-slate-200"
                   onClick={() => {

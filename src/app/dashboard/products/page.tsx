@@ -15,6 +15,9 @@ export default function ProductsPage() {
   const [selectedReason, setSelectedReason] = useState("");
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
   const fetchProducts = async () => {
     try {
@@ -30,6 +33,24 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
   return (
     <div className={styles.container}>
       <h3 className={styles.h3}>Product Management</h3>
@@ -40,75 +61,85 @@ export default function ProductsPage() {
             Add New Product
           </button>
         </Link> */}
-        <Search placeholder="Search for a product..." />
+        <Search
+          placeholder="Search for a product..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
       </div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <td>Front Image</td>
-            <td>Back Image</td>
-            <td>Product Name</td>
-            <td>Pattern</td>
-            <td>Price</td>
-            <td>Action</td>
-          </tr>
-        </thead>
-        <tbody style={{ backgroundColor: "#fff" }}>
-          {products.length > 0 ? (
-            products.map((product, index) => (
-              <tr key={index}>
-                <td>
-                  <div className={styles.imageContainer}>
-                    <Image
-                      src={product.images?.front || shirt}
-                      alt={product.name}
-                      width={50}
-                      height={60}
-                      className={styles.userImage}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div className={styles.imageContainer}>
-                    <Image
-                      src={product.images?.back || shirt}
-                      alt={product.name}
-                      width={50}
-                      height={60}
-                      className={styles.userImage}
-                    />
-                  </div>
-                </td>
-                <td>{product.name}</td>
-                <td>{product.pattern}</td>
-                <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-                <td>
-                  <div className={styles.buttons}>
-                    <Link href={`/dashboard/products/edit/${product._id}`}>
-                      <MdOutlineEdit size={20} className={styles.buttonEdit} />
-                    </Link>
-                    <MdDeleteOutline
-                      size={20}
-                      className={styles.buttonDelete}
-                      onClick={() => {
-                        setOpen(true);
-                        setSelectedReason(product);
-                      }}
-                    />
-                  </div>
+      <div >
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <td>Front Image</td>
+              <td>Back Image</td>
+              <td>Product Name</td>
+              <td>Pattern</td>
+              <td>Price</td>
+              <td>Action</td>
+            </tr>
+          </thead>
+          <tbody>
+            {currentProducts.length > 0 ? (
+              currentProducts.map((product, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className={styles.imageContainer}>
+                      <Image
+                        src={product.images?.front || shirt}
+                        alt={product.name}
+                        width={50}
+                        height={60}
+                        className={styles.userImage}
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.imageContainer}>
+                      <Image
+                        src={product.images?.back || shirt}
+                        alt={product.name}
+                        width={50}
+                        height={60}
+                        className={styles.userImage}
+                      />
+                    </div>
+                  </td>
+                  <td>{product.name}</td>
+                  <td>{product.pattern}</td>
+                  <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                  <td>
+                    <div className={styles.buttons}>
+                      <Link href={`/dashboard/products/edit/${product._id}`}>
+                        <MdOutlineEdit size={20} className={styles.buttonEdit} />
+                      </Link>
+                      <MdDeleteOutline
+                        size={20}
+                        className={styles.buttonDelete}
+                        onClick={() => {
+                          setOpen(true);
+                          setSelectedReason(product);
+                        }}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  No products found.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" style={{ textAlign: "center" }}>
-                No products found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <Pagination />
+            )}
+          </tbody>
+        </table>
+      </div>
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={handlePageChange} 
+      />
       <ModalDelete open={open} onClose={() => setOpen(false)}>
         <div className={styles.modal}>
           <h3 className={styles.h3header}>Do you want to delete this product?</h3>

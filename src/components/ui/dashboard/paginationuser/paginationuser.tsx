@@ -1,9 +1,12 @@
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
-import styles from '../pagination/pagination.module.css';
+import styles from '../paginationuser/paginationuser.module.css';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const PaginationUser = ({ currentPage, totalPages, onPageChange, totalUsers }) => {
     return (
         <div className={styles.container}>
+            {/* <div className={styles.info}>
+                <span>Total Users: {totalUsers}</span>
+            </div> */}
             <div className={styles.buttonGroup}>
                 <button 
                     className={styles.buttonBack} 
@@ -22,7 +25,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Pagination;
+export default PaginationUser;

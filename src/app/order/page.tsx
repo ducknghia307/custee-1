@@ -50,6 +50,15 @@ export default function page() {
   const [orderList, setOrderList] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const sortOrderList = (orderList: Order[]) => {
+    var ordering: any = {},
+      sortOrder = ["pending", "delivering", "completed", "cancelled"];
+    for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
+    return orderList.sort(function (a: any, b: any) {
+      return ordering[a.status] - ordering[b.status];
+    });
+  };
+
   const fetchOrder = async () => {
     setIsLoading(true);
     if (userId) {
@@ -57,57 +66,28 @@ export default function page() {
         .get(`/api/order/user/${userId}`)
         .then((res) => {
           console.log("Order: ", res.data);
-          setOrderList(res.data.metadata);
+          setOrderList(sortOrderList(res.data.metadata));
         })
         .catch((err) => console.log(err));
     }
     setIsLoading(false);
   };
 
-  const getPageStatus = async () => {
-    if (!sessionStorage.payNowOrder) return;
-    else {
-      const payNowOrder = JSON.parse(sessionStorage.payNowOrder);
-      console.log("PayNowOrder: ", payNowOrder);
-      await axiosInstance
-        .get(`/api/payos/getPaymentLinkInformation/${payNowOrder.code}`)
-        .then((res) => {
-          if (res.data.metadata.status === "CANCELLED") {
-            axiosInstance
-              .patch(`/api/order/${payNowOrder.code}`, {
-                paymentLink: payNowOrder.paymentLink,
-              })
-              .then((res) => {
-                console.log("Cancel payment link: ", res.data);
-              })
-              .catch((err) => console.log(err));
-
-            toast.warning("Online payment has been aborted.");
-          } else if (res.data.metadata.status === "PAID") {
-            axiosInstance
-              .patch(`/api/order/paymentMethod/${payNowOrder.code}`, {
-                paymentMethod: "Card",
-              })
-              .then((res) => {
-                console.log("Update payment method: ", res.data);
-              })
-              .catch((err) => console.log(err));
-
-            axiosInstance
-              .patch(`/api/order/paidStatus/${payNowOrder.code}`)
-              .then((res) => {
-                console.log("Update paid status: ", res.data);
-              })
-              .catch((err) => console.log(err));
-
-            toast.success(`Successfully paid order ${payNowOrder.code}`);
-          }
-        });
+  const getPageStatus = () => {
+    if (sessionStorage.payNowSucceeded) {
+      toast.success(
+        `You have successfully paid order ${sessionStorage.payNowSucceeded}.`
+      );
+    } else if (sessionStorage.payNowCancelled) {
+      toast.info(
+        `Aborted online payment order ${sessionStorage.payNowCancelled}.`
+      );
+    } else if (sessionStorage.cancelOrderCode) {
+      toast.info(`Cancelled order ${sessionStorage.cancelOrderCode}.`);
     }
-    if (!sessionStorage.cancelOrderCode) return;
-    else {
-      toast.info(`Order ${sessionStorage.cancelOrderCode} has been cancelled.`);
-    }
+    setTimeout(() => {
+      sessionStorage.clear();
+    }, 10000);
   };
 
   useEffect(() => {

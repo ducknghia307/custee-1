@@ -183,7 +183,7 @@ const EditProductPage = () => {
               <label>Price</label>
               <input type="text" name="price" value={productData.price} onChange={handleInputChange} placeholder="Enter price" />
             </div>
-            <div className={styles.inputGroup}>
+            {/* <div className={styles.inputGroup}>
               <label>Size</label>
               <div className={styles.sizeSelector}>
                 {['S', 'M', 'L', 'XL'].map((size) => (
@@ -192,7 +192,7 @@ const EditProductPage = () => {
                   </label>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </form>
                 <button type="submit" className={styles.submitButton} onClick={submitForm}>Update Now</button>

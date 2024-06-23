@@ -12,6 +12,7 @@ const Card = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalPending, setTotalPending] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
 
   useEffect(() => {
     const fetchTotalUsers = async () => {
@@ -31,6 +32,11 @@ const Card = () => {
 
         const pendingOrdersCount = orders.filter(order => order.status === 'pending').length;
         setTotalPending(pendingOrdersCount);
+
+        const totalSalesAmount = orders
+          .filter(order => order.status === 'completed')
+          .reduce((sum, order) => sum + order.total, 0); // Changed 'price' to 'total'
+        setTotalSales(totalSalesAmount);
       } catch (error) {
         console.error("Error fetching total orders:", error);
       }
@@ -43,7 +49,7 @@ const Card = () => {
   const stats = [
     { title: "Total Users", number: totalUsers, detail: "Total Users", icon: <AiOutlineUser size={22} /> },
     { title: "Total Orders", number: totalOrders, detail: "Total Orders", icon: <AiOutlineShoppingCart size={22} /> },
-    { title: "Total Sales", number: "10.123", detail: "Total Sales", icon: <MdAttachMoney size={22} /> },
+    { title: "Total Sales", number: totalSales.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }), detail: "Total Sales", icon: <MdAttachMoney size={22} /> },
     { title: "Total Pending", number: totalPending, detail: "Total Pending", icon: <MdOutlinePending size={22} /> },
   ];
 

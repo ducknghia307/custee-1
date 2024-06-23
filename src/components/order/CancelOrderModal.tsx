@@ -23,9 +23,7 @@ export default function CancelOrderModal({
       })
       .catch((err) => console.log(err));
     sessionStorage.setItem("cancelOrderCode", orderCode);
-    setTimeout(() => {
-      window.location.replace("/order");
-    }, 1000);
+    window.location.replace("/order");
   };
   return (
     <Modal

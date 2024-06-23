@@ -3,7 +3,6 @@
 import styles from "../../../../components/ui/dashboard/usermanagement/users.module.css";
 import Link from "next/link";
 import Image from "next/image";
-import Pagination from "@/components/ui/dashboard/pagination/pagination";
 import { MdDeleteOutline, MdOutlineAdd, MdOutlineEdit } from "react-icons/md";
 import logo from "../../../../assets/logo/avatar1.jpg";
 import Search from "@/components/ui/dashboard/search/search";
@@ -11,13 +10,17 @@ import { useState, useEffect } from "react";
 import ModalDelete from "@/components/ui/dashboard/usermanagement/deleteUser/deleteModal";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { showToast } from "@/components/toast/toast";
+import PaginationUser from "@/components/ui/dashboard/paginationuser/paginationuser";
 
 const UserManagement = () => {
   const [selectedReason, setSelectedReason] = useState('');
   const [otherReason, setOtherReason] = useState('');
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   const fetchUsers = async () => {
     try {
@@ -32,6 +35,10 @@ const UserManagement = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   const handleReasonChange = (event) => {
     const { value } = event.target;
@@ -60,6 +67,20 @@ const UserManagement = () => {
     return `${month}/${day}/${year}`;
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.username.toLowerCase().includes(searchQuery.toLowerCase())||user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
   return (
     <div className={styles.container}>
       <h3 className={styles.h3}>User Management</h3>
@@ -70,7 +91,11 @@ const UserManagement = () => {
             Add New User
           </button>
         </Link> */}
-        <Search placeholder="Search for a user..." />
+        <Search
+          placeholder="Search for a user..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
       </div>
       <table className={styles.table}>
         <thead>
@@ -87,7 +112,7 @@ const UserManagement = () => {
           </tr>
         </thead>
         <tbody style={{ backgroundColor: "#fff" }}>
-          {users.map((user, index) => (
+          {currentUsers.map((user, index) => (
             <tr key={index}>
               <td>
                 <div className={styles.user}>
@@ -113,7 +138,12 @@ const UserManagement = () => {
           ))}
         </tbody>
       </table>
-      <Pagination />
+      <PaginationUser 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        onPageChange={handlePageChange}
+        totalUsers={filteredUsers.length}
+      />
       <ModalDelete open={open} onClose={() => setOpen(false)}>
         <div className={styles.modal}>
           <h1 className={styles.h1}>Ban Reason</h1>
