@@ -89,7 +89,7 @@ export default function page() {
       {productList.length === 0 ? (
         <div className="mt-32">NO PRODUCT FOUND</div>
       ) : (
-        <div className="w-full flex items-center justify-start gap-4 px-8 overflow-x-auto">
+        <div className="w-full flex flex-wrap items-center justify-start gap-x-4 gap-y-2 px-8">
           <p className="w-min text-[8px]">
             Default size: 1 of each size &#40;S,M,L,XL,XXL,XXXL&#41;
           </p>

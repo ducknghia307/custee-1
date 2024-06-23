@@ -1,63 +1,81 @@
-"use client"
+"use client";
 
-import styles from "../chartdasboard/chart.module.css"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MdCalendarMonth, MdErrorOutline, MdOutlineFileDownload } from "react-icons/md";
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import styles from "../chartdasboard/chart.module.css";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  MdCalendarMonth,
+  MdErrorOutline,
+  MdOutlineFileDownload,
+} from "react-icons/md";
+import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { Parser } from 'json2csv';
+import { Parser } from "json2csv";
 
 const ChartDashboard = () => {
-    const [data, setData] = useState([]);
-    const [dateRange, setDateRange] = useState([null, null]);
-    const [dateRangeString, setDateRangeString] = useState('');
-    const [startDate, endDate] = dateRange;
+  const [data, setData] = useState([]);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [dateRangeString, setDateRangeString] = useState("");
+  const [startDate, endDate] = dateRange;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const usersResponse = await axiosInstance.get("/api/user");
-                const ordersResponse = await axiosInstance.get("/api/order");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersResponse = await axiosInstance.get("/api/user");
+        const ordersResponse = await axiosInstance.get("/api/order");
 
-                console.log("Users Response:", usersResponse.data);
-                console.log("Orders Response:", ordersResponse.data);
+        console.log("Users Response:", usersResponse.data);
+        console.log("Orders Response:", ordersResponse.data);
 
-                const users = usersResponse.data.metadata?.users || [];
-                const orders = ordersResponse.data.metadata || [];
+        const users = usersResponse.data.metadata?.users || [];
+        const orders = ordersResponse.data.metadata || [];
 
-                let processedData;
+        let processedData;
 
-                // If both startDate and endDate are selected, process the data accordingly
-                if (startDate && endDate) {
-                    processedData = processChartData(users, orders, startDate, endDate);
-                } else {
-                    processedData = processChartData(users, orders);
-                }
+        // If both startDate and endDate are selected, process the data accordingly
+        if (startDate && endDate) {
+          processedData = processChartData(users, orders, startDate, endDate);
+        } else {
+          processedData = processChartData(users, orders);
+        }
 
-                setData(processedData);
+        setData(processedData);
 
-                console.log("Processed Data:", processedData);
-            } catch (error) {
-                console.error("Error fetching chart data:", error);
-            }
-        };
+        console.log("Processed Data:", processedData);
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    };
 
-        fetchData();
-    }, [startDate, endDate]);
+    fetchData();
+  }, [startDate, endDate]);
 
-    const processChartData = (users, orders, startDate = null, endDate = null) => {
-        const monthlyData = {};
+  const processChartData = (
+    users,
+    orders,
+    startDate = null,
+    endDate = null
+  ) => {
+    const monthlyData = {};
 
-        const isInRange = (date) => {
-            if (!startDate && !endDate) return true;
-            const d = new Date(date);
-            if (startDate && endDate) {
-                return d >= startDate && d <= endDate;
-            }
-            return false;
-        };
+    const isInRange = (date) => {
+      if (!startDate && !endDate) return true;
+      const d = new Date(date);
+      if (startDate && endDate) {
+        return d >= startDate && d <= endDate;
+      }
+      return false;
+    };
 
         users.forEach(user => {
             const date = new Date(user.createdAt);
@@ -89,42 +107,48 @@ const ChartDashboard = () => {
         const sortedMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const sortedData = sortedMonths.map(month => monthlyData[month] || { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 });
 
-        return sortedData;
-    };
+    return sortedData;
+  };
 
-    const handleDateRangeChange = (update) => {
-        setDateRange(update);
-        if (update[0] && update[1]) {
-            const startMonth = update[0]?.getMonth() + 1;
-            const startYear = update[0]?.getFullYear();
-            const endMonth = update[1]?.getMonth() + 1;
-            const endYear = update[1]?.getFullYear();
-            const rangeString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
-            setDateRangeString(rangeString);
-        } else {
-            setDateRangeString(''); // Clear date range string if only one date is selected
-        }
-    };
+  const handleDateRangeChange = (update) => {
+    setDateRange(update);
+    if (update[0] && update[1]) {
+      const startMonth = update[0]?.getMonth() + 1;
+      const startYear = update[0]?.getFullYear();
+      const endMonth = update[1]?.getMonth() + 1;
+      const endYear = update[1]?.getFullYear();
+      const rangeString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
+      setDateRangeString(rangeString);
+    } else {
+      setDateRangeString(""); // Clear date range string if only one date is selected
+    }
+  };
 
-    const handleExport = () => {
-        const fields = ['month', 'totalUsers', 'totalOrders', 'totalSales', 'totalPending'];
-        const opts = { fields };
-        try {
-            const parser = new Parser(opts);
-            const csv = parser.parse(data);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "chart_data.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (err) {
-            console.error(err);
-        }
-    };
+  const handleExport = () => {
+    const fields = [
+      "month",
+      "totalUsers",
+      "totalOrders",
+      "totalSales",
+      "totalPending",
+    ];
+    const opts = { fields };
+    try {
+      const parser = new Parser(opts);
+      const csv = parser.parse(data);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "chart_data.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
     return (
         <div className={styles.container}>
