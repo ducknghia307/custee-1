@@ -13,7 +13,7 @@ import CheckoutDiscount from "@/components/checkout/Discount";
 import { axiosInstance } from "@/utils/axiosInstance";
 import Loading from "@/components/loading/Loading";
 
-export default function page() {
+export default function Page() {
   const [checkoutList, setCheckoutList] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [totalIncludingDelivery, setTotalIncludingDelivery] = useState(0);

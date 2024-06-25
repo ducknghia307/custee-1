@@ -2,7 +2,7 @@
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useEffect } from "react";
 
-export default function page() {
+export default function Page() {
   const getPageStatus = async () => {
     if (!sessionStorage.payNowOrder) window.location.replace("/order");
     else {

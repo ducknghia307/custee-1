@@ -69,7 +69,7 @@ export default function CheckoutContactDetails({ getDeliveryInfo }: any) {
               editModeOn ? "inline" : "hidden"
             } text-[8px] absolute left-[1%] bottom-[95%] z-10 opacity-70`}
           >
-            Recipient's name:
+            Recipient&apos;s name:
           </p>
           <input
             id="first-edit"

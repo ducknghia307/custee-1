@@ -51,10 +51,10 @@ export default function OrderItem({ orderItem }: { orderItem: OrderItem }) {
             <p className="text-sm pr-4 border-r border-gray-400 opacity-50">
               {CurrencySplitter(orderItem.unitPrice)} &#8363;
             </p>
-            {orderItem.quantityPerSize.map((q: any) => {
+            {orderItem.quantityPerSize.map((q: any, key) => {
               if (q.quantity > 0)
                 return (
-                  <span className="flex flex-row items-center gap-1 text-sm">
+                  <span key={key} className="flex flex-row items-center gap-1 text-sm">
                     <span className="font-bold">{q.size}:</span>
                     <span>{q.quantity}</span>
                   </span>

@@ -42,7 +42,7 @@ interface OrderItem {
   updatedAt: Date;
 }
 
-export default function page({
+export default function Page({
   params,
 }: {
   params: {

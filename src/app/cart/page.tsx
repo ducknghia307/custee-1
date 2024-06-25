@@ -40,7 +40,7 @@ interface CartItem {
   updatedAt: Date;
 }
 
-export default function page() {
+export default function Page() {
   const [checkedList, setCheckedList] = useState<CartItem[]>([]);
   const [currentTotal, setCurrentTotal] = useState(0);
   const [cartItemList, setCartItemList] = useState<CartItem[]>([]);

@@ -45,7 +45,7 @@ interface OrderItem {
   updatedAt: Date;
 }
 
-export default function page() {
+export default function Page() {
   const userId = localStorage.userId;
   const [orderList, setOrderList] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
