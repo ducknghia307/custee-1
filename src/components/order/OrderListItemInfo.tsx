@@ -19,7 +19,7 @@ interface Order {
   };
   deliveryOptions: {
     method: string;
-    cose: number;
+    cost: number;
   };
   discountValue: string;
   status: string;

@@ -1,18 +1,14 @@
 "use client"
-
 import { useState } from "react";
 import styles from "../../../../../components/ui/dashboard/usermanagement/addUser/addUser.module.css"
 import { MdArrowBackIos, MdCameraAlt } from "react-icons/md";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdCalendarMonth } from 'react-icons/md';
-import { useHistory } from 'react-router-dom';
 import Link from "next/link";
 
-
 const AddUserPage = () => {
-    const [selectedImage, setSelectedImage] = useState(null);
-
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [birthDate, setBirthDate] = useState(new Date());
 
     const handleFileChange = ({ target }) => {
@@ -23,12 +19,18 @@ const AddUserPage = () => {
     };
 
     const triggerFileInput = () => {
-        // Kích hoạt sự kiện click trên input file
         document.getElementById('file-upload').click();
     };
 
+    const focusDatePickerInput = () => {
+        const inputElement = document.querySelector<HTMLInputElement>('.react-datepicker__input-container input');
+        if (inputElement) {
+            inputElement.focus();
+        }
+    };
+
     return (
-        <div >
+        <div>
             <div className={styles.headerContainer}>
                 <Link href="/dashboard/users/usermanagement">
                     <button className={styles.addButton}>
@@ -38,7 +40,6 @@ const AddUserPage = () => {
                 <h1 className={styles.headerTitle}>Add New User</h1>
             </div>
             <div className={styles.container}>
-
                 <div className={styles.uploadImage}>
                     <input type="file" id="file-upload" className={styles.fileInput} onChange={handleFileChange} />
                     <label htmlFor="file-upload" className={styles.imageUploadLabel}>
@@ -50,7 +51,8 @@ const AddUserPage = () => {
                             </div>
                         )}
                     </label>
-                    <p className={styles.uploadText} onClick={triggerFileInput}>Upload Photo</p>                </div>
+                    <p className={styles.uploadText} onClick={triggerFileInput}>Upload Photo</p>
+                </div>
 
                 <form className={styles.form}>
                     <div className={styles.row}>
@@ -89,7 +91,7 @@ const AddUserPage = () => {
                             <MdCalendarMonth
                                 size={20}
                                 className={styles.calendarIcon}
-                                onClick={() => document.querySelector('.react-datepicker__input-container input').focus()}
+                                onClick={focusDatePickerInput}
                             />
                         </div>
                     </div>
@@ -104,7 +106,6 @@ const AddUserPage = () => {
                             </label>
                         </div>
                     </div>
-
                 </form>
                 <button type="submit" className={styles.submitButton}>Add New User</button>
             </div>
@@ -112,4 +113,4 @@ const AddUserPage = () => {
     );
 }
 
-export default AddUserPage
+export default AddUserPage;

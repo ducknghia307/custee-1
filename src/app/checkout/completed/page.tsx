@@ -7,7 +7,7 @@ import { dela, montserrat_500, montserrat_700 } from "@/assets/fonts/font";
 import Link from "next/link";
 import { axiosInstance } from "@/utils/axiosInstance";
 
-export default function page() {
+export default function Page() {
   const packedData = JSON.parse(sessionStorage.orderPackedData);
   const orderCode = packedData.order.code;
 

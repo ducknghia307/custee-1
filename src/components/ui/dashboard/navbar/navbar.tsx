@@ -67,7 +67,7 @@ console.log(isIconClicked);
         try {
             const response = await axiosInstance.post("/auth/logout", {});
             dispatch(logOutAction(null));
-            showToast("Logged out successfully", "");
+            showToast("Logged out successfully", "success");
             router.push("/login"); // Redirect to the login page after logout
         } catch (error) {
             showToast("Something went wrong", "error");

@@ -107,7 +107,7 @@ const Profile = () => {
       let avatarUrl = formData.avatar;
 
       if (selectedProfileImage) {
-        avatarUrl = await dispatch(uploadImage(id, selectedProfileImage));
+        avatarUrl = await dispatch(uploadImage(id, selectedProfileImage)) as string;
         setFormData({ ...formData, avatar: avatarUrl });
       }
 

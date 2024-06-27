@@ -17,7 +17,7 @@ export default function CheckoutContactDetails({ getDeliveryInfo }: any) {
     phone: "",
     address: "",
   });
-  const userId = localStorage.userId;
+  const {userId} = localStorage.userId;
 
   const getUserInfo = async () => {
     if (userId) {

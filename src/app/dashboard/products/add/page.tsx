@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const AddProductPage = () => {
 
-    const [selectedImage, setSelectedImage] = useState(null);  
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const handleFileChange = ({ target }) => {
         if (target.files && target.files[0]) {
@@ -17,7 +17,10 @@ const AddProductPage = () => {
     };
 
     const triggerFileInput = () => {
-        document.getElementById('file-upload').click();
+        const fileInput = document.getElementById('file-upload') as HTMLInputElement | null;
+        if (fileInput) {
+            fileInput.click();
+        }
     };
 
     return (

@@ -210,8 +210,8 @@ export default function OrderInfo({
 
       <div className="min-h-80 max-h-80 w-full flex flex-col items-center justify-start gap-2 border-t border-gray-300 px-2 overflow-x-hidden overflow-y-auto">
         {orderItemList
-          ? orderItemList.map((item: OrderItem) => {
-              return <OrderItemComponent orderItem={item} />;
+          ? orderItemList.map((item: OrderItem, key) => {
+              return <OrderItemComponent key={key} orderItem={item} />;
             })
           : order._id}
       </div>

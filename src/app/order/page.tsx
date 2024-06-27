@@ -25,7 +25,7 @@ interface Order {
   };
   deliveryOptions: {
     method: string;
-    cose: number;
+    cost: number;
   };
   discountValue: string;
   status: string;
@@ -119,8 +119,8 @@ export default function Page() {
           </div>
         ) : null}
         <div className="w-full xl:w-2/3 mx-2 flex flex-col items-center gap-8 mt-8">
-          {orderList.map((order: Order) => {
-            return <OrderListItem order={order} />;
+          {orderList.map((order: Order, key) => {
+            return <OrderListItem key={key} order={order} />;
           })}
         </div>
       </div>

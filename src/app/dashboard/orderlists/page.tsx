@@ -9,19 +9,34 @@ import ModalEditStatus from "@/components/ui/dashboard/orderlists/modalstatus/mo
 import { axiosInstance } from "@/utils/axiosInstance"
 import PaginationOrder from "@/components/ui/dashboard/paginationorder/paginationorder"
 
+// Define the type for an individual order
+interface Order {
+    _id: string;
+    code: string;
+    deliveryInfo: {
+        recipientName: string;
+        phone: string;
+        address: string;
+    };
+    paymentMethod: string;
+    total: string;
+    deliveryOptions: {
+        method: string;
+        cost: string;
+    };
+    status: string;
+}
+
 const OrderList = () => {
-
     const [open, setOpen] = useState<boolean>(false)
+    const [orders, setOrders] = useState<Order[]>([]); // Explicitly typed as Order[]
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null); // Typing for selectedOrderId
 
-    const [orders, setOrders] = useState([]);
-
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
-
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const ordersPerPage = 10;
 
-    //màu test thoai
-    const getStatusStyle = (status) => {
+    // Function to get status style
+    const getStatusStyle = (status: string) => {
         const baseStyle = {
             padding: '5px 10px',
             borderRadius: '10px',
@@ -47,12 +62,13 @@ const OrderList = () => {
         }
     };
 
+    // Fetch orders on component mount
     useEffect(() => {
         const fetchTotalOrders = async () => {
             try {
                 const response = await axiosInstance.get("/api/order");
                 console.log("Response Data:", response.data);
-                setOrders(response.data.metadata || []);
+                setOrders(response.data.metadata || []); // Ensure response data matches Order type
             } catch (error) {
                 console.error("Error fetching total orders:", error);
             }
@@ -61,19 +77,23 @@ const OrderList = () => {
         fetchTotalOrders();
     }, []);
 
-    const handleEditClick = (orderId) => {
+    // Handle click on edit button
+    const handleEditClick = (orderId: string) => {
         setSelectedOrderId(orderId);
         setOpen(true);
     };
 
-    const handleStatusChange = (orderId, newStatus) => {
+    // Handle status change
+    const handleStatusChange = (orderId: string, newStatus: string) => {
         setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
     };
 
-    const handlePageChange = (newPage) => {
+    // Handle page change
+    const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
 
+    // Calculate current page's orders
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
@@ -108,7 +128,8 @@ const OrderList = () => {
                                 <td>{order.paymentMethod}</td>
                                 <td>{parseInt(order.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
                                 <td>{order.deliveryOptions.method}</td>
-                                <td>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>                                <td>
+                                <td>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                                <td>
                                     <span style={getStatusStyle(order.status)}>
                                         {order.status}
                                     </span>
@@ -120,17 +141,17 @@ const OrderList = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="10" style={{ textAlign: "center" }}>
+                            <td colSpan={10} style={{ textAlign: "center" }}>
                                 No orders found.
                             </td>
                         </tr>
                     )}
                 </tbody>
             </table>
-            <PaginationOrder 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                onPageChange={handlePageChange} 
+            <PaginationOrder
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
             />
             {selectedOrderId && (
                 <ModalEditStatus
@@ -140,8 +161,8 @@ const OrderList = () => {
                     onStatusChange={handleStatusChange}
                 />
             )}
-
         </div>
-    )
+    );
 }
-export default OrderList
+
+export default OrderList;

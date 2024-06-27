@@ -127,7 +127,7 @@ export default function ProductsPage() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
+                <td colSpan={6} style={{ textAlign: "center" }}>
                   No products found.
                 </td>
               </tr>

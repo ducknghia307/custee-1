@@ -1,5 +1,4 @@
-import { useAppSelector } from "@/redux/hook";
-import { useEffect } from "react";
+
 import axios from "axios";
 
 // Axios instance setup

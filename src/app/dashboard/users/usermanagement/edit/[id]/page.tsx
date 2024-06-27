@@ -66,9 +66,9 @@ const EditUserPage = () => {
         if (target.files && target.files[0]) {
             const file = target.files[0];
             setSelectedImage(URL.createObjectURL(file));
-
+    
             try {
-                const avatarUrl = await dispatch(uploadImage(userId, file));
+                const avatarUrl = await dispatch(uploadImage(userId, file)) as string;
                 setUserData({ ...userData, avatar: avatarUrl });
                 showToast("Image uploaded successfully", "success");
             } catch (error) {

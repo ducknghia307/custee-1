@@ -16,19 +16,30 @@ const EditProductPage = () => {
     const productId = params.id; // Get product ID from the URL
     const formRef = useRef(null); // Create a ref for the form
 
-    const [selectedFrontImage, setSelectedFrontImage] = useState(null);
-    const [selectedBackImage, setSelectedBackImage] = useState(null);
+    const [selectedFrontImage, setSelectedFrontImage] = useState<string | null>(null);
+    const [selectedBackImage, setSelectedBackImage] = useState<string | null>(null);
 
-    const [productData, setProductData] = useState({
-        name: '',
-        pattern: '',
-        price: '',
-        size: [],
-        images: {
-            front: '',
-            back: ''
-        }
-    });
+    interface ProductData {
+      name: string;
+      pattern: string;
+      price: string;
+      size: string[]; // Define size as string array if the sizes are string values like 'S', 'M', etc.
+      images: {
+          front: string;
+          back: string;
+      };
+  }
+  
+  const [productData, setProductData] = useState<ProductData>({
+      name: '',
+      pattern: '',
+      price: '',
+      size: [],
+      images: {
+          front: '',
+          back: ''
+      }
+  });
 
     const dispatch = useAppDispatch();
 

@@ -73,7 +73,7 @@ export function SigninForm() {
       const { accessToken, user } = response.data;
       console.log(response);
 
-      const id = user.id;
+      const {id} = user.id;
       localStorage.setItem("userId", id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
@@ -126,7 +126,7 @@ export function SigninForm() {
       console.log("Logged in user:", result.user);
       // Additional logic if needed
       const { accessToken,user } = response.data;
-      const id = response.data.user.id
+      const {id} = response.data.user.id
       localStorage.setItem("userId", id);
       setAuthToken(accessToken);
      

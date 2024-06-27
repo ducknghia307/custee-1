@@ -17,13 +17,14 @@ interface Order {
   };
   deliveryOptions: {
     method: string;
-    cose: number;
+    cost: number;  // Corrected property name
   };
   discountValue: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
 interface OrderItem {
   _id: string;
   productId: any;

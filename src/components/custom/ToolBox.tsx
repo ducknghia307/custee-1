@@ -8,11 +8,9 @@ import ShapeSelectionPopup from "./ShapeSelection";
 const ToolBox = ({
   addText,
   handleImageUpload,
-  deleteSelectedImage,
   selectedText,
   handleTypeSelection,
   setDrawingMode,
- 
 }) => {
   const [showTextPopup, setShowTextPopup] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
@@ -142,7 +140,6 @@ const ToolBox = ({
             backgroundColor: "#784BE6",
             display: "flex",
             flexDirection: "column",
-           
           }}
           onClick={handleDrawButtonClick}
         >

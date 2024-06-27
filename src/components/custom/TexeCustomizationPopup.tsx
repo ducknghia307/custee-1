@@ -1,7 +1,7 @@
 import { TextB, TextItalic, TextUnderline } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 
-const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText }) => {
+const TextCustomizationPopup = ({ addText, closePopup, selectedText }) => {
   const [fontFamily, setFontFamily] = useState("Arial");
   const [fontSize, setFontSize] = useState(20);
   const [textColor, setTextColor] = useState("#000000");
@@ -28,9 +28,9 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
   const handleFontFamilyChange = (e) => setFontFamily(e.target.value);
   const handleFontSizeChange = (e) => setFontSize(e.target.value);
   const handleTextColorChange = (e) => setTextColor(e.target.value);
-  const handleBoldToggle = () => setIsBold(prev => !prev);
-  const handleItalicToggle = () => setIsItalic(prev => !prev);
-  const handleUnderlineToggle = () => setIsUnderline(prev => !prev);
+  const handleBoldToggle = () => setIsBold((prev) => !prev);
+  const handleItalicToggle = () => setIsItalic((prev) => !prev);
+  const handleUnderlineToggle = () => setIsUnderline((prev) => !prev);
 
   const handleAddText = () => {
     const textStyles = {
@@ -43,11 +43,11 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
       text: inputText,
     };
 
-    if (selectedText) {
-      updateText(textStyles);
-    } else {
-      addText(textStyles);
-    }
+    // if (selectedText) {
+    //   updateText(textStyles);
+    // } else {
+    addText(textStyles);
+    // }
     closePopup();
   };
 
@@ -61,7 +61,10 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
   };
 
   return (
-    <div className="absolute top-0 left-24 bg-gray-800 bg-opacity-5 flex justify-center items-center z-50" style={{ width: "300px" }}>
+    <div
+      className="absolute top-0 left-24 bg-gray-800 bg-opacity-5 flex justify-center items-center z-50"
+      style={{ width: "300px" }}
+    >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-xl font-bold mb-4 text-center">Customize Text</h2>
 
@@ -75,7 +78,11 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
 
         <div className="mb-4 flex flex-row items-center">
           <label>Font:</label>
-          <select value={fontFamily} onChange={handleFontFamilyChange} className="w-full p-2 border rounded">
+          <select
+            value={fontFamily}
+            onChange={handleFontFamilyChange}
+            className="w-full p-2 border rounded"
+          >
             <option value="Arial">Arial</option>
             <option value="Helvetica">Helvetica</option>
             <option value="Times New Roman">Times New Roman</option>
@@ -86,7 +93,12 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
 
         <div className="flex items-center mb-4">
           <label>Color:</label>
-          <input type="color" value={textColor} onChange={handleTextColorChange} className="ml-2" />
+          <input
+            type="color"
+            value={textColor}
+            onChange={handleTextColorChange}
+            className="ml-2"
+          />
           <label>Size:</label>
           <input
             type="number"
@@ -106,7 +118,9 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             onMouseEnter={() => setHoverB(true)}
             onMouseLeave={() => setHoverB(false)}
             size={20}
-            className={`cursor-pointer mr-2 ${hoverB || isBold ? "bg-blue-500 text-white" : ""}`}
+            className={`cursor-pointer mr-2 ${
+              hoverB || isBold ? "bg-blue-500 text-white" : ""
+            }`}
           />
 
           <TextItalic
@@ -114,7 +128,9 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             onMouseEnter={() => setHoverI(true)}
             onMouseLeave={() => setHoverI(false)}
             size={20}
-            className={`cursor-pointer mr-2 ${hoverI || isItalic ? "bg-blue-500 text-white" : ""}`}
+            className={`cursor-pointer mr-2 ${
+              hoverI || isItalic ? "bg-blue-500 text-white" : ""
+            }`}
           />
 
           <TextUnderline
@@ -122,7 +138,9 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
             onMouseEnter={() => setHoverU(true)}
             onMouseLeave={() => setHoverU(false)}
             size={20}
-            className={`cursor-pointer mr-2 ${hoverU || isUnderline ? "bg-blue-500 text-white" : ""}`}
+            className={`cursor-pointer mr-2 ${
+              hoverU || isUnderline ? "bg-blue-500 text-white" : ""
+            }`}
           />
         </div>
 
@@ -131,10 +149,16 @@ const TextCustomizationPopup = ({ addText, closePopup, selectedText, updateText 
         </div>
 
         <div className="flex justify-center space-x-4 items-center">
-          <button onClick={handleAddText} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+          <button
+            onClick={handleAddText}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
             {selectedText ? "Update Text" : "Add Text"}
           </button>
-          <button onClick={closePopup} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">
+          <button
+            onClick={closePopup}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+          >
             Cancel
           </button>
         </div>

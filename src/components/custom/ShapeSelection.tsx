@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Square, Circle, LineSegment, Heart } from "@phosphor-icons/react";
 
 const ShapeSelectionPopup = ({ selectShape, closePopup }) => {
-  const popupRef = useRef();
+  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !(popupRef.current as HTMLDivElement).contains(event.target as Node)) {
         closePopup();
       }
     };

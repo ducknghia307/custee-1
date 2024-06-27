@@ -4,7 +4,7 @@ import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { showToast } from "@/components/toast/toast";
 import { useAppSelector } from "@/redux/hook";
-import {axiosInstance} from "@/utils/axiosInstance";
+import { axiosInstance } from "@/utils/axiosInstance";
 import React, { useState } from "react";
 
 const ChangePassword = () => {
@@ -39,8 +39,8 @@ const ChangePassword = () => {
       showToast("Password changed successfully", "success");
     } catch (error) {
       // Handle error response
-      console.error("Failed to change password:", error.response.data.error);
-      setErrorMessage(error.response.data.error);
+      console.error("Failed to change password:", error);
+      // setErrorMessage(error);
       showToast("Something went wrong", "error");
     }
   };

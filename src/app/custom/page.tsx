@@ -13,12 +13,12 @@ import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { showToast } from "@/components/toast/toast";
 import { axiosInstance } from "@/utils/axiosInstance";
 
-const fabric = typeof window !== "undefined" ? require("fabric").fabric : null;
+import { fabric } from "fabric"; // Import fabric
 
 export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
-  const canvasFrontRef = useRef(null);
-  const canvasBackRef = useRef(null);
+  const canvasFrontRef = useRef<fabric.Canvas | null>(null);
+  const canvasBackRef = useRef<fabric.Canvas | null>(null);
   const [drawingMode, setDrawingMode] = useState(null);
 
   const [sizes, setSizes] = useState({
@@ -32,7 +32,7 @@ export default function Custom() {
   const [currentView, setCurrentView] = useState("front");
   const [selectedImage, setSelectedImage] = useState("front");
   const [selectedColor, setSelectedColor] = useState("Beige");
-  const [selectedText, setSelectedText] = useState(null);
+  const [selectedText, setSelectedText] = useState<fabric.Textbox | null>(null);
   const [totalPrice, setTotalPrice] = useState(100000); // Default price
   const [productName, setProductName] = useState("Áo Thun Cổ Tròn"); // Default product name
   const [pattern, setPattern] = useState("tshirt");
@@ -52,12 +52,18 @@ export default function Custom() {
   });
   console.log('product""""""""""', product);
 
-  const [cartItem, setCartItem] = useState({
+  type CartItem = {
+    userId: string;
+    productId: string;
+    quantityPerSize: { size: string; quantity: number }[];
+  };
+
+  // Assuming initial state has an empty array for quantityPerSize
+  const [cartItem, setCartItem] = useState<CartItem>({
     userId,
     productId: "",
     quantityPerSize: [],
   });
-
   console.log("::::::::::::", cartItem);
 
   const dispatch = useAppDispatch();
@@ -107,20 +113,19 @@ export default function Custom() {
     }
   };
 
-  const handleTextSelection = (e) => {
+  const handleTextSelection = (options: fabric.IEvent<Event>) => {
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
-    const target = e.target;
+    const target = options.target;
     if (target && target.type === "textbox") {
-      setSelectedText(target);
+      setSelectedText(target as fabric.Textbox);
     }
   };
   useEffect(() => {
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
-
     if (canvas) {
-      const handleMouseDown = (options) => {
+      const handleMouseDown = (options: fabric.IEvent<Event>) => {
         if (drawingMode) {
           const pointer = canvas.getPointer(options.e);
           const origX = pointer.x;
@@ -154,13 +159,13 @@ export default function Custom() {
           } else if (drawingMode === "heart") {
             const heartPath = new fabric.Path(
               "M 272.70141,238.71731 \
-    C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731  \
-    C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
-    C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
-    C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731  \
-    C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
-    C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731  \
-    z ",
+        C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731  \
+        C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
+        C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
+        C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731  \
+        C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
+        C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731  \
+        z ",
               {
                 left: origX,
                 top: origY,
@@ -242,15 +247,14 @@ export default function Custom() {
   useEffect(() => {
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
+
     if (canvas) {
       canvas.on("mouse:down", handleTextSelection);
-    }
 
-    return () => {
-      if (canvas) {
+      return () => {
         canvas.off("mouse:down", handleTextSelection);
-      }
-    };
+      };
+    }
   }, [currentView]);
 
   useEffect(() => {
@@ -300,7 +304,7 @@ export default function Custom() {
 
       const backgroundImg = new Image();
       backgroundImg.onload = () => {
-        ctx.drawImage(
+        ctx?.drawImage(
           backgroundImg,
           0,
           0,
@@ -309,7 +313,7 @@ export default function Custom() {
         );
 
         const fabricCanvas = canvas.toCanvasElement();
-        ctx.drawImage(
+        ctx?.drawImage(
           fabricCanvas,
           146,
           120,
@@ -353,16 +357,20 @@ export default function Custom() {
       const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
       const backFile = dataURLtoFile(backDataURL, "back_design.png");
 
-      const frontURL = await dispatch(uploadImage("userId123", frontFile));
+      const frontURL = (await dispatch(
+        uploadImage("userId123", frontFile)
+      )) as string;
       console.log("Front design uploaded. Download URL:", frontURL);
 
-      const backURL = await dispatch(uploadImage("userId123", backFile));
+      const backURL = (await dispatch(
+        uploadImage("userId123", backFile)
+      )) as string;
       console.log("Back design uploaded. Download URL:", backURL);
 
       const updatedProduct = {
         ...product,
         name: productName,
-        price: totalPrice,
+        price: totalPrice.toString(),
         images: {
           front: frontURL,
           back: backURL,
@@ -447,8 +455,13 @@ export default function Custom() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const imgObj = new Image();
-      imgObj.src = e.target.result;
+      const result = e.target?.result;
 
+      if (typeof result === "string") {
+        imgObj.src = result;
+      } else {
+        console.error("Image data is not a string:", result);
+      }
       imgObj.onload = () => {
         const img = new fabric.Image(imgObj);
 
@@ -472,13 +485,12 @@ export default function Custom() {
 
     reader.readAsDataURL(file);
   };
-  
 
-  const handleAddDrawing = () => {
-    setDrawingMode(!drawingMode);
-    setNumberOfDrawings((prevCount) => prevCount + 1); // Update numberOfDrawings
-    setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
-  };
+  // const handleAddDrawing = () => {
+  //   setDrawingMode(!drawingMode);
+  //   setNumberOfDrawings((prevCount) => prevCount + 1); // Update numberOfDrawings
+  //   setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
+  // };
 
   const handleSizeChange = (event) => {
     const { name, value } = event.target;
@@ -505,29 +517,27 @@ export default function Custom() {
     const cFront = new fabric.Canvas("canvasFront", {
       height: 300,
       width: 200,
-      border: "1px solid ",
       backgroundColor: "rgba(0, 0, 0, 0)",
     });
 
     const cBack = new fabric.Canvas("canvasBack", {
       height: 300,
       width: 200,
-      border: "1px solid ",
       backgroundColor: "rgba(0, 0, 0, 0)",
     });
 
     // settings for all canvas in the app
-    fabric.Object.prototype.transparentCorners = false;
-    fabric.Object.prototype.cornerColor = "#2BEBC8";
-    // fabric.Object.prototype.cornerStyle = "rect";
-    fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
+    // fabric.Object.prototype.transparentCorners = false;
+    // fabric.Object.prototype.cornerColor = "#2BEBC8";
+    // // fabric.Object.prototype.cornerStyle = "rect";
+    // fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
     fabric.Object.prototype.cornerSize = 10;
 
     canvasFrontRef.current = cFront;
     canvasBackRef.current = cBack;
 
     return () => {
-      cFront.dispose();
+      cFront.dispose(); 
       cBack.dispose();
     };
   }, []);
@@ -537,8 +547,8 @@ export default function Custom() {
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
     if (canvas) {
       const activeObject = canvas.getActiveObject();
-      console.log('activeObject::',activeObject);
-      
+      console.log("activeObject::", activeObject);
+
       if (activeObject) {
         canvas.remove(activeObject);
         canvas.requestRenderAll();
@@ -581,17 +591,14 @@ export default function Custom() {
                 handleTypeSelection={handleTypeSelection}
                 addText={addText}
                 handleImageUpload={handleImageUpload}
-                deleteSelectedImage={deleteSelectedImage}
                 selectedText={selectedText}
                 setDrawingMode={setDrawingMode}
-              
               />
             </div>
 
             <div className="relative" style={{ width: 500, height: 500 }}>
               <img
                 src={imageDisplay}
-                alt="White Shirt"
                 style={{
                   position: "absolute",
                   top: 0,

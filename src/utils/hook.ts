@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppSelector } from '@/redux/hook';
-import axiosInstance, { setAuthToken } from './axiosInstance';
+import  { setAuthToken } from './axiosInstance';
 
 const useAxiosToken = () => {
   const token = useAppSelector((state) => state.auth.token);

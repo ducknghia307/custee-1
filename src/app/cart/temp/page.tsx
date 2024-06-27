@@ -21,7 +21,7 @@ interface Product {
   updatedAt: Date;
 }
 
-export default function page() {
+export default function Page() {
   const [productList, setProductList] = useState<Product[]>([]);
   const userId = localStorage.getItem("userId");
   const fetchProduct = async () => {

@@ -4,15 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { showToast } from "@/components/toast/toast";
-
-// const sizeColors = {
-//   S: "#FFEBEE",
-//   M: "#E3F2FD",
-//   L: "#E8F5E9",
-//   XL: "#FFFDE7",
-//   XXL: "#F3E5F5",
-//   XXXL: "rgb(255 198 198)",
-// };
+import { CSSProperties } from "react"; // Import CSSProperties
 
 const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
   const [order, setOrder] = useState(null);
@@ -21,10 +13,10 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
   const [error, setError] = useState(null);
 
   const getStatusStyle = (status) => {
-    const baseStyle = {
+    const baseStyle: CSSProperties = {
       padding: "5px 10px",
       borderRadius: "10px",
-      textAlign: "center",
+      textAlign: "center" as CSSProperties['textAlign'], // Ensure correct type
       minWidth: "80px",
       display: "inline-block",
       fontWeight: "600",
@@ -47,10 +39,10 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
   };
 
   const getButtonStyle = (status) => {
-    const baseStyle = {
+    const baseStyle: CSSProperties = {
       padding: "5px 10px",
       borderRadius: "10px",
-      textAlign: "center",
+      textAlign: "center" as CSSProperties['textAlign'], // Ensure correct type
       minWidth: "80px",
       display: "inline-block",
       fontWeight: "600",
@@ -75,21 +67,31 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
       case "pending":
         return (
           <div className={styles.actions}>
-            <button style={getButtonStyle('processing')} onClick={() => handleStatusClick('processing')}>Processing</button>
-            <button style={getButtonStyle('cancelled')} onClick={() => handleStatusClick('cancelled')}>Cancelled</button>
+            <button style={getButtonStyle("processing")} onClick={() => handleStatusClick("processing")}>
+              Processing
+            </button>
+            <button style={getButtonStyle("cancelled")} onClick={() => handleStatusClick("cancelled")}>
+              Cancelled
+            </button>
           </div>
         );
       case "processing":
         return (
           <div className={styles.actions}>
-            <button style={getButtonStyle('delivering')} onClick={() => handleStatusClick('delivering')}>Delivering</button>
-            <button style={getButtonStyle('cancelled')} onClick={() => handleStatusClick('cancelled')}>Cancelled</button>
+            <button style={getButtonStyle("delivering")} onClick={() => handleStatusClick("delivering")}>
+              Delivering
+            </button>
+            <button style={getButtonStyle("cancelled")} onClick={() => handleStatusClick("cancelled")}>
+              Cancelled
+            </button>
           </div>
         );
       case "delivering":
         return (
           <div className={styles.actions}>
-            <button style={getButtonStyle('completed')} onClick={() => handleStatusClick('completed')}>Completed</button>
+            <button style={getButtonStyle("completed")} onClick={() => handleStatusClick("completed")}>
+              Completed
+            </button>
           </div>
         );
       case "completed":
@@ -103,7 +105,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
     try {
       await axiosInstance.put(`/api/order/${orderId}`, { status: newStatus });
       setOrder({ ...order, status: newStatus });
-      onStatusChange(orderId, newStatus);  // Gọi hàm callback sau khi cập nhật trạng thái thành công
+      onStatusChange(orderId, newStatus);
 
       showToast("Change status successful", "success");
     } catch (error) {
@@ -207,63 +209,62 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
             <span>Unit Price</span>
             <span>Size</span>
             <span>Quantity</span>
-            {/* <span>Amount</span> */}
-            {/* <span>Total</span> */}
             <span>Shipping Price</span>
           </div>
           {orderItems && orderItems.length > 0 ? (
             orderItems.map((item, index) => (
               <div key={index} className={styles.productRow}>
                 <div className={styles.productDetail}>
-                  <Image width={40} height={40} src={item.productId.images.front} alt={item.productId.name} className={styles.productImage} objectFit="contain"/>
-                  <Image width={40} height={40} src={item.productId.images.back} alt={item.productId.name} className={styles.productImage} objectFit="contain"/>
+                  <Image
+                    width={40}
+                    height={40}
+                    src={item.productId.images.front}
+                    alt={item.productId.name}
+                    className={styles.productImage}
+                    objectFit="contain"
+                  />
+                  <Image
+                    width={40}
+                    height={40}
+                    src={item.productId.images.back}
+                    alt={item.productId.name}
+                    className={styles.productImage}
+                    objectFit="contain"
+                  />
                 </div>
                 <span>{item.productId.name}</span>
-                <span>{parseInt(item.unitPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
-                {/* <span>
-                  {item.quantityPerSize.map((q, index) => (
-                    q.quantity > 0 && (
-                      <div key={index}>
-                        Size: {q.size}, Quantity: {q.quantity}
-                      </div>
-                    )
-                  ))}
-                </span> */}
+                <span>{parseInt(item.unitPrice).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
                 <span>
-                  {/* {item.quantityPerSize.map((q, index) => (
-                    q.quantity > 0 && (
-                      <div key={index} style={{ backgroundColor: sizeColors[q.size] || "#fff" }} className={styles.sizeSpan}>
-                        {q.size}
-                      </div>
-                    )
-                  ))} */}
-                  {item.quantityPerSize.map((q, index) => (
-                q.quantity > 0 && (
-                  <div key={index}>
-                    {q.size}
-                  </div>
-                )
-              ))}
+                  {item.quantityPerSize.map(
+                    (q, index) =>
+                      q.quantity > 0 && (
+                        <div key={index}>
+                          {q.size}
+                        </div>
+                      )
+                  )}
                 </span>
                 <span>
-              {item.quantityPerSize.map((q, index) => (
-                q.quantity > 0 && (
-                  <div key={index}>
-                    {q.quantity}
-                  </div>
-                )
-              ))}
+                  {item.quantityPerSize.map(
+                    (q, index) =>
+                      q.quantity > 0 && (
+                        <div key={index}>
+                          {q.quantity}
+                        </div>
+                      )
+                  )}
                 </span>
-                {/* <span>{(item.unitPrice * item.quantityPerSize.reduce((total, q) => total + q.quantity, 0)).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span> */}
-                <span>{parseInt(order.deliveryOptions.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                <span>{parseInt(order.deliveryOptions.cost).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
               </div>
             ))
           ) : (
-            <div style={{ textAlign: "center", paddingTop: "20px", paddingBottom: "20px" }} className={styles.noProducts}>No products found.</div>
+            <div style={{ textAlign: "center", paddingTop: "20px", paddingBottom: "20px" }} className={styles.noProducts}>
+              No products found.
+            </div>
           )}
         </div>
         <div className={styles.totalPrice}>
-          <strong>Total:</strong> {parseInt(order.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+          <strong>Total:</strong> {parseInt(order.total).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
         </div>
         {renderActionButtons(order.status)}
       </div>
