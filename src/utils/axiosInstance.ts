@@ -94,13 +94,15 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
+
+        // Redirect to login page
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);
   }
 );
-
 // // React hook to update the token
 // export const useAxiosAuthToken = () => {
 //   const token = useAppSelector((state) => state.auth.token);
