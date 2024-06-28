@@ -72,9 +72,12 @@ export function SigninForm() {
       showToast("Login successful!", "success");
       const { accessToken, user } = response.data;
       console.log(response);
+      console.log("user", user);
 
-      const {id} = user.id;
-      localStorage.setItem("userId", id);
+      const id = user.id;
+      console.log("...", user.id);
+
+      localStorage.setItem("userId", user.id);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
       dispatch(setCredentials({ accessToken, id, user }));
@@ -125,11 +128,10 @@ export function SigninForm() {
       console.log("Backend response:", response);
       console.log("Logged in user:", result.user);
       // Additional logic if needed
-      const { accessToken,user } = response.data;
-      const {id} = response.data.user.id
+      const { accessToken, user } = response.data;
+      const { id } = response.data.user.id;
       localStorage.setItem("userId", id);
       setAuthToken(accessToken);
-     
 
       console.log("Login successful, token set");
       dispatch(setCredentials({ accessToken, id, user }));
@@ -247,7 +249,9 @@ export function SigninForm() {
           >
             Log In
           </Button>
-        {errorMessage && <p style={{ color: "red", marginTop:"20px" }}>{errorMessage}</p>}
+          {errorMessage && (
+            <p style={{ color: "red", marginTop: "20px" }}>{errorMessage}</p>
+          )}
         </CardFooter>
         <div
           className="mt-4 text-center text-sm"

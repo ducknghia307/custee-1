@@ -20,7 +20,7 @@ export default function Navbar() {
 
   async function logOut() {
     try {
-      const response = await axiosInstance.post("/auth/logout", {});
+      const response = await axiosInstance.post("/auth/logout");
       dispatch(logOutAction(null));
       showToast("Logged out successfully", "success");
     } catch (error) {

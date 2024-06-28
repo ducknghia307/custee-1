@@ -45,8 +45,6 @@ publicAxios.interceptors.request.use(
     //   config.headers['Authorization'] = `Bearer ${getToken()}`;
     // }
     // console.log(config.headers);
-    console.log('::::::::::',config);
-    
     config.headers["Content-Type"] = "application/json";
     return config;
   },
@@ -94,15 +92,13 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
-
-        // Redirect to login page
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);
   }
 );
+
 // // React hook to update the token
 // export const useAxiosAuthToken = () => {
 //   const token = useAppSelector((state) => state.auth.token);
