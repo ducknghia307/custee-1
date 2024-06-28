@@ -45,6 +45,8 @@ publicAxios.interceptors.request.use(
     //   config.headers['Authorization'] = `Bearer ${getToken()}`;
     // }
     // console.log(config.headers);
+    console.log('::::::::::',config);
+    
     config.headers["Content-Type"] = "application/json";
     return config;
   },
