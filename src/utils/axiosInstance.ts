@@ -3,11 +3,11 @@ import axios from "axios";
 
 // Axios instance setup
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: "https://custeeserver.onrender.com",
   withCredentials: true,
 });
 const publicAxios = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://custeeserver.onrender.com",
   withCredentials: true,
 });
 
