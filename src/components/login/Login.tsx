@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { publicAxios, setAuthToken } from "../../utils/axiosInstance";
+import { publicAxios, saveTokens, setAuthToken } from "../../utils/axiosInstance";
 import { auth, provider } from "../../config/config"; // Import Firebase auth and provider
 import { signInWithPopup } from "firebase/auth"; // Import signInWithPopup function
 import {
@@ -70,7 +70,7 @@ export function SigninForm() {
     try {
       const response = await publicAxios.post("/auth", { email, password });
       showToast("Login successful!", "success");
-      const { accessToken, user } = response.data;
+      const { accessToken, user, refreshToken } = response.data;
       console.log(response);
       console.log("user", user);
 
@@ -78,6 +78,7 @@ export function SigninForm() {
       console.log("...", user.id);
 
       localStorage.setItem("userId", user.id);
+      saveTokens(accessToken, refreshToken);
       setAuthToken(accessToken);
       console.log("Login successful, token set");
       dispatch(setCredentials({ accessToken, id, user }));
