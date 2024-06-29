@@ -12,7 +12,7 @@ import { uploadImage } from "@/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { showToast } from "@/components/toast/toast";
 import { axiosInstance } from "@/utils/axiosInstance";
-
+import { imageMapping } from "@/components/custom/ImageMapping";
 import { fabric } from "fabric"; // Import fabric
 
 export default function Custom() {
@@ -67,39 +67,7 @@ export default function Custom() {
   console.log("::::::::::::", cartItem);
 
   const dispatch = useAppDispatch();
-  const imageMapping = {
-    tshirt: {
-      Black: {
-        front: "/TeeFrontBlack.png",
-        back: "/TeeBackBlack.png",
-      },
-      White: {
-        front: "/TeeFrontWhite.png",
-        back: "/TeeBackWhite.png",
-      },
-      Beige: {
-        front:
-          "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f",
-        back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeBackBeige.png?alt=media&token=6788b6ec-a82e-4d07-ba37-3fba48da7999",
-      },
-      // Add more mappings as needed
-    },
-    polo: {
-      Black: {
-        front: "/PoloFrontBlack.png",
-        back: "/PoloBackBlack.png",
-      },
-      White: {
-        front: "/PoloFrontWhite.png",
-        back: "/PoloBackWhite.png",
-      },
-      Beige: {
-        front: "/PoloFrontBeige.png",
-        back: "/PoloBackBeige.png",
-      },
-      // Add more mappings as needed
-    },
-  };
+ 
   const handleTypeSelection = (type) => {
     console.log(type);
 
@@ -160,13 +128,13 @@ export default function Custom() {
           } else if (drawingMode === "heart") {
             const heartPath = new fabric.Path(
               "M 272.70141,238.71731 \
-          C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731  \
-          C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
-          C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
-          C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731  \
-          C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
-          C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731  \
-          z ",
+        C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731  \
+        C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
+        C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
+        C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731  \
+        C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
+        C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731  \
+        z ",
               {
                 left: origX,
                 top: origY,
@@ -353,23 +321,6 @@ export default function Custom() {
     }
   };
 
-  const fetchShirtImage = async (type, color) => {
-    try {
-      const response = await axiosInstance.get(`/api/shirt/search`, {
-        params: { type, color },
-      });
-      if (response.status === 200) {
-        const imageUrls = response.data; // Adjust according to your response structure
-        return imageUrls;
-      } else {
-        throw new Error("Failed to fetch shirt images");
-      }
-    } catch (error) {
-      console.error("Error fetching shirt image:", error);
-      return null;
-    }
-  };
-
   const uploadDesignImages = async (frontDataURL, backDataURL) => {
     try {
       const frontFile = dataURLtoFile(frontDataURL, "front_design.png");
@@ -532,12 +483,6 @@ export default function Custom() {
   };
 
   useEffect(() => {
-    fetchShirtImage(pattern, selectedColor).then((imageUrls) => {
-      if (imageUrls) {
-        setImageDisplay(imageUrls.front); // Assuming imageUrls has front and back URLs
-        imageMapping[pattern][selectedColor] = imageUrls;
-      }
-    });
     const cFront = new fabric.Canvas("canvasFront", {
       height: 300,
       width: 200,
@@ -561,7 +506,7 @@ export default function Custom() {
     canvasBackRef.current = cBack;
 
     return () => {
-      cFront.dispose();
+      cFront.dispose(); 
       cBack.dispose();
     };
   }, []);

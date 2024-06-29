@@ -29,7 +29,6 @@ const MaterialInfo = ({
     numberOfDrawings * drawingCost + numberOfUploads * uploadCost;
 
   const finalTotalPrice = totalPrice + additionalCost;
-  console.log("SIZESSSSSSSS", sizes);
   const handleAddToCart = () => {
     setShowDialog(true);
   };
