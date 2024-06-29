@@ -14,7 +14,6 @@
   import { axiosInstance } from "@/utils/axiosInstance";
 
   import { fabric } from "fabric"; // Import fabric
-import Image from "next/image";
 
   export default function Custom() {
     const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
@@ -621,18 +620,14 @@ import Image from "next/image";
               </div>
 
               <div className="relative" style={{ width: 500, height: 500 }}>
-                <Image
+                <img
                   src={imageDisplay}
-                  alt="123"
-                  width={500}
-                  height={550}
                   style={{
                     position: "absolute",
                     top: 0,
                     left: 0,
                     width: 500,
                     height: 550,
-                    
                   }}
                 />
 
