@@ -16,7 +16,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { fabric } from "fabric"; // Import fabric
 
 export default function Custom() {
-  const [imageDisplay, setImageDisplay] = useState("/TeeFrontBeige.png");
+  const [imageDisplay, setImageDisplay] = useState("https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f");
   const canvasFrontRef = useRef<fabric.Canvas | null>(null);
   const canvasBackRef = useRef<fabric.Canvas | null>(null);
   const [drawingMode, setDrawingMode] = useState(null);
@@ -31,7 +31,7 @@ export default function Custom() {
   });
   const [currentView, setCurrentView] = useState("front");
   const [selectedImage, setSelectedImage] = useState("front");
-  const [selectedColor, setSelectedColor] = useState("White");
+  const [selectedColor, setSelectedColor] = useState("Beige");
   const [selectedText, setSelectedText] = useState<fabric.Textbox | null>(null);
   const [totalPrice, setTotalPrice] = useState(100000); // Default price
   const [productName, setProductName] = useState("Áo Thun Cổ Tròn"); // Default product name
