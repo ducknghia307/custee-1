@@ -16,7 +16,9 @@ import { imageMapping } from "@/components/custom/ImageMapping";
 import { fabric } from "fabric"; // Import fabric
 
 export default function Custom() {
-  const [imageDisplay, setImageDisplay] = useState("https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f");
+  const [imageDisplay, setImageDisplay] = useState(
+    "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f"
+  );
   const canvasFrontRef = useRef<fabric.Canvas | null>(null);
   const canvasBackRef = useRef<fabric.Canvas | null>(null);
   const [drawingMode, setDrawingMode] = useState(null);
@@ -67,7 +69,7 @@ export default function Custom() {
   console.log("::::::::::::", cartItem);
 
   const dispatch = useAppDispatch();
- 
+
   const handleTypeSelection = (type) => {
     console.log(type);
 
@@ -270,8 +272,8 @@ export default function Custom() {
       offscreenCanvas.width = 500; // Adjust these values to the actual image dimensions
       offscreenCanvas.height = 550; // Adjust these values to the actual image dimensions
       const ctx = offscreenCanvas.getContext("2d");
-
       const backgroundImg = new Image();
+      backgroundImg.crossOrigin = 'anonymous';  
       backgroundImg.onload = () => {
         ctx?.drawImage(
           backgroundImg,
@@ -293,7 +295,6 @@ export default function Custom() {
         const dataURL = offscreenCanvas.toDataURL("image/png");
         resolve(dataURL);
       };
-
       backgroundImg.src = imageMapping[pattern][selectedColor][view];
     });
   };
@@ -506,7 +507,7 @@ export default function Custom() {
     canvasBackRef.current = cBack;
 
     return () => {
-      cFront.dispose(); 
+      cFront.dispose();
       cBack.dispose();
     };
   }, []);

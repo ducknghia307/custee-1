@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 const publicAxios = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://custeeserver.onrender.com",
   withCredentials: true,
 });
 
