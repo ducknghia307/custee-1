@@ -14,7 +14,7 @@ import { showToast } from "@/components/toast/toast";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { imageMapping } from "@/components/custom/ImageMapping";
 import { fabric } from "fabric"; // Import fabric
-
+import Loading from "@/components/loading/Loading";
 export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState(
     "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f"
@@ -22,7 +22,7 @@ export default function Custom() {
   const canvasFrontRef = useRef<fabric.Canvas | null>(null);
   const canvasBackRef = useRef<fabric.Canvas | null>(null);
   const [drawingMode, setDrawingMode] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [sizes, setSizes] = useState({
     S: "0",
     M: "0",
@@ -40,7 +40,7 @@ export default function Custom() {
   const [pattern, setPattern] = useState("tshirt");
   const [numberOfDrawings, setNumberOfDrawings] = useState(0);
   const [numberOfUploads, setNumberOfUploads] = useState(0);
-
+  const [error, setError] = useState("");
   const userId = useAppSelector((state) => state.auth.userId);
   const [product, setProduct] = useState({
     userId,
@@ -72,7 +72,6 @@ export default function Custom() {
 
   const handleTypeSelection = (type) => {
     console.log(type);
-
     setPattern(type);
     if (type === "tshirt") {
       setProductName("Áo Thun Cổ Tròn");
@@ -242,13 +241,9 @@ export default function Custom() {
   async function createProduct(product) {
     console.log("myPRODUCT", product);
     try {
+      setIsLoading(true);
       const response = await axiosInstance.post("/api/product", product);
       console.log("12312321", response);
-
-      if (response.status === 200) {
-        showToast("Add to cart successfully", "success");
-      }
-
       setCartItem((prevCartItem) => ({
         ...prevCartItem,
         productId: response.data.metadata._id,
@@ -259,7 +254,8 @@ export default function Custom() {
         ...cartItem,
         productId: response.data.metadata._id, // Ensure productId is correct
       });
-
+      setIsLoading(false);
+      showToast("Add to cart successfully", "success");
       console.log("addtocartresponse:::", addToCartResponse);
     } catch (error) {
       console.error("Error creating product:", error);
@@ -273,7 +269,7 @@ export default function Custom() {
       offscreenCanvas.height = 550; // Adjust these values to the actual image dimensions
       const ctx = offscreenCanvas.getContext("2d");
       const backgroundImg = new Image();
-      backgroundImg.crossOrigin = 'anonymous';  
+      backgroundImg.crossOrigin = "anonymous";
       backgroundImg.onload = () => {
         ctx?.drawImage(
           backgroundImg,
@@ -299,7 +295,13 @@ export default function Custom() {
     });
   };
   const saveDesign = () => {
-    console.log("12312");
+    const isAnySizeSelected = Object.values(sizes).some(
+      (quantity) => parseInt(quantity) > 0
+    );
+    if (!isAnySizeSelected) {
+      setError("Please select size");
+      return;
+    }
 
     const canvasFront = canvasFrontRef.current;
     const canvasBack = canvasBackRef.current;
@@ -312,7 +314,6 @@ export default function Custom() {
         .then(([frontDataURL, backDataURL]) => {
           console.log("Both canvases saved successfully");
           uploadDesignImages(frontDataURL, backDataURL);
-          showToast("Successfully created", "success");
         })
         .catch((error) => {
           console.error("Error saving canvases:", error);
@@ -387,11 +388,11 @@ export default function Custom() {
     { name: "White", value: "#FFFFFF" },
     { name: "Beige", value: "#e4d5b7" },
     { name: "Yellow", value: "#FFFF00" },
-    { name: "Orange", value: "#ffa333" },
-    { name: "Blue", value: "#0000FF" },
+    { name: "Pink", value: "#E75480" },
+    { name: "Blue", value: "#8ED8D8" },
     { name: "Green", value: "#008000" },
-    { name: "Brown", value: "#A52A2A" },
-    { name: "Grey", value: "#808080" },
+    { name: "Red", value: "#e63d00" },
+    { name: "Gray", value: "#808080" },
     { name: "Purple", value: "#800080" },
   ];
 
@@ -420,7 +421,7 @@ export default function Custom() {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
+    setTotalPrice((prevPrice) => prevPrice + 10000);
     setNumberOfUploads((prevCount) => prevCount + 1);
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -434,8 +435,6 @@ export default function Custom() {
       }
       imgObj.onload = () => {
         const img = new fabric.Image(imgObj);
-
-        // Set the desired width and height for the image
         const desiredWidth = 100; // Adjust this value as needed
         const desiredHeight = 100; // Adjust this value as needed
 
@@ -469,7 +468,7 @@ export default function Custom() {
       [name]: value,
     };
     setSizes(newSizes);
-
+    setError("");
     const updatedQuantityPerSize = Object.keys(newSizes)
       .map((size) => ({
         size,
@@ -497,10 +496,10 @@ export default function Custom() {
     });
 
     // settings for all canvas in the app
-    // fabric.Object.prototype.transparentCorners = false;
-    // fabric.Object.prototype.cornerColor = "#2BEBC8";
-    // // fabric.Object.prototype.cornerStyle = "rect";
-    // fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
+    fabric.Object.prototype.transparentCorners = false;
+    fabric.Object.prototype.cornerColor = "#2BEBC8";
+    fabric.Object.prototype.cornerStyle = "rect";
+    fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
     fabric.Object.prototype.cornerSize = 10;
 
     canvasFrontRef.current = cFront;
@@ -518,9 +517,19 @@ export default function Custom() {
     if (canvas) {
       const activeObject = canvas.getActiveObject();
       console.log("activeObject::", activeObject);
-
       if (activeObject) {
+        console.log("Nghia", activeObject);
+        const activeObjectWithElement = activeObject as {
+          _element?: HTMLElement;
+        };
+
+        if (activeObjectWithElement._element) {
+          setTotalPrice((prevPrice) => prevPrice - 10000);
+          setNumberOfUploads((prevCount) => prevCount - 1);
+        }
+
         canvas.remove(activeObject);
+
         canvas.requestRenderAll();
       }
     }
@@ -546,6 +555,7 @@ export default function Custom() {
       <div className="mt-2 w-full h-96 flex flex-col items-center">
         <div className="flex flex-col justify-center items-center mt-32">
           <p className={`text-3xl font-black ${dela.className}`}>My Design</p>
+          {isLoading ? <Loading /> : null}
           <div className="mt-10 flex">
             <div
               style={{ height: "60vh", marginRight: "100px" }}
@@ -599,7 +609,7 @@ export default function Custom() {
                   position: "absolute",
                   top: 130,
                   left: 146,
-                  border: "1px dashed #b3b3ff",
+                  border: "2px dashed #3399ff",
                   display: currentView === "front" ? "block" : "none",
                 }}
               >
@@ -610,7 +620,7 @@ export default function Custom() {
                   position: "absolute",
                   top: 130,
                   left: 146,
-                  border: "1px dashed #b3b3ff",
+                  border: "2px dashed #3399ff",
                   display: currentView === "back" ? "block" : "none",
                 }}
               >
@@ -666,6 +676,7 @@ export default function Custom() {
               </div>
             </div>
             <MaterialInfo
+              error={error}
               sizes={sizes}
               handleSizeChange={handleSizeChange}
               saveDesign={saveDesign}

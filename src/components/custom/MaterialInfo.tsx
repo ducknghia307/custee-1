@@ -4,31 +4,62 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Lightbulb, ShoppingCart } from "@phosphor-icons/react";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
-import SizeInfoModal from "./SizeInfoModel"; // Import the SizeInfoModal component
+import SizeInfoModal from "./SizeInfoModel";
 
-const MaterialInfo = ({
+// Define the types for sizes
+type Sizes = {
+  [key: string]: string;
+};
+
+interface MaterialInfoProps {
+  error: string;
+  sizes: Sizes;
+  handleSizeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  saveDesign: () => void;
+  totalPrice: number;
+  name: string;
+  numberOfDrawings: number;
+  numberOfUploads: number;
+}
+
+const MaterialInfo: React.FC<MaterialInfoProps> = ({
+  error,
   sizes,
   handleSizeChange,
   saveDesign,
   totalPrice,
   name,
-  numberOfDrawings, // New prop
-  numberOfUploads, // New prop
+  numberOfDrawings,
+  numberOfUploads,
 }) => {
   console.log("numberOfDrawings", numberOfDrawings);
   console.log("numberOfUploads", numberOfUploads);
+  console.log("123", error);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [showSizeInfoModal, setShowSizeInfoModal] = useState(false); // State for SizeInfoModal
+  const [showSizeInfoModal, setShowSizeInfoModal] = useState(false);
+  const [totalQuantity, setTotalQuantity] = useState(0);
 
   const drawingCost = 10000;
   const uploadCost = 30000;
+
+  const basePrice = 100000; // Base price of the shirt
+
+  useEffect(() => {
+    const total = Object.values(sizes).reduce(
+      (sum, qty) => sum + Number(qty),
+      0
+    );
+    setTotalQuantity(total);
+  }, [sizes]);
 
   // Calculate additional costs
   const additionalCost =
     numberOfDrawings * drawingCost + numberOfUploads * uploadCost;
 
-  const finalTotalPrice = totalPrice + additionalCost;
+  const finalTotalPrice =
+    totalPrice + additionalCost + totalQuantity * basePrice - 100000;
+
   const handleAddToCart = () => {
     setShowDialog(true);
   };
@@ -75,18 +106,21 @@ const MaterialInfo = ({
               <p className="text-sm ">DTF/ Decal</p>
             </div>
           </div>
-          <div className="flex flex-row justify-center items-center p-3">
-          
+          <div className="flex flex-row justify-center items-center p-1">
             <Button variant={"outline"} onClick={handleSizeInfoClick}>
               <Lightbulb className="mr-1" size={22} />
               Size Information
             </Button>
           </div>
-          <div className="flex flex-wrap gap-1 ml-4  mt-1 mb-5">
-            {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+          <div className="flex flex-wrap justify-center items-center  ">
+            {["S", "M", "L", "XL", "XXL", "XXXL"].map((size, index) => (
               <div
                 key={size}
-                className="flex flex-col justify-center items-center mr-11"
+                className="flex flex-col justify-center items-center m-1 "
+                style={{
+                  flexBasis: "calc(33.33% - 2rem)",
+                  maxWidth: "calc(33.33% - 2rem)",
+                }}
               >
                 <Label
                   className="font-bold"
@@ -111,15 +145,23 @@ const MaterialInfo = ({
                 />
               </div>
             ))}
+            <div className="w-full h-7 mt-2">
+              {error && (
+                <p className="text-sm font-black text-center" style={{ color: "red" }}>
+                  {error}
+                </p>
+              )}
+            </div>
           </div>
+
           <div style={{ borderBottom: "2px solid black" }}></div>
           <div className="p-3">
-            <div className="text-base font-black mb-1">Total:</div>
+            <div className="text-base font-black mb-1">Cost:</div>
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Shirt price:</p>
               <p className="text-base  mb-1">100.000đ</p>
             </div>
-        
+
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Draw price:</p>
               <p className="text-base  mb-1">
@@ -128,7 +170,9 @@ const MaterialInfo = ({
             </div>
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Image price:</p>
-              <p className="text-base  mb-1">{numberOfUploads * uploadCost}đ</p>
+              <p className="text-base  mb-1">
+                {(numberOfUploads * uploadCost).toLocaleString()}đ
+              </p>
             </div>
             <div className="flex items-center justify-between">
               <p className=" text-base font-black mb-1">Total Price</p>
