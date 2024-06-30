@@ -89,6 +89,7 @@ export default function Custom() {
     const target = options.target;
     if (target && target.type === "textbox") {
       setSelectedText(target as fabric.Textbox);
+     
     }
   };
   useEffect(() => {
@@ -199,6 +200,7 @@ export default function Custom() {
           const handleMouseUp = () => {
             canvas.off("mouse:move", handleMouseMove);
             canvas.off("mouse:up", handleMouseUp);
+            setNumberOfDrawings((prevCount) => prevCount + 1);
             setDrawingMode(null); // Reset drawing mode after shape is drawn
           };
 
@@ -220,7 +222,6 @@ export default function Custom() {
 
     if (canvas) {
       canvas.on("mouse:down", handleTextSelection);
-
       return () => {
         canvas.off("mouse:down", handleTextSelection);
       };
@@ -415,13 +416,14 @@ export default function Custom() {
       canvas.add(text);
       canvas.setActiveObject(text);
       canvas.requestRenderAll();
+      setNumberOfDrawings((prevCount) => prevCount + 1);
     }
   };
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    setTotalPrice((prevPrice) => prevPrice + 10000);
+
     setNumberOfUploads((prevCount) => prevCount + 1);
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -455,11 +457,7 @@ export default function Custom() {
     reader.readAsDataURL(file);
   };
 
-  // const handleAddDrawing = () => {
-  //   setDrawingMode(!drawingMode);
-  //   setNumberOfDrawings((prevCount) => prevCount + 1); // Update numberOfDrawings
-  //   setTotalPrice((prevPrice) => prevPrice + 10000); // Update totalPrice
-  // };
+
 
   const handleSizeChange = (event) => {
     const { name, value } = event.target;
@@ -514,26 +512,34 @@ export default function Custom() {
   const deleteSelectedImage = () => {
     const canvas =
       currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
+    
     if (canvas) {
-      const activeObject = canvas.getActiveObject();
-      console.log("activeObject::", activeObject);
-      if (activeObject) {
-        console.log("Nghia", activeObject);
-        const activeObjectWithElement = activeObject as {
-          _element?: HTMLElement;
-        };
-
-        if (activeObjectWithElement._element) {
-          setTotalPrice((prevPrice) => prevPrice - 10000);
-          setNumberOfUploads((prevCount) => prevCount - 1);
-        }
-
-        canvas.remove(activeObject);
-
+      const activeObjects = canvas.getActiveObjects(); // Use getActiveObjects to get all selected objects
+      
+      if (activeObjects && activeObjects.length > 0) {
+        activeObjects.forEach((object) => {
+          const activeObjectWithElement = object as {
+            _element?: HTMLElement;
+          };
+          
+          if (activeObjectWithElement._element) {
+            setTotalPrice((prevPrice) => prevPrice - 10000);
+            setNumberOfUploads((prevCount) => prevCount - 1);
+          } else {
+            setNumberOfDrawings((prevCount) => prevCount - 1);
+          }
+          
+          canvas.remove(object); // Remove each selected object from the canvas
+        });
+        
+        canvas.discardActiveObject(); // Deselect all objects
         canvas.requestRenderAll();
+      } else {
+        console.log("No objects selected");
       }
     }
   };
+  
 
   useEffect(() => {
     const handleKeyDown = (event) => {

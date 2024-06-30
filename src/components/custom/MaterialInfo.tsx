@@ -147,7 +147,10 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
             ))}
             <div className="w-full h-7 mt-2">
               {error && (
-                <p className="text-sm font-black text-center" style={{ color: "red" }}>
+                <p
+                  className="text-sm font-black text-center"
+                  style={{ color: "red" }}
+                >
                   {error}
                 </p>
               )}
@@ -165,7 +168,7 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Draw price:</p>
               <p className="text-base  mb-1">
-                {numberOfDrawings * drawingCost}đ
+                {(numberOfDrawings * drawingCost).toLocaleString()}đ
               </p>
             </div>
             <div className="justify-between flex">
