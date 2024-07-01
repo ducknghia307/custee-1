@@ -119,8 +119,8 @@ export default function Page() {
             ? totalIncludingDelivery - discountAmount
             : total - discountAmount,
         description: "Custee Order",
-        cancelUrl: "http://localhost:3000/cart",
-        returnUrl: "http://localhost:3000/checkout/completed",
+        cancelUrl: "https://custee-two.vercel.app/cart",
+        returnUrl: "https://custee-two.vercel.app//checkout/completed",
         buyerName: deliveryInfo.recipientName,
         buyerPhone: getHiddenPhoneNumber(deliveryInfo.phone),
         buyerAddress: deliveryInfo.address,

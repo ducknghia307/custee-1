@@ -510,36 +510,36 @@ export default function Custom() {
   }, []);
 
   const deleteSelectedImage = () => {
-    const canvas =
-      currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
-    
-    if (canvas) {
-      const activeObjects = canvas.getActiveObjects(); // Use getActiveObjects to get all selected objects
-      
-      if (activeObjects && activeObjects.length > 0) {
-        activeObjects.forEach((object) => {
-          const activeObjectWithElement = object as {
-            _element?: HTMLElement;
-          };
-          
-          if (activeObjectWithElement._element) {
-            setTotalPrice((prevPrice) => prevPrice - 10000);
-            setNumberOfUploads((prevCount) => prevCount - 1);
-          } else {
-            setNumberOfDrawings((prevCount) => prevCount - 1);
-          }
-          
-          canvas.remove(object); // Remove each selected object from the canvas
-        });
-        
-        canvas.discardActiveObject(); // Deselect all objects
-        canvas.requestRenderAll();
-      } else {
-        console.log("No objects selected");
-      }
-    }
-  };
+  const canvas =
+    currentView === "front" ? canvasFrontRef.current : canvasBackRef.current;
   
+  if (canvas) {
+    const activeObjects = canvas.getActiveObjects(); // Use getActiveObjects to get all selected objects
+    
+    if (activeObjects && activeObjects.length > 0) {
+      activeObjects.forEach((object) => {
+        const activeObjectWithElement = object as {
+          _element?: HTMLElement;
+        };
+        
+        if (activeObjectWithElement._element) {
+          setTotalPrice((prevPrice) => prevPrice - 10000);
+          setNumberOfUploads((prevCount) => prevCount - 1);
+        } else {
+          setNumberOfDrawings((prevCount) => prevCount - 1);
+        }
+        
+        canvas.remove(object); // Remove each selected object from the canvas
+      });
+      
+      canvas.discardActiveObject(); // Deselect all objects
+      canvas.requestRenderAll();
+    } else {
+      console.log("No objects selected");
+    }
+  }
+};
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
