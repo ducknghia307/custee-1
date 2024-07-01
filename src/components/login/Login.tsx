@@ -129,11 +129,11 @@ export function SigninForm() {
       console.log("Backend response:", response);
       console.log("Logged in user:", result.user);
       // Additional logic if needed
-      const { accessToken, user } = response.data;
+      const { accessToken, user,refreshToken } = response.data;
       const id = response.data.user.id;
       localStorage.setItem("userId", id);
+      saveTokens(accessToken, refreshToken);
       setAuthToken(accessToken);
-
       console.log("Login successful, token set");
       dispatch(setCredentials({ accessToken, id, user }));
       showToast("Login successful!", "success");
