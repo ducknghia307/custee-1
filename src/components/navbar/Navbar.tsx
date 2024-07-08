@@ -18,16 +18,17 @@ export default function Navbar() {
 
   const dispatch = useAppDispatch();
 
-  async function logOut() {
+  const handleLogOut = async () => {
     try {
-      const response = await axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/auth/logout");
+      window.localStorage.removeItem("userId");
       dispatch(logOutAction(null));
       showToast("Logged out successfully", "success");
     } catch (error) {
       showToast("Something went wrong", "error");
       throw error;
     }
-  }
+  };
 
   const [notificationList, setNotificationList] = useState([
     {
@@ -75,7 +76,6 @@ export default function Navbar() {
           <img src={logo.src} alt="" className="w-[16rem]" />
         </Link>
       </div>
-
       <NavigationGroup />
 
       {/*ACCOUNT MENU*/}
@@ -332,7 +332,7 @@ export default function Navbar() {
                   className="flex items-center justify-center gap-1 py-2 px-3 rounded-lg text-sm text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
                   href="/"
                   onClick={(e) => {
-                    logOut(); // Call logOut function
+                    handleLogOut(); // Call logOut function
                   }}
                 >
                   <svg

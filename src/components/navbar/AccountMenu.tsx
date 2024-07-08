@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { logOut as logOutAction } from "../../redux/features/auth/authSlice";
+import { logOut as logOutAction, logOutAndRevertAll } from "../../redux/features/auth/authSlice";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { showToast } from "../toast/toast";
@@ -8,8 +8,11 @@ import moment from "moment";
 import { Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import "./Navbar.css";
+import { useRouter } from "next/navigation";
+import { resetConversationState } from "@/redux/features/conversation/conversationSlice";
 
 export default function AccountMenu() {
+  const router = useRouter();
   const [notificationList, setNotificationList] = useState([
     {
       id: 1,
@@ -37,7 +40,9 @@ export default function AccountMenu() {
   async function logOut() {
     try {
       const response = await axiosInstance.post("/auth/logout", {});
-      dispatch(logOutAction(null));
+      dispatch(logOutAndRevertAll());
+      window.localStorage.removeItem("userId");
+      router.push("/");
       showToast("Logged out successfully", "success");
     } catch (error) {
       showToast("Something went wrong", "error");
