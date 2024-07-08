@@ -51,6 +51,10 @@ export default function ProductsPage() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN');
+  };
+
   return (
     <div className={styles.container}>
       <h3 className={styles.h3}>Product Management</h3>
@@ -75,7 +79,7 @@ export default function ProductsPage() {
               <td>Back Image</td>
               <td>Product Name</td>
               <td>Pattern</td>
-              <td>Price</td>
+              <td>Price (đ)</td>
               <td>Action</td>
             </tr>
           </thead>
@@ -107,7 +111,8 @@ export default function ProductsPage() {
                   </td>
                   <td>{product.name}</td>
                   <td>{product.pattern}</td>
-                  <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                  {/* <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td> */}
+                  <td>{formatPrice(product.price)}</td>
                   <td>
                     <div className={styles.buttons}>
                       <Link href={`/dashboard/products/edit/${product._id}`}>
