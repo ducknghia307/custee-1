@@ -5,6 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import StoreProvider from "./StoreProvider";
 import { Toast } from "@/components/toast/toast";
+import ChatPopupWrapper from "@/components/chat/ChatPopup";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
         <StoreProvider>
           {children}
           <Toast />
+          <ChatPopupWrapper />
         </StoreProvider>
       </body>
     </html>
