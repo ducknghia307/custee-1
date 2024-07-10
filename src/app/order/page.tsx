@@ -9,7 +9,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import Loading from "@/components/loading/Loading";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import EmptyCartImage from "../../assets/images/cart/empty-cart.png";
+import EmptyOrderImage from "../../assets/images/cart/empty-order.webp";
 
 interface Order {
   _id: string;
@@ -48,14 +48,13 @@ interface OrderItem {
 export default function Page() {
   const userId = localStorage.userId;
   const [orderList, setOrderList] = useState<Order[]>([]);
+  const [currentList, setCurrentList] = useState<Order[]>([]);
+  const [group, setGroup] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
 
   const sortOrderList = (orderList: Order[]) => {
-    var ordering: any = {},
-      sortOrder = ["pending", "delivering", "completed", "cancelled"];
-    for (var i = 0; i < sortOrder.length; i++) ordering[sortOrder[i]] = i;
-    return orderList.sort(function (a: any, b: any) {
-      return ordering[a.status] - ordering[b.status];
+    return orderList.sort((a: Order, b: Order) => {
+      return new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1;
     });
   };
 
@@ -67,11 +66,41 @@ export default function Page() {
         .then((res) => {
           console.log("Order: ", res.data);
           setOrderList(sortOrderList(res.data.metadata));
+          setCurrentList(sortOrderList(res.data.metadata));
         })
         .catch((err) => console.log(err));
     }
     setIsLoading(false);
   };
+
+  const filterOrder = () => {
+    if (group === "all") {
+      setCurrentList(orderList);
+    } else if (group === "pending") {
+      setCurrentList(
+        orderList.filter(
+          (order: Order) =>
+            order.status === "pending" || order.status === "processing"
+        )
+      );
+    } else if (group === "in delivery") {
+      setCurrentList(
+        orderList.filter((order: Order) => order.status === "delivering")
+      );
+    } else if (group === "completed") {
+      setCurrentList(
+        orderList.filter((order: Order) => order.status === "completed")
+      );
+    } else if (group === "canceled") {
+      setCurrentList(
+        orderList.filter((order: Order) => order.status === "cancelled")
+      );
+    }
+  };
+
+  useEffect(() => {
+    filterOrder();
+  }, [group]);
 
   const getPageStatus = () => {
     if (sessionStorage.payNowSucceeded) {
@@ -100,26 +129,74 @@ export default function Page() {
       <Navbar />
       <div className="w-full flex flex-col justify-center items-center mt-32">
         <p className={`text-3xl font-black ${dela.className}`}>ORDER</p>
-        {isLoading ? <Loading /> : null}
-        {orderList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-4 font-thin py-16">
-            <img src={EmptyCartImage.src} alt="" className="w-36 -z-10" />
-            <p className={`${montserrat_600.className} text-lg`}>
-              NO ORDER YET
-            </p>
-            <p
-              className={`${montserrat_400.className} text-xs opacity-80 text-gray-500`}
-            >
-              Go get some from your{" "}
-              <Link href="/cart" className="underline bold hover:text-black">
-                cart
-              </Link>
-              &nbsp;!
-            </p>
-          </div>
-        ) : null}
         <div className="w-full xl:w-2/3 mx-2 flex flex-col items-center gap-8 mt-8">
-          {orderList.map((order: Order, key) => {
+          <div
+            className={`w-1/2 mx-auto flex items-center gap-2 ${montserrat_600.className}`}
+          >
+            <button
+              onClick={() => setGroup("all")}
+              className={`grow p-2 rounded-xl font-semibold ${
+                group === "all"
+                  ? "bg-gray-800 text-white"
+                  : "border hover:bg-slate-100"
+              } duration-200`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setGroup("pending")}
+              className={`grow p-2 rounded-xl font-semibold ${
+                group === "pending"
+                  ? "bg-gray-800 text-white"
+                  : "border hover:bg-slate-100"
+              } duration-200`}
+            >
+              Pending
+            </button>
+            <button
+              onClick={() => setGroup("in delivery")}
+              className={`grow p-2 rounded-xl font-semibold ${
+                group === "in delivery"
+                  ? "bg-gray-800 text-white"
+                  : "border hover:bg-slate-100"
+              } duration-200`}
+            >
+              In delivery
+            </button>
+            <button
+              onClick={() => setGroup("completed")}
+              className={`grow p-2 rounded-xl font-semibold ${
+                group === "completed"
+                  ? "bg-gray-800 text-white"
+                  : "border hover:bg-slate-100"
+              } duration-200`}
+            >
+              Completed
+            </button>
+            <button
+              onClick={() => setGroup("canceled")}
+              className={`grow p-2 rounded-xl font-semibold ${
+                group === "canceled"
+                  ? "bg-gray-800 text-white"
+                  : "border hover:bg-slate-100"
+              } duration-200`}
+            >
+              Canceled
+            </button>
+          </div>
+          {isLoading ? <Loading /> : null}
+          {currentList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-4 font-thin py-16">
+              <img src={EmptyOrderImage.src} alt="" className="w-36 -z-10" />
+              <p className={`${montserrat_600.className} text-lg`}>NO ORDER</p>
+              <p
+                className={`${montserrat_400.className} text-xs opacity-80 text-gray-500`}
+              >
+                No result that match was found!
+              </p>
+            </div>
+          ) : null}
+          {currentList.map((order: Order, key) => {
             return <OrderListItem key={key} order={order} />;
           })}
         </div>
