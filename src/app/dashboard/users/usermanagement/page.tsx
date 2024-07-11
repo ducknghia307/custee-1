@@ -38,6 +38,7 @@ const UserManagement = () => {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const handleReasonChange = (event) => {

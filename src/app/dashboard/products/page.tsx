@@ -23,7 +23,8 @@ export default function ProductsPage() {
     try {
       const response = await axiosInstance.get("/api/product");
       console.log("Response Data:", response.data); 
-      setProducts(response.data.metadata || []);
+      const sortedProducts = (response.data.metadata || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setProducts(sortedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -35,6 +36,7 @@ export default function ProductsPage() {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const handleSearchChange = (e) => {
