@@ -23,12 +23,13 @@ export default function ProductsPage() {
     try {
       const response = await axiosInstance.get("/api/product");
       console.log("Response Data:", response.data); 
-      const sortedProducts = (response.data.metadata || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const sortedProducts = (response.data.metadata || []).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setProducts(sortedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchProducts();
