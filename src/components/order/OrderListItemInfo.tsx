@@ -37,6 +37,12 @@ export default function OrderListItemInfo({ order }: { order: Order }) {
           PENDING
         </p>
       );
+    } else if (order?.status.match("processing")) {
+      return (
+        <p className="text-purple-600 hover:text-purple-800 cursor-default">
+          PROCESSING
+        </p>
+      );
     } else if (order?.status.match("delivering")) {
       return (
         <p className="text-sky-700 hover:text-sky-800 cursor-default">

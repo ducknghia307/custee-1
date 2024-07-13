@@ -72,7 +72,8 @@ const OrderList = () => {
             try {
                 const response = await axiosInstance.get("/api/order");
                 console.log("Response Data:", response.data);
-                setOrders(response.data.metadata || []); // Ensure response data matches Order type
+                const sortedOrders = (response.data.metadata || []).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                setOrders(sortedOrders);
             } catch (error) {
                 console.error("Error fetching total orders:", error);
             }
@@ -95,6 +96,7 @@ const OrderList = () => {
     // Handle page change
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'auto' });
     };
 
     // Handle search change
@@ -130,8 +132,8 @@ const OrderList = () => {
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
     const formatPrice = (price: number) => {
-        return price.toLocaleString('vi-VN') ;
-      };
+        return price.toLocaleString('vi-VN');
+    };
 
     return (
         <div className={styles.container}>
@@ -164,11 +166,11 @@ const OrderList = () => {
                         <td>ORDER CODE</td>
                         <td>RECIPIENT NAME</td>
                         <td>PHONE</td>
-                        <td>ADDRESS</td>
-                        <td>PAYMENT METHOD</td>
+                        {/* <td>ADDRESS</td> */}
+                        {/* <td>PAYMENT METHOD</td> */}
                         <td>TOTAL PRICE (đ)</td>
                         <td>SHIPPING METHOD</td>
-                        <td>SHIPPING PRICE (đ)</td>
+                        {/* <td>SHIPPING PRICE (đ)</td> */}
                         <td>STATUS</td>
                         <td>ACTION</td>
                     </tr>
@@ -180,11 +182,11 @@ const OrderList = () => {
                                 <td>{order.code}</td>
                                 <td>{order.deliveryInfo.recipientName}</td>
                                 <td>{order.deliveryInfo.phone}</td>
-                                <td>{order.deliveryInfo.address}</td>
-                                <td>{order.paymentMethod}</td>
+                                {/* <td>{order.deliveryInfo.address}</td> */}
+                                {/* <td>{order.paymentMethod}</td> */}
                                 <td>{formatPrice(parseInt(order.total))}</td>
-                <td>{order.deliveryOptions.method}</td>
-                <td>{formatPrice(parseInt(order.deliveryOptions.cost))}</td>
+                                <td>{order.deliveryOptions.method}</td>
+                                {/* <td>{formatPrice(parseInt(order.deliveryOptions.cost))}</td> */}
                                 <td>
                                     <span style={getStatusStyle(order.status)}>
                                         {order.status}
