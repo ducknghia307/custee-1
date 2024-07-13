@@ -78,10 +78,11 @@ export default function Page() {
       setCurrentList(orderList);
     } else if (group === "pending") {
       setCurrentList(
-        orderList.filter(
-          (order: Order) =>
-            order.status === "pending" || order.status === "processing"
-        )
+        orderList.filter((order: Order) => order.status === "pending")
+      );
+    } else if (group === "processing") {
+      setCurrentList(
+        orderList.filter((order: Order) => order.status === "processing")
       );
     } else if (group === "in delivery") {
       setCurrentList(

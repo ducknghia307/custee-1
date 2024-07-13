@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,10 +16,11 @@ interface MaterialInfoProps {
   sizes: Sizes;
   handleSizeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   saveDesign: () => void;
-  totalPrice: number;
   name: string;
   numberOfDrawings: number;
   numberOfUploads: number;
+  setPricePerShirt: (price: number) => void;
+  pricePerShirt: number;
 }
 
 const MaterialInfo: React.FC<MaterialInfoProps> = ({
@@ -27,22 +28,19 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
   sizes,
   handleSizeChange,
   saveDesign,
-  totalPrice,
   name,
+  setPricePerShirt, 
   numberOfDrawings,
   numberOfUploads,
+  pricePerShirt,
 }) => {
-  console.log("numberOfDrawings", numberOfDrawings);
-  console.log("numberOfUploads", numberOfUploads);
-  console.log("123", error);
-
   const [showDialog, setShowDialog] = useState(false);
   const [showSizeInfoModal, setShowSizeInfoModal] = useState(false);
-  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(1);
+  const [totalPrice,setTotalPrice]=useState(0);
 
   const drawingCost = 10000;
   const uploadCost = 30000;
-
   const basePrice = 100000; // Base price of the shirt
 
   useEffect(() => {
@@ -53,13 +51,21 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
     setTotalQuantity(total);
   }, [sizes]);
 
-  // Calculate additional costs
-  const additionalCost =
-    numberOfDrawings * drawingCost + numberOfUploads * uploadCost;
+  const additionalCost = useMemo(
+    () =>
+      (numberOfDrawings * drawingCost + numberOfUploads * uploadCost) *
+      totalQuantity,
+    [numberOfDrawings, numberOfUploads, totalQuantity]
+  );
 
-  const finalTotalPrice =
-    totalPrice + additionalCost + totalQuantity * basePrice - 100000;
+  useEffect(() => {
+    const newTotalPrice = basePrice * totalQuantity;
+    setTotalPrice(newTotalPrice);
+  }, [totalQuantity, basePrice, setTotalPrice]);
 
+  setPricePerShirt(
+    basePrice + numberOfDrawings * drawingCost + numberOfUploads * uploadCost
+  );
   const handleAddToCart = () => {
     setShowDialog(true);
   };
@@ -80,6 +86,8 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
   const handleSizeInfoClose = () => {
     setShowSizeInfoModal(false); // Close the SizeInfoModal
   };
+
+  const totalCost = totalPrice + additionalCost;
 
   return (
     <div style={{ height: "62vh", width: "350px", marginLeft: "100px" }}>
@@ -113,7 +121,7 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
             </Button>
           </div>
           <div className="flex flex-wrap justify-center items-center  ">
-            {["S", "M", "L", "XL", "XXL", "XXXL"].map((size, index) => (
+            {["S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
               <div
                 key={size}
                 className="flex flex-col justify-center items-center m-1 "
@@ -162,26 +170,36 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
             <div className="text-base font-black mb-1">Cost:</div>
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Shirt price:</p>
-              <p className="text-base  mb-1">100.000đ</p>
+              <p className="text-base  mb-1">
+                {(basePrice * totalQuantity).toLocaleString()}đ
+              </p>
             </div>
 
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Draw price:</p>
               <p className="text-base  mb-1">
-                {(numberOfDrawings * drawingCost).toLocaleString()}đ
+                {(
+                  numberOfDrawings *
+                  drawingCost *
+                  totalQuantity
+                ).toLocaleString()}
+                đ
               </p>
             </div>
             <div className="justify-between flex">
               <p className="text-base font-black mb-1">Image price:</p>
               <p className="text-base  mb-1">
-                {(numberOfUploads * uploadCost).toLocaleString()}đ
+                {(
+                  numberOfUploads *
+                  uploadCost *
+                  totalQuantity
+                ).toLocaleString()}
+                đ
               </p>
             </div>
             <div className="flex items-center justify-between">
               <p className=" text-base font-black mb-1">Total Price</p>
-              <p className="text-base  mb-1">
-                {finalTotalPrice.toLocaleString()}đ
-              </p>
+              <p className="text-base  mb-1">{totalCost.toLocaleString()}đ</p>
             </div>
           </div>
         </div>

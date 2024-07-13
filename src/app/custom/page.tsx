@@ -35,7 +35,7 @@ export default function Custom() {
   const [selectedImage, setSelectedImage] = useState("front");
   const [selectedColor, setSelectedColor] = useState("Beige");
   const [selectedText, setSelectedText] = useState<fabric.Textbox | null>(null);
-  const [totalPrice, setTotalPrice] = useState(100000); // Default price
+  const [pricePerShirt, setPricePerShirt] = useState(100000); // Default price
   const [productName, setProductName] = useState("Áo Thun Cổ Tròn"); // Default product name
   const [pattern, setPattern] = useState("tshirt");
   const [numberOfDrawings, setNumberOfDrawings] = useState(0);
@@ -342,7 +342,7 @@ export default function Custom() {
       const updatedProduct = {
         ...product,
         name: productName,
-        price: totalPrice.toString(),
+        price: pricePerShirt.toString(),
         images: {
           front: frontURL,
           back: backURL,
@@ -523,7 +523,6 @@ export default function Custom() {
         };
         
         if (activeObjectWithElement._element) {
-          setTotalPrice((prevPrice) => prevPrice - 10000);
           setNumberOfUploads((prevCount) => prevCount - 1);
         } else {
           setNumberOfDrawings((prevCount) => prevCount - 1);
@@ -686,7 +685,8 @@ export default function Custom() {
               sizes={sizes}
               handleSizeChange={handleSizeChange}
               saveDesign={saveDesign}
-              totalPrice={totalPrice}
+              pricePerShirt={pricePerShirt}
+              setPricePerShirt={setPricePerShirt}
               name={productName}
               numberOfDrawings={numberOfDrawings}
               numberOfUploads={numberOfUploads}

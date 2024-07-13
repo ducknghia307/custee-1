@@ -56,17 +56,24 @@ export default function Page() {
         .then((res: any) => {
           console.log("FETCHED: ", res.data.metadata);
           const fetched = res.data.metadata;
-          fetched.map((item: CartItem) => {
-            return sortSize(item);
+  
+          // Sort fetched items based on createdAt in descending order
+          fetched.sort((a: CartItem, b: CartItem) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           });
+  
+          // Set the sorted items in state
           setCartItemList(fetched);
         })
         .catch((err: any) => {
           console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
-    setIsLoading(false);
   };
+  
 
   const sumQuantity = (quantityArray: any) => {
     return quantityArray.reduce(

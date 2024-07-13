@@ -63,6 +63,8 @@ export default function OrderListItemDetails({
   useEffect(() => {
     if (order?.status.match("delivering")) {
       setStatusColor("#E0F2FE");
+    } else if (order?.status.match("processing")) {
+      setStatusColor("#ffccff");
     } else if (order?.status.match("completed")) {
       setStatusColor("#DCFCE7");
     } else if (order?.status.match("cancelled")) {
