@@ -77,35 +77,69 @@ const ChartDashboard = () => {
       return false;
     };
 
-        users.forEach(user => {
-            const date = new Date(user.createdAt);
-            if (!isInRange(date)) return;
-            const month = date.toLocaleString('default', { month: 'short' });
-            if (!monthlyData[month]) {
-                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 };
-            }
-            monthlyData[month].totalUsers += 1;
-        });
+    users.forEach((user) => {
+      const date = new Date(user.createdAt);
+      if (!isInRange(date)) return;
+      const month = date.toLocaleString("default", { month: "short" });
+      if (!monthlyData[month]) {
+        monthlyData[month] = {
+          month,
+          totalUsers: 0,
+          totalOrders: 0,
+          totalSales: 0,
+          totalPending: 0,
+        };
+      }
+      monthlyData[month].totalUsers += 1;
+    });
 
-        orders.forEach(order => {
-            const date = new Date(order.createdAt);
-            if (!isInRange(date)) return;
-            const month = date.toLocaleString('default', { month: 'short' });
-            if (!monthlyData[month]) {
-                monthlyData[month] = { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 };
-            }
-            monthlyData[month].totalOrders += 1;
-            if (order.status === "pending") {
-                monthlyData[month].totalPending += 1;
-            }
-            if (order.status === "completed") {
-                monthlyData[month].totalSales += order.total;
-            }
-        });
+    orders.forEach((order) => {
+      const date = new Date(order.createdAt);
+      if (!isInRange(date)) return;
+      const month = date.toLocaleString("default", { month: "short" });
+      if (!monthlyData[month]) {
+        monthlyData[month] = {
+          month,
+          totalUsers: 0,
+          totalOrders: 0,
+          totalSales: 0,
+          totalPending: 0,
+        };
+      }
+      monthlyData[month].totalOrders += 1;
+      if (order.status === "pending") {
+        monthlyData[month].totalPending += 1;
+      }
+      if (order.status === "completed") {
+        monthlyData[month].totalSales += order.total;
+      }
+    });
 
-        // Sort data by month
-        const sortedMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const sortedData = sortedMonths.map(month => monthlyData[month] || { month, totalUsers: 0, totalOrders: 0, totalSales: 0, totalPending: 0 });
+    // Sort data by month
+    const sortedMonths = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const sortedData = sortedMonths.map(
+      (month) =>
+        monthlyData[month] || {
+          month,
+          totalUsers: 0,
+          totalOrders: 0,
+          totalSales: 0,
+          totalPending: 0,
+        }
+    );
 
     return sortedData;
   };
@@ -113,11 +147,13 @@ const ChartDashboard = () => {
   const handleDateRangeChange = (update) => {
     setDateRange(update);
     if (update[0] && update[1]) {
+      const startDay = update[0]?.getDate();
       const startMonth = update[0]?.getMonth() + 1;
       const startYear = update[0]?.getFullYear();
+      const endDay = update[1]?.getDate();
       const endMonth = update[1]?.getMonth() + 1;
       const endYear = update[1]?.getFullYear();
-      const rangeString = `${startMonth}/${startYear} - ${endMonth}/${endYear}`;
+      const rangeString = `${startDay}/${startMonth}/${startYear} - ${endDay}/${endMonth}/${endYear}`;
       setDateRangeString(rangeString);
     } else {
       setDateRangeString(""); // Clear date range string if only one date is selected
@@ -150,48 +186,56 @@ const ChartDashboard = () => {
     }
   };
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <button className={styles.button}> <MdErrorOutline />Sale Details</button>
-                <div className={styles.controls}>
-                    <DatePicker
-                        selectsRange={true}
-                        startDate={startDate}
-                        endDate={endDate}
-                        onChange={handleDateRangeChange}
-                        dateFormat="MM/yyyy"
-                        showMonthYearPicker
-                        customInput={<button className={styles.button}><MdCalendarMonth size={18} /> {dateRangeString || "Select Date Range"}</button>}
-                    />
-                    <button className={styles.button} onClick={handleExport}>Export <MdOutlineFileDownload /></button>
-                </div>
-            </div>
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
-                    margin={{
-                        top: 10,
-                        right: 30,
-                        left: 20,
-                        bottom: 40,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" style={{ fontSize: '10px' }} />
-                    <YAxis style={{ fontSize: '10px' }} />
-                    <Tooltip contentStyle={{ fontSize: '13px', fontWeight: 500 }} />
-                    <Legend wrapperStyle={{ fontSize: '13px', fontWeight: 500 }} />
-                    <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" />
-                    <Line type="monotone" dataKey="totalUsers" stroke="#82ca9d" />
-                    {/* <Line type="monotone" dataKey="totalSales" stroke="violet" /> */}
-                    <Line type="monotone" dataKey="totalPending" stroke="#FF6A6A" />
-                </LineChart>
-            </ResponsiveContainer>
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <button className={styles.button}>
+          <MdErrorOutline />
+          Sale Details
+        </button>
+        <div className={styles.controls}>
+          <DatePicker
+            selectsRange={true}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleDateRangeChange}
+            dateFormat="dd/MM/yyyy"
+            customInput={
+              <button className={styles.button}>
+                <MdCalendarMonth size={18} />{" "}
+                {dateRangeString || "Select Date Range"}
+              </button>
+            }
+          />
+          <button className={styles.button} onClick={handleExport}>
+            Export <MdOutlineFileDownload />
+          </button>
         </div>
-    )
-}
+      </div>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          width={500}
+          height={300}
+          data={data}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 20,
+            bottom: 40,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" style={{ fontSize: "10px" }} />
+          <YAxis style={{ fontSize: "10px" }} />
+          <Tooltip contentStyle={{ fontSize: "13px", fontWeight: 500 }} />
+          <Legend wrapperStyle={{ fontSize: "13px", fontWeight: 500 }} />
+          <Line type="monotone" dataKey="totalOrders" stroke="#8884d8" />
+          <Line type="monotone" dataKey="totalUsers" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="totalPending" stroke="#FF6A6A" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
 export default ChartDashboard;

@@ -23,11 +23,13 @@ export default function ProductsPage() {
     try {
       const response = await axiosInstance.get("/api/product");
       console.log("Response Data:", response.data); 
-      setProducts(response.data.metadata || []);
+      const sortedProducts = (response.data.metadata || []).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setProducts(sortedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchProducts();
@@ -35,6 +37,7 @@ export default function ProductsPage() {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const handleSearchChange = (e) => {
@@ -50,6 +53,10 @@ export default function ProductsPage() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN');
+  };
 
   return (
     <div className={styles.container}>
@@ -75,7 +82,7 @@ export default function ProductsPage() {
               <td>Back Image</td>
               <td>Product Name</td>
               <td>Pattern</td>
-              <td>Price</td>
+              <td>Price (đ)</td>
               <td>Action</td>
             </tr>
           </thead>
@@ -107,7 +114,8 @@ export default function ProductsPage() {
                   </td>
                   <td>{product.name}</td>
                   <td>{product.pattern}</td>
-                  <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                  {/* <td>{product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td> */}
+                  <td>{formatPrice(product.price)}</td>
                   <td>
                     <div className={styles.buttons}>
                       <Link href={`/dashboard/products/edit/${product._id}`}>

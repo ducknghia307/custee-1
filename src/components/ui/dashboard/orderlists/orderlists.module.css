@@ -19,6 +19,41 @@
     margin-top: 10px;
 }
 
+.filters {
+    display: flex;
+    gap: 10px;
+}
+
+.filter1 {
+    padding: 6px 12px; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    padding-right: 30px; 
+}
+
+.filter2 {
+    padding: 6px 12px; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    padding-right: 30px; 
+}
+
+/* .filter option {
+    padding: 8px 12px; 
+} */
+
 .addButton {
     padding: 6px 15px;
     background-color: #D9D9D9;
@@ -45,7 +80,7 @@
     border-left: 1px solid #D8D8D8;
     border-right: 1px solid #D8D8D8;
     border-bottom: 1px solid #D8D8D8;
-    margin-top: 15px;
+    /* margin-top: 15px; */
 }
 
 .user {
@@ -59,7 +94,7 @@
 .table thead tr {
     background-color: #fff;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .table thead tr:first-child td:first-child {
@@ -89,7 +124,7 @@
 }
 
 .table tbody tr td {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .table th, .table td {
