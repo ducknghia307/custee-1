@@ -61,14 +61,6 @@ export default function OrderListItemDetails({
   const estimatedDelivery = moment(order?.createdAt).add(4, "days").toDate();
 
   useEffect(() => {
-    if (order?.status.match("delivering")) {
-      setStatusColor("#E0F2FE");
-    } else if (order?.status.match("completed")) {
-      setStatusColor("#DCFCE7");
-    } else if (order?.status.match("cancelled")) {
-      setStatusColor("#FEE2E2");
-    }
-
     if (
       sessionStorage.updatedDeliveryInfo &&
       sessionStorage.updatedDeliveryInfo.match("true")
@@ -79,6 +71,20 @@ export default function OrderListItemDetails({
       sessionStorage.removeItem("updatedDeliveryInfo");
     }
   }, []);
+
+  useEffect(() => {
+    if (order.status.match("pending")) {
+      setStatusColor("#F9F4CE");
+    } else if (order.status.match("processing")) {
+      setStatusColor("#FFCCFF");
+    } else if (order.status.match("delivering")) {
+      setStatusColor("#E0F2FE");
+    } else if (order.status.match("completed")) {
+      setStatusColor("#DCFCE7");
+    } else if (order.status.match("cancelled")) {
+      setStatusColor("#FEE2E2");
+    }
+  }, [order]);
 
   const getPaymentMethods = (code: string) => {
     if (code.toLowerCase().match("card")) {

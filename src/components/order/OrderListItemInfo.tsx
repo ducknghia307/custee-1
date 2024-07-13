@@ -27,7 +27,7 @@ interface Order {
   updatedAt: Date;
 }
 
-export default function OrderListItemInfo({ order }: { order: Order | null }) {
+export default function OrderListItemInfo({ order }: { order: Order }) {
   const [statusColor, setStatusColor] = useState<string>("#F3EBA0");
 
   const getOrderStatus = () => {
@@ -59,14 +59,18 @@ export default function OrderListItemInfo({ order }: { order: Order | null }) {
   };
 
   useEffect(() => {
-    if (order?.status.match("delivering")) {
+    if (order.status.match("pending")) {
+      setStatusColor("#F3EBA0");
+    } else if (order.status.match("processing")) {
+      setStatusColor("#E6B8FF");
+    } else if (order.status.match("delivering")) {
       setStatusColor("#BAE6FD");
-    } else if (order?.status.match("completed")) {
+    } else if (order.status.match("completed")) {
       setStatusColor("#BBF7D0");
-    } else if (order?.status.match("cancelled")) {
+    } else if (order.status.match("cancelled")) {
       setStatusColor("#FECACA");
     }
-  }, []);
+  }, [order]);
 
   return order === null ? null : (
     <div

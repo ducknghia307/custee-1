@@ -8,7 +8,6 @@ import OrderListItem from "@/components/order/OrderListItem";
 import { axiosInstance } from "@/utils/axiosInstance";
 import Loading from "@/components/loading/Loading";
 import { toast } from "react-toastify";
-import Link from "next/link";
 import EmptyOrderImage from "../../assets/images/cart/empty-order.webp";
 
 interface Order {
