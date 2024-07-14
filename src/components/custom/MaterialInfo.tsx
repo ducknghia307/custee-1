@@ -66,6 +66,7 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
   setPricePerShirt(
     basePrice + numberOfDrawings * drawingCost + numberOfUploads * uploadCost
   );
+
   const handleAddToCart = () => {
     setShowDialog(true);
   };
@@ -87,16 +88,26 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
     setShowSizeInfoModal(false); // Close the SizeInfoModal
   };
 
+  const handleValidatedSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    // Validate if the value is a number
+    if (/^\d*$/.test(value)) {
+      // Convert the validated value to an integer
+      const intValue = parseInt(value, 10);
+  
+      // Ensure the integer value is within a specific range (if needed)
+      if (intValue >= 0 && intValue <= 100) {
+        handleSizeChange(e); // Proceed with handling the size change
+      }
+    }
+  };
+
   const totalCost = totalPrice + additionalCost;
 
   return (
     <div style={{ height: "62vh", width: "350px", marginLeft: "100px" }}>
-      <div
-        className="flex justify-center items-center h-16 mb-3 border-black rounded-2xl"
-        style={{ borderWidth: "1px" }}
-      >
-        <p className="text-2xl font-black">Material</p>
-      </div>
+     
       <div className="border border-black rounded-2xl">
         <div className="">
           <div className="p-3">
@@ -140,14 +151,13 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
                 <Input
                   id={size}
                   name={size}
-                  type="text"
                   value={sizes[size]}
-                  onChange={handleSizeChange}
+                  onChange={handleValidatedSizeChange}
                   className="font-normal"
                   style={{
                     height: "40px",
                     fontSize: "15px",
-                    width: "60px",
+                    width: "65px",
                     textAlign: "center",
                   }}
                 />

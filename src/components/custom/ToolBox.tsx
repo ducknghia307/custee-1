@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { TShirt, TextT, PencilLine } from "@phosphor-icons/react";
@@ -15,6 +15,21 @@ const ToolBox = ({
   const [showTextPopup, setShowTextPopup] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [showShapePopup, setShowShapePopup] = useState(false);
+
+  const typeMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (typeMenuRef.current && !typeMenuRef.current.contains(event.target)) {
+        setShowTypeMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleTextButtonClick = () => {
     setShowTextPopup(true);
@@ -45,10 +60,15 @@ const ToolBox = ({
     setDrawingMode(shape);
   };
 
+  const handleTypeSelectionAndCloseMenu = (type) => {
+    handleTypeSelection(type);
+    setShowTypeMenu(false);
+  };
+
   return (
     <div
       className="relative shadow-xl gap-1 border-black border rounded-xl flex flex-col items-center mt-4"
-      style={{ height: "420px", width: "200px" }}
+      style={{ height: "500px", width: "200px" }}
     >
       <div className="my-4 relative">
         <Button
@@ -65,10 +85,13 @@ const ToolBox = ({
           Type
         </Button>
         {showTypeMenu && (
-          <div className="absolute left-10  -top-10 mt-2 w-52 h-44 bg-white border rounded shadow-lg z-10 flex flex-row items-center">
+          <div
+            ref={typeMenuRef}
+            className="absolute left-10 -top-10 mt-2 w-52 h-44 bg-white border rounded shadow-lg z-10 flex flex-row items-center"
+          >
             <div
               className="flex flex-col justify-center items-center cursor-pointer"
-              onClick={() => handleTypeSelection("tshirt")}
+              onClick={() => handleTypeSelectionAndCloseMenu("tshirt")}
             >
               <img
                 style={{ height: "100px", width: "200px", objectFit: "cover" }}
@@ -78,7 +101,7 @@ const ToolBox = ({
             </div>
             <div
               className="flex flex-col justify-center items-center cursor-pointer"
-              onClick={() => handleTypeSelection("polo")}
+              onClick={() => handleTypeSelectionAndCloseMenu("polo")}
             >
               <img
                 style={{ height: "100px", width: "200px", objectFit: "cover" }}
@@ -132,7 +155,7 @@ const ToolBox = ({
           />
         )}
       </div>
-      <div>
+      <div className="mb-4">
         <Button
           style={{
             height: "80px",
