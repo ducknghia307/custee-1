@@ -88,7 +88,7 @@ axiosInstance.interceptors.response.use(
         const response = await axiosInstance.post('/auth/refresh', {}, {
           headers: { Authorization: `Bearer ${refreshToken}` }
         });
-        const newAccessToken = response.data.accessToken;
+        const newAccessToken = response.data.accessToken; 
         if (isBrowser) {
           document.cookie = `accessToken=${newAccessToken}; path=/; max-age=${60 * 60 * 24 * 7}`; // 1 week
         }
@@ -96,6 +96,10 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+            window.location.href = '/login';
+          
+          console.log('123');
+          
         console.error("Error refreshing token:", refreshError);
         return Promise.reject(refreshError);
       }

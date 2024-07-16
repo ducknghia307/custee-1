@@ -37,7 +37,8 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
   const [showDialog, setShowDialog] = useState(false);
   const [showSizeInfoModal, setShowSizeInfoModal] = useState(false);
   const [totalQuantity, setTotalQuantity] = useState(1);
-  const [totalPrice,setTotalPrice]=useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [validationError, setValidationError] = useState('');
 
   const drawingCost = 10000;
   const uploadCost = 30000;
@@ -45,7 +46,7 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
 
   useEffect(() => {
     const total = Object.values(sizes).reduce(
-      (sum, qty) => sum + Number(qty),
+      (sum, qty) => sum + (Number(qty) || 0),
       0
     );
     setTotalQuantity(total);
@@ -63,11 +64,21 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
     setTotalPrice(newTotalPrice);
   }, [totalQuantity, basePrice, setTotalPrice]);
 
-  setPricePerShirt(
-    basePrice + numberOfDrawings * drawingCost + numberOfUploads * uploadCost
-  );
+  useEffect(() => {
+    setPricePerShirt(
+      basePrice + numberOfDrawings * drawingCost + numberOfUploads * uploadCost
+    );
+  }, [basePrice, numberOfDrawings, drawingCost, numberOfUploads, uploadCost, setPricePerShirt]);
 
   const handleAddToCart = () => {
+    // Validate inputs
+    const isAllSizesFilled = Object.values(sizes).every(size => size !== '' && Number(size) <= 100);
+    if (!isAllSizesFilled) {
+      setValidationError('Please fill size quantity.');
+      return;
+    }
+    
+    setValidationError(''); // Clear the validation error if all inputs are valid
     setShowDialog(true);
   };
 
@@ -91,15 +102,15 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
   const handleValidatedSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Validate if the value is a number
-    if (/^\d*$/.test(value)) {
-      // Convert the validated value to an integer
-      const intValue = parseInt(value, 10);
-  
-      // Ensure the integer value is within a specific range (if needed)
-      if (intValue >= 0 && intValue <= 100) {
-        handleSizeChange(e); // Proceed with handling the size change
-      }
+    // Validate if the value is a number or empty and less than or equal to 100
+    if (/^\d*$/.test(value) && (value === '' || Number(value) <= 100)) {
+      handleSizeChange(e); // Proceed with handling the size change
+    }
+
+    // Clear the validation error if all sizes are filled with valid values
+    const isAllSizesValid = Object.values({ ...sizes, [name]: value }).every(size => size === '' || Number(size) <= 100);
+    if (isAllSizesValid) {
+      setValidationError('');
     }
   };
 
@@ -107,7 +118,6 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
 
   return (
     <div style={{ height: "62vh", width: "350px", marginLeft: "100px" }}>
-     
       <div className="border border-black rounded-2xl">
         <div className="">
           <div className="p-3">
@@ -170,6 +180,14 @@ const MaterialInfo: React.FC<MaterialInfoProps> = ({
                   style={{ color: "red" }}
                 >
                   {error}
+                </p>
+              )}
+              {validationError && (
+                <p
+                  className="text-sm font-black text-center"
+                  style={{ color: "red" }}
+                >
+                  {validationError}
                 </p>
               )}
             </div>
