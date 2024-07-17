@@ -10,7 +10,7 @@ import Link from "next/link"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { useAppDispatch } from "@/redux/hook"
 import { showToast } from "@/components/toast/toast"
-import { logOut as logOutAction } from "../../../../redux/features/auth/authSlice";
+import { logOut as logOutAction, logOutAndRevertAll } from "../../../../redux/features/auth/authSlice";
 
 
 const Navbar = () => {
@@ -65,8 +65,9 @@ console.log(isIconClicked);
 
     async function logOut() {
         try {
-            const response = await axiosInstance.post("/auth/logout", {});
-            dispatch(logOutAction(null));
+            const response = await axiosInstance.post("/auth/logout");
+            window.localStorage.removeItem("userId");
+            dispatch(logOutAndRevertAll());
             showToast("Logged out successfully", "success");
             router.push("/login"); // Redirect to the login page after logout
         } catch (error) {
