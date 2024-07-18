@@ -36,6 +36,10 @@
     margin-right: 70px;
 }
 
+.left{
+    max-width: 60%;
+}
+
 .pendingButton {
     color: #FFA756;
     background-color: #FFF3E0;

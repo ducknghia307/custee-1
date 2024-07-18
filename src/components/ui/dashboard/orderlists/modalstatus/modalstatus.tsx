@@ -182,7 +182,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
         </div>
 
         <div className={styles.orderInfo}>
-          <div>
+          <div className={styles.left}>
             <p>
               <strong>ID:</strong> {order._id}
             </p>
@@ -193,7 +193,7 @@ const ModalEditStatus = ({ open, onClose, orderId, onStatusChange }) => {
               <strong>Address:</strong> {order.deliveryInfo.address}
             </p>
           </div>
-          <div>
+          <div className={styles.right}>
             <p>
               <strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}
             </p>
