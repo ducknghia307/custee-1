@@ -15,6 +15,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { imageMapping } from "@/components/custom/ImageMapping";
 import { fabric } from "fabric"; // Import fabric
 import Loading from "@/components/loading/Loading";
+import { useRouter } from "next/navigation";
 export default function Custom() {
   const [imageDisplay, setImageDisplay] = useState(
     "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/ShirtTemplate%2FTeeFrontBeige.png?alt=media&token=6987c884-cdec-4c97-ad6f-82325ff7da9f"
@@ -42,6 +43,7 @@ export default function Custom() {
   const [numberOfUploads, setNumberOfUploads] = useState(0);
   const [error, setError] = useState("");
   const userId = useAppSelector((state) => state.auth.userId);
+  
   const [product, setProduct] = useState({
     userId,
     name: "",
@@ -69,7 +71,12 @@ export default function Custom() {
   console.log("::::::::::::", cartItem);
 
   const dispatch = useAppDispatch();
-
+  const router = useRouter(); 
+  useEffect(() => {
+    if (!userId) {
+      router.push("/login"); // Replace with your login route
+    }  
+  }, [userId, history]);
   const handleTypeSelection = (type) => {
     console.log(type);
     setPattern(type);
@@ -586,7 +593,7 @@ export default function Custom() {
                 src={imageDisplay}
                 style={{
                   position: "absolute",
-                  top: 0,
+                  top: -40,
                   left: 0,
                   width: 500,
                   height: 550,
@@ -612,7 +619,7 @@ export default function Custom() {
               <div
                 style={{
                   position: "absolute",
-                  top: 130,
+                  top: 100,
                   left: 146,
                   border: "2px dashed #3399ff",
                   display: currentView === "front" ? "block" : "none",
@@ -623,7 +630,7 @@ export default function Custom() {
               <div
                 style={{
                   position: "absolute",
-                  top: 130,
+                  top: 100,
                   left: 146,
                   border: "2px dashed #3399ff",
                   display: currentView === "back" ? "block" : "none",
@@ -654,6 +661,7 @@ export default function Custom() {
                     setSelectedImage("front");
                   }}
                 />
+                <p className="text-center">Front</p>
               </div>
               <div
                 style={{
@@ -678,6 +686,7 @@ export default function Custom() {
                     setSelectedImage("back");
                   }}
                 />
+                <p className="text-center">Back</p>
               </div>
             </div>
             <MaterialInfo

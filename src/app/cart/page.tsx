@@ -387,15 +387,15 @@ export default function Page() {
               </div>
               <div className="w-full flex flex-row items-center justify-between gap-16">
                 <div className="flex flex-col items-start justify-around gap-2">
-                  <p>Vouchers:</p>
-                  <p>Discount:</p>
+                  {/* <p>Vouchers:</p>
+                  <p>Discount:</p> */}
                   <p>Total cost:</p>
                 </div>
                 <div className="flex flex-col items-end justify-around gap-2 min-w-fit">
-                  <Link href="/cart/temp" className="underline text-[#F1E15B]">
+                  {/* <Link href="/cart/temp" className="underline text-[#F1E15B]">
                     Select or type
-                  </Link>
-                  <p>-0 đ</p>
+                  </Link> */}
+                  {/* <p>-0 đ</p> */}
                   <p>{CurrencySplitter(currentTotal)} đ</p>
                 </div>
               </div>

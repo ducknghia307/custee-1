@@ -53,51 +53,54 @@ export const imageMapping = {
   },
   polo: {
     Black: {
-      front: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20black.png?alt=media&token=58400b96-d68f-46a8-9068-26ff20ed151b",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20black.png?alt=media&token=f8316b65-9abe-4ada-b9ae-2de113f95e1d",
+      front:
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20black.png?alt=media&token=b6cf510d-d49d-466e-a9fe-da9b2fd600c1",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20black.png?alt=media&token=f4354930-5e71-4d8d-80d5-15fd2e1e7b19",
     },
     White: {
-      front: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20white.png?alt=media&token=fd1be377-3711-4bf5-bd78-ebd1d5d90e62",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20white.png?alt=media&token=fcf45565-df10-48cf-af5a-f17de9640855",
+      front:
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20white.png?alt=media&token=c130cbc9-f412-4ef3-8178-c9f03ab9e046",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20white.png?alt=media&token=fc701229-5c95-4325-8d9c-1129cd65d136",
     },
     Beige: {
-      front: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20beige.png?alt=media&token=b6238188-6870-415f-b716-3edcc3dbcb2b",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20beige.png?alt=media&token=7a4d4d0f-761d-43a9-a3e9-6552419ff99d",
+      front:
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20beige.png?alt=media&token=89e9414a-b52f-447d-b5f9-50f0fe1a3477",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20beige.png?alt=media&token=b1f80f0b-0afb-487c-80be-96346cbcfd76",
     },
     Blue: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20blue.png?alt=media&token=14564956-4665-47d9-bee2-cdd3c7751c9f",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20blue.png?alt=media&token=4bf31544-6123-4ed7-8a5a-ce37249b2d6d",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20blue.png?alt=media&token=d8c08a51-eaaf-49ef-ad12-76299ec57d66",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20blue.png?alt=media&token=82cf8115-70f7-425c-8a6c-da7801328272",
     },
     Gray: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20gray.png?alt=media&token=f30218c6-94fa-4fd4-9928-59cadeaccd5c",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20gray.png?alt=media&token=e1bfe76a-3fed-41f5-b722-cfa52bb6c3a5",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20gray.png?alt=media&token=613877e3-b7a4-4d0b-bdb5-ddf9e3b2a5a3",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20gray.png?alt=media&token=70ee12ac-3a10-4f84-af2c-d70d913591f6",
     },
     Green: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20green.png?alt=media&token=719e9ec1-8afe-4402-b6d8-7f190c9277b8",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20green.png?alt=media&token=61a0722b-be4d-4e51-ae9c-87cddfd1f1bc",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20green.png?alt=media&token=00120959-5de2-4af6-acdb-978344be8215",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20green.png?alt=media&token=3d361afc-717e-4a2f-b48a-29a952f10c90",
     },
     Pink: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20pink.png?alt=media&token=8358c02f-475a-423f-b76a-f8744e03849d",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20pink.png?alt=media&token=310c16c6-5702-48e8-b740-9b97868cc3e2",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20pink.png?alt=media&token=8a3f74a4-0046-4f6d-a074-78c0072b2d25",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20pink.png?alt=media&token=5cb7faa2-2894-48a6-82e6-a007944b1bfc",
     },
     Purple: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20purple.png?alt=media&token=1fbe9796-6fc5-4412-9833-84a0e5d6454d",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20purple.png?alt=media&token=723a88f8-973b-4f62-9968-0f62ef693666",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20purple.png?alt=media&token=919dec78-ecb3-46ac-87bc-2439aa891768",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20purple.png?alt=media&token=885285e4-46f2-432e-a1cf-30cbca760177",
     },
     Red: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20red.png?alt=media&token=c022ec35-86ff-4ec6-a09f-992c8beb5449",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20red.png?alt=media&token=f8f61590-1689-4fb2-bb0a-2e4fe24c55ed",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20red.png?alt=media&token=f1a343fd-b0e9-42ae-9e68-4941099f437e",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20red.png?alt=media&token=a52f63af-dac2-4706-aa37-473bce185af7",
     },
     Yellow: {
       front:
-        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20yellow.png?alt=media&token=a29d0605-cd2d-4cb2-8401-10662ec5fd99",
-      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20yellow.png?alt=media&token=11172b7f-7613-4a8c-bdf7-39ce60e782ec",
+        "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20front%20yellow.png?alt=media&token=50cf2e6e-c4f6-4e72-923c-bc1b914ffdec",
+      back: "https://firebasestorage.googleapis.com/v0/b/custee-1669e.appspot.com/o/PoloTemplate%2Fpolo%20back%20yellow.png?alt=media&token=cd37b190-bbee-436a-8823-5585398a6ab6",
     },
   },
 };

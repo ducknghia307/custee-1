@@ -14,6 +14,7 @@ import Search from "@/components/ui/dashboard/search/search";
 interface Order {
     _id: string;
     code: string;
+    userId;
     deliveryInfo: {
         recipientName: string;
         phone: string;
@@ -165,7 +166,9 @@ const OrderList = () => {
                     <tr>
                         <td>ORDER CODE</td>
                         <td>RECIPIENT NAME</td>
+                        <td>Email</td>
                         <td>PHONE</td>
+
                         {/* <td>ADDRESS</td> */}
                         {/* <td>PAYMENT METHOD</td> */}
                         <td>TOTAL PRICE (đ)</td>
@@ -181,6 +184,7 @@ const OrderList = () => {
                             <tr key={index}>
                                 <td>{order.code}</td>
                                 <td>{order.deliveryInfo.recipientName}</td>
+                                <td>{order?.userId.email}</td>
                                 <td>{order.deliveryInfo.phone}</td>
                                 {/* <td>{order.deliveryInfo.address}</td> */}
                                 {/* <td>{order.paymentMethod}</td> */}
