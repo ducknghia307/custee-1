@@ -118,7 +118,7 @@ export default function Page() {
           totalIncludingDelivery > 0
             ? totalIncludingDelivery - discountAmount
             : total - discountAmount,
-        description: "Custee Order",
+        description: `Custee Order #${newOrderCode}`,
         cancelUrl: "https://custee.vercel.app/cart",
         returnUrl: "https://custee.vercel.app/checkout/completed",
         buyerName: deliveryInfo.recipientName,
