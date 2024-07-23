@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import {axiosInstance , setAuthToken } from "../../utils/axiosInstance";
+import {axiosInstance , saveTokens, setAuthToken } from "../../utils/axiosInstance";
 import { useAppDispatch } from "../../redux/hook";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { showToast } from "../toast/toast";
@@ -103,14 +103,15 @@ export function SignupForm() {
         });
 
         console.log("Registration response:", response.data.user);
-        const { token, user } = response.data;
+        const { accessToken, user, refreshToken } = response.data;
         const id = user._id;
-        let accessToken = token;
-        await setAuthToken(token);
+        localStorage.setItem("userId", id);
+        saveTokens(accessToken, refreshToken);
+        await setAuthToken(accessToken);
         dispatch(setCredentials({ accessToken, user, id }));
         showToast("Registration successful", "success");
         router.push("/");
-      } catch (error) {
+      } catch (error)   {
         console.error("Registration error:", error.response.data);
       }
     }

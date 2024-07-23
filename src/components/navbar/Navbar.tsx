@@ -52,7 +52,19 @@ export default function Navbar() {
     },
   ]);
 
-
+  if (typeof window !== "undefined") {
+    var prevScrollPos = window.scrollY;
+    window.onscroll = () => {
+      var currentScrollPos = window.scrollY;
+      if (prevScrollPos > currentScrollPos) {
+        document.getElementById("navbar")!.style.top = "0";
+      } else {
+        if (currentScrollPos > 50)
+          document.getElementById("navbar")!.style.top = "-65px";
+      }
+      prevScrollPos = currentScrollPos;
+    };
+  }
 
   return (
     <div
